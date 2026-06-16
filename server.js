@@ -2158,3 +2158,11 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+
+// Keep-alive ping so Render free tier doesn't spin down (every 14 min)
+if (process.env.RENDER_EXTERNAL_URL) {
+  setInterval(() => {
+    fetch(`${process.env.RENDER_EXTERNAL_URL}/api/products`)
+      .catch(() => {});
+  }, 14 * 60 * 1000);
+}
