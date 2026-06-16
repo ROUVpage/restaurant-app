@@ -1246,6 +1246,33 @@ async function startServer() {
   // ── PRODUCTS ──────────────────────────────────────────────────────────────
   app.get('/api/products', (req, res) => res.json(PRODUCTS));
 
+  // ── WEBHOOK TEST (diagnóstico) ───────────────────────────────────────────
+  app.get('/api/test-webhook', async (req, res) => {
+    const webhookUrl = process.env.RESERVATION_WEBHOOK_URL;
+    if (!webhookUrl) {
+      return res.json({ ok: false, error: 'RESERVATION_WEBHOOK_URL no está configurado en las variables de entorno' });
+    }
+    const testPayload = {
+      targetEmail: RESERVATION_NOTIFICATION_EMAIL,
+      reservation: {
+        date: '2026-06-20', slot: 'dinner', slotLabel: 'Cena - 21:00',
+        name: 'Test desde Render', phone: '612345678', persons: 2,
+        source: 'test', createdAt: Math.floor(Date.now() / 1000)
+      }
+    };
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testPayload)
+      });
+      const text = await response.text();
+      res.json({ ok: response.ok, status: response.status, body: text, webhookUrl });
+    } catch (e) {
+      res.json({ ok: false, error: e.message, webhookUrl });
+    }
+  });
+
   // ── PAYPAL CONNECT + CHECKOUT ────────────────────────────────────────────
   app.get('/api/paypal/config', (req, res) => {
     const connection = getPayPalConnection();
