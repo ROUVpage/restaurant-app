@@ -34,9 +34,27 @@ const PAYPAL_CURRENCY = String(process.env.PAYPAL_CURRENCY || 'EUR').toUpperCase
 const PAYPAL_CONNECT_REDIRECT_PATH = '/api/paypal/connect/callback';
 const PAYPAL_CONNECT_SCOPE = process.env.PAYPAL_CONNECT_SCOPE || 'openid';
 const PAYPAL_TOKEN_ENCRYPTION_KEY = String(process.env.PAYPAL_TOKEN_ENCRYPTION_KEY || '').trim();
+const SESSION_SECRET = String(process.env.SESSION_SECRET || PAYPAL_TOKEN_ENCRYPTION_KEY || 'restaurant-default-secret-change-me').trim();
 const PAYPAL_STATE_TTL_MS = 10 * 60 * 1000;
 let paypalTokenCache = { token: null, expiresAt: 0 };
 const paypalOAuthStates = new Map();
+
+// ── SESSION TOKEN HELPERS (HMAC-signed, survive server restarts) ────────────
+function signDeviceId(uuid) {
+  const sig = crypto.createHmac('sha256', SESSION_SECRET).update(uuid).digest('hex');
+  return `${uuid}.${sig}`;
+}
+
+function verifyDeviceId(deviceId) {
+  if (!deviceId || typeof deviceId !== 'string') return false;
+  const dotIdx = deviceId.lastIndexOf('.');
+  if (dotIdx === -1) return false;
+  const uuid = deviceId.slice(0, dotIdx);
+  const sig = deviceId.slice(dotIdx + 1);
+  if (!uuid || !sig) return false;
+  const expected = crypto.createHmac('sha256', SESSION_SECRET).update(uuid).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'));
+}
 
 function getFirstLanIPv4() {
   const interfaces = os.networkInterfaces();
@@ -1209,6 +1227,12 @@ async function startServer() {
       return null;
     }
 
+    // New format: uuid.hmacSig — verified without DB (survives restarts)
+    if (deviceId.includes('.') && verifyDeviceId(deviceId)) {
+      return deviceId;
+    }
+
+    // Legacy format: bare UUID stored in devices table
     const device = dbGet('SELECT id FROM devices WHERE id = ?', [deviceId]);
     if (!device) {
       res.status(401).json({ error: 'Sesión no válida' });
@@ -1220,11 +1244,10 @@ async function startServer() {
 
   // ── AUTH ──────────────────────────────────────────────────────────────────
   app.post('/api/auth/login', (req, res) => {
-    const { username, password, deviceId } = req.body;
-    if (username === 'admin' && password === 'admin') {
-      let id = deviceId || uuidv4();
-      const exists = dbGet('SELECT id FROM devices WHERE id = ?', [id]);
-      if (!exists) { dbRun('INSERT INTO devices (id) VALUES (?)', [id]); saveDb(); }
+    const { username, password } = req.body;
+    const adminPassword = String(process.env.ADMIN_PASSWORD || 'admin');
+    if (username === 'admin' && password === adminPassword) {
+      const id = signDeviceId(uuidv4());
       return res.json({ success: true, deviceId: id });
     }
     res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
@@ -1233,13 +1256,21 @@ async function startServer() {
   app.post('/api/auth/check', (req, res) => {
     const { deviceId } = req.body;
     if (!deviceId) return res.json({ authenticated: false });
+    // New signed format
+    if (deviceId.includes('.') && verifyDeviceId(deviceId)) {
+      return res.json({ authenticated: true });
+    }
+    // Legacy: check DB
     const device = dbGet('SELECT id FROM devices WHERE id = ?', [deviceId]);
     res.json({ authenticated: !!device });
   });
 
   app.post('/api/auth/logout', (req, res) => {
     const { deviceId } = req.body;
-    if (deviceId) { dbRun('DELETE FROM devices WHERE id = ?', [deviceId]); saveDb(); }
+    // Legacy cleanup
+    if (deviceId && !deviceId.includes('.')) {
+      dbRun('DELETE FROM devices WHERE id = ?', [deviceId]); saveDb();
+    }
     res.json({ success: true });
   });
 
