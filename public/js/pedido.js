@@ -42,6 +42,11 @@ function startPedidoRealtime() {
   if (!token) return;
 
   if (isAdminOrderFlow) {
+    const deviceId = getDeviceId();
+    if (!deviceId) { location.replace('/login.html'); return; }
+    const auth = await api('POST', '/api/auth/check', { deviceId });
+    if (!auth.authenticated) { location.replace('/login.html'); return; }
+
     document.body.classList.add('admin-order-flow');
     const reserveBtn = document.querySelector('.reserve-header-btn');
     reserveBtn?.remove();
