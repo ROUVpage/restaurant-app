@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservar Mesa</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/reservas.css">
+</head>
+<body class="reservas-page">
+  <header class="reservas-header">
+    <div>
+      <h1>Reservar mesa</h1>
+      <p>Elige fecha y turno (14:00 o 21:00) segun disponibilidad.</p>
+    </div>
+    <div class="reservas-header-actions">
+      <button id="backToPreviousBtn" class="btn-ghost" type="button">Volver</button>
+      <button id="cancelReservationInfoBtn" class="btn-danger" type="button">Cancelar reserva</button>
+    </div>
+  </header>
+
+  <main class="reservas-layout">
+    <section class="card calendar-card">
+      <div class="calendar-topbar">
+        <button id="prevMonthBtn" class="btn-ghost" type="button" aria-label="Mes anterior" title="Mes anterior">&larr;</button>
+        <select id="monthSelect" aria-label="Seleccionar mes" class="calendar-select"></select>
+        <select id="yearSelect" aria-label="Seleccionar ano" class="calendar-select"></select>
+        <button id="nextMonthBtn" class="btn-ghost" type="button" aria-label="Mes siguiente" title="Mes siguiente">&rarr;</button>
+      </div>
+      <div class="calendar-weekdays">
+        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </section>
+
+    <section class="card booking-card">
+      <h2 id="selectedDateLabel">Selecciona un dia</h2>
+      <p class="subtle">Reserva disponible todo el año.</p>
+
+      <div id="slotCards" class="slot-cards">
+        <button type="button" class="slot-card" data-slot="lunch">
+          <span class="slot-title">Comida - 14:00</span>
+          <span class="slot-meta" id="slotMetaLunch">Cargando...</span>
+        </button>
+        <button type="button" class="slot-card" data-slot="dinner">
+          <span class="slot-title">Cena - 21:00</span>
+          <span class="slot-meta" id="slotMetaDinner">Cargando...</span>
+        </button>
+      </div>
+
+      <form id="reservationForm" class="reservation-form" autocomplete="off">
+        <div class="form-group">
+          <label for="resName">Nombre</label>
+          <input id="resName" type="text" required maxlength="80" placeholder="Ej: Ana Perez">
+        </div>
+        <div class="form-group">
+          <label for="resPhone">Numero de telefono</label>
+          <input id="resPhone" type="tel" required maxlength="9" minlength="9" pattern="[67][0-9]{8}" inputmode="numeric" title="Debe ser un movil de 9 digitos y empezar por 6 o 7" placeholder="Ej: 600123123">
+        </div>
+        <div class="form-group">
+          <label for="resPersons">Numero de personas</label>
+          <input id="resPersons" type="number" min="1" max="30" required value="2">
+        </div>
+        <div id="publicReservationError" class="error-msg hidden"></div>
+        <div id="publicReservationSuccess" class="success-msg hidden"></div>
+        <button id="submitReservationBtn" class="btn-primary btn-full" type="submit">Revisar reserva</button>
+      </form>
+
+    </section>
+  </main>
+
+  <div id="confirmationOverlay" class="modal-overlay hidden" aria-live="polite">
+    <div class="modal confirmation-modal">
+      <div class="modal-header">
+        <h3>Confirmacion de reserva</h3>
+        <button id="closeConfirmModalBtn" class="modal-close" type="button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirmation-grid">
+          <span>Fecha</span><strong id="confirmDate"></strong>
+          <span>Turno</span><strong id="confirmSlot"></strong>
+          <span>Nombre</span><strong id="confirmName"></strong>
+          <span>Telefono</span><strong id="confirmPhone"></strong>
+          <span>Personas</span><strong id="confirmPersons"></strong>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button id="cancelConfirmBtn" class="btn-ghost" type="button"><span class="label-full">Editar datos</span><span class="label-short">Editar</span></button>
+        <button id="acceptConfirmBtn" class="btn-primary" type="button"><span class="label-full">Confirmar reserva</span><span class="label-short">Confirmar</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cancelInfoOverlay" class="modal-overlay hidden" aria-live="polite">
+    <div class="modal cancel-info-modal">
+      <div class="modal-header">
+        <h3>Cancelar reserva</h3>
+        <button id="closeCancelInfoBtn" class="modal-close" type="button">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="cancel-info-text">Para cancelar la reserva, llama al restaurante al <strong>691432907</strong>.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="acceptCancelInfoBtn" class="btn-primary" type="button">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/reservas.js"></script>
+</body>
+</html>

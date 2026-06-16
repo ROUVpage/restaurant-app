@@ -1,0 +1,6 @@
+node_modules/
+.env
+restaurant.db
+cloudflared.exe
+*.db
+.venv/

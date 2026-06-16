@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Gestión — Mesas</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-page">
+
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="header-brand">
+      <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+        <path d="M14 18c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v2a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8v-2Z" stroke="#c9a84c" stroke-width="1.5"/>
+        <path d="M24 28v6M20 34h8" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="19" cy="12" r="1.5" fill="#c9a84c"/>
+        <circle cx="24" cy="10" r="1.5" fill="#c9a84c"/>
+        <circle cx="29" cy="12" r="1.5" fill="#c9a84c"/>
+      </svg>
+      <span>Panel de Gestión</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary mobile-view-toggle" id="mobileViewToggle" type="button">Mesas</button>
+      <button class="btn-ghost header-menu-toggle" id="headerMenuToggle" type="button" aria-label="Abrir menú" aria-expanded="false">⋯</button>
+      <div class="header-menu-dropdown" id="headerMenuDropdown">
+        <a class="btn-secondary header-menu-link" href="/admin/reservas">Reservas</a>
+        <button class="btn-ghost" id="logoutBtn" type="button">Cerrar sesión</button>
+        <button class="btn-secondary" id="connectPaypalBtn" type="button">Conectar con PayPal</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="admin-layout">
+
+    <!-- MESAS GRID -->
+    <main class="tables-area">
+      <div class="section-header">
+        <h2>Mesas Activas</h2>
+        <span id="tablesCount" class="badge">0</span>
+      </div>
+      <div id="tablesGrid" class="tables-grid">
+        <!-- table cards injected -->
+      </div>
+      <div id="emptyTables" class="empty-state hidden">
+        <p>No hay mesas activas</p>
+      </div>
+    </main>
+
+    <!-- SIDEBAR PEDIDOS -->
+    <aside class="orders-sidebar">
+      <div class="sidebar-header">
+        <h3>Pedidos en Cola</h3>
+        <span id="ordersCount" class="badge">0</span>
+      </div>
+      <div id="ordersQueue" class="orders-queue">
+        <!-- order cards injected -->
+      </div>
+      <div id="emptyOrders" class="empty-state">
+        <p>Sin pedidos pendientes</p>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- FAB NUEVA MESA -->
+  <button class="fab" id="newTableBtn" title="Nueva Mesa">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>Nueva Mesa</span>
+  </button>
+
+  <!-- MODAL NUEVA MESA -->
+  <div class="modal-overlay hidden" id="newTableModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Crear Nueva Mesa</h3>
+        <button class="modal-close" id="closeNewTableModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Número de Mesa</label>
+          <input type="number" id="tableNumber" min="1" max="999" placeholder="Ej: 5">
+        </div>
+        <div class="form-group">
+          <label>Número de Personas</label>
+          <input type="number" id="tablePersons" min="1" max="30" placeholder="Ej: 4">
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelNewTable">Cancelar</button>
+        <button class="btn-primary" id="confirmNewTable">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL QR -->
+  <div class="modal-overlay hidden" id="qrModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Mesa <span id="qrTableNumber"></span> — Código QR</h3>
+        <button class="modal-close" id="closeQrModal">&times;</button>
+      </div>
+      <div class="modal-body center">
+        <img id="qrImage" src="" alt="QR Code" class="qr-image">
+        <p class="qr-url" id="qrUrl"></p>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="closeQrBtn">Cerrar</button>
+        <button class="btn-primary" id="printQrBtn">Imprimir QR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CUENTA COMPLETA -->
+  <div class="modal-overlay hidden" id="billModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Cuenta — Mesa <span id="billTableNumber"></span></h3>
+        <button class="modal-close" id="closeBillModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="billItems" class="bill-items"></div>
+        <div class="bill-total">
+          <span>TOTAL</span>
+          <span id="billTotal"></span>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="closeBillBtn">Cerrar</button>
+        <button class="btn-secondary" id="newOrderBtn"><span class="label-full">Nuevo pedido</span><span class="label-short">Nuevo pedido</span></button>
+        <button class="btn-danger" id="finalizeBillTableBtn"><span class="label-full">Finalizar mesa</span><span class="label-short">Finalizar</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TICKET PAGO FINALIZADO -->
+  <div class="modal-overlay hidden" id="paidModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Mesa <span id="paidTableNumber"></span> — Pago Recibido</h3>
+        <button class="modal-close" id="closePaidModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="paid-badge">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#4caf50" stroke-width="1.5"/><path d="m8 12 3 3 5-5" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Pedido finalizado — Pago confirmado</p>
+        </div>
+        <div id="paidBillItems" class="bill-items"></div>
+        <div class="bill-total">
+          <span>TOTAL</span>
+          <span id="paidBillTotal"></span>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="closePaidBtn">Cerrar</button>
+        <button class="btn-danger" id="finalizePaidTableBtn"><span class="label-full">Finalizar mesa</span><span class="label-short">Finalizar</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL OPCIONES FINALIZAR MESA -->
+  <div class="modal-overlay hidden" id="finalizeTableModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Finalizar Mesa <span id="finalizeTableNumber"></span></h3>
+        <button class="modal-close" id="closeFinalizeTableModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="finalize-message">¿Cómo quieres finalizar la mesa?</p>
+      </div>
+      <div class="modal-footer finalize-actions">
+        <button class="btn-primary" id="finalizeWithPrintBtn">Finalizar e imprimir ticket</button>
+        <button class="btn-secondary" id="finalizeWithoutPrintBtn">Finalizar sin imprimir</button>
+        <button class="btn-ghost" id="cancelFinalizeTableBtn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR DESCONEXION PAYPAL -->
+  <div class="modal-overlay modal-center-mobile hidden" id="paypalDisconnectModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Cuenta PayPal conectada</h3>
+        <button class="modal-close" id="closePayPalDisconnectModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="finalize-message">La cuenta PayPal ya está conectada. ¿Quieres desconectarla?</p>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelPayPalDisconnectBtn" type="button">Cancelar</button>
+        <button class="btn-primary" id="confirmPayPalDisconnectBtn" type="button">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

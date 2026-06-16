@@ -1,0 +1,186 @@
+/* ── PAGAR PAGE ──────────────────────────────────────────────────────────── */
+
+.pagar-main {
+  flex: 1;
+  padding: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.bill-container {
+  width: 100%;
+  max-width: 520px;
+}
+
+.bill-header {
+  margin-bottom: 1.5rem;
+}
+.bill-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: .25rem;
+}
+.bill-header p {
+  font-size: .85rem;
+  color: var(--text-muted);
+}
+#precioTotal {
+  margin-top: .3rem;
+}
+
+.bill-items-pay .bill-item { cursor: default; }
+
+.bill-total-lg {
+  font-size: 1.2rem;
+  margin-top: .5rem;
+}
+
+.paid-confirm {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 1rem;
+  background: rgba(76,175,80,.08);
+  border: 1px solid rgba(76,175,80,.25);
+  border-radius: var(--radius-md);
+  color: var(--accent-green);
+  font-weight: 600;
+  margin-top: 1.5rem;
+  font-size: .95rem;
+}
+.paid-confirm.hidden { display: none; }
+
+/* PayPal modal */
+.pagar-page #paypalModal {
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-paypal { max-width: 420px; }
+
+.pagar-page .modal-paypal {
+  width: min(420px, calc(100vw - 2rem));
+  margin: auto;
+}
+
+.paypal-logo {
+  margin: .5rem auto 1rem;
+}
+.paypal-amount {
+  font-size: .95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+.paypal-amount strong {
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+.paypal-form { text-align: left; }
+
+.paypal-note {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: .75rem;
+}
+
+#cashConfirmModal .paypal-note {
+  font-size: .86rem;
+  line-height: 1.4;
+}
+
+.paypal-buttons {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.paypal-button-slot {
+  width: 100%;
+}
+
+.btn-paypal {
+  background: #0070ba;
+  color: #fff;
+  border: none;
+  padding: .65rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: .9rem;
+  transition: background .2s;
+}
+.btn-paypal:hover { background: #005c9e; }
+
+@media (max-width: 640px) {
+  .pagar-main {
+    padding: .9rem;
+  }
+
+  .paid-confirm {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .bill-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .pagar-page #paypalModal {
+    padding: .75rem;
+  }
+
+  .pagar-page .modal-paypal {
+    width: min(420px, calc(100vw - 1.5rem));
+    max-height: calc(100dvh - 1.5rem);
+  }
+}
+
+@media (max-width: 220px) {
+  .pagar-page #paypalModal .modal-footer.keep-row-mobile {
+    flex-wrap: wrap;
+  }
+
+  .pagar-page #paypalModal .modal-footer.keep-row-mobile > button {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .pagar-page #cancelPaypalBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 295px) {
+  .pagar-page .bill-items-pay .bill-item {
+    column-gap: .4rem;
+  }
+
+  .pagar-page .bill-items-pay .bill-item .bill-item-qty {
+    order: 3;
+    flex: 0 0 auto;
+    min-width: 2.2rem;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .pagar-page .bill-items-pay .bill-item .bill-item-unit {
+    order: 3;
+    flex: 1 1 auto;
+    text-align: left;
+  }
+
+  .pagar-page .bill-items-pay .bill-item .bill-item-price {
+    order: 3;
+    flex: 0 0 auto;
+    margin-left: 0;
+    min-width: max-content;
+    white-space: nowrap;
+    text-align: right;
+  }
+}

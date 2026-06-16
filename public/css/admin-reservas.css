@@ -1,0 +1,278 @@
+.admin-reservas-page {
+  min-height: 100vh;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .9rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.header-brand span {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  gap: .6rem;
+}
+
+.admin-reservas-layout {
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 1rem;
+}
+
+.panel-calendar,
+.panel-day {
+  align-self: start;
+}
+
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.calendar-topbar {
+  display: grid;
+  grid-template-columns: minmax(42px, .25fr) minmax(150px, 1fr) minmax(120px, 1fr) minmax(42px, .25fr);
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .8rem;
+}
+
+.calendar-topbar > * {
+  width: 100%;
+}
+
+.calendar-select {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: .58rem .8rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.2;
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 0;
+}
+
+.calendar-select:hover {
+  border-color: var(--border-light);
+}
+
+.calendar-select:focus {
+  outline: none;
+  border-color: var(--gold-dim);
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, .25);
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: .35rem;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .72rem;
+}
+
+.calendar-day {
+  min-height: 44px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.calendar-day.selected {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+.calendar-day.hot {
+  border-color: rgba(239, 83, 80, .55);
+}
+
+.calendar-day.medium {
+  border-color: rgba(201, 168, 76, .55);
+}
+
+.calendar-day.light {
+  border-color: rgba(76, 175, 80, .45);
+}
+
+.slots-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin: .7rem 0 1rem;
+}
+
+.slot-settings-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .75rem;
+  background: var(--bg-card);
+}
+
+.slot-settings-card h3 {
+  font-size: .9rem;
+  margin-bottom: .5rem;
+}
+
+.inline-row {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.slot-toggle-btn {
+  white-space: nowrap;
+}
+
+.inline-row input,
+.inline-row select {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: .55rem .7rem;
+  border-radius: 8px;
+}
+
+.slot-status {
+  margin-top: .55rem;
+  font-size: .78rem;
+  color: var(--text-secondary);
+}
+
+.form-row-3 input {
+  flex: 1;
+}
+
+.reservation-form {
+  margin-bottom: 1rem;
+}
+
+.new-reservation-title {
+  margin-bottom: .6rem;
+}
+
+.day-reservations-title {
+  margin-top: 1.15rem;
+  margin-bottom: .55rem;
+}
+
+.reservation-slot-row {
+  margin-top: .65rem;
+}
+
+.day-reservations {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.reservation-row {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 8px;
+  padding: .65rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: .6rem;
+  align-items: center;
+}
+
+.reservation-row.cancelled {
+  opacity: .58;
+}
+
+.badge-slot {
+  font-size: .7rem;
+  border-radius: 999px;
+  padding: .18rem .5rem;
+  border: 1px solid var(--border);
+  color: var(--gold);
+}
+
+.res-main strong {
+  display: block;
+  font-size: .9rem;
+}
+
+.res-main span {
+  font-size: .8rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 980px) {
+
+  .admin-header {
+    flex-wrap: wrap;
+    gap: .65rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .slots-settings {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row-3 {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reservation-row {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-topbar {
+    grid-template-columns: minmax(40px, .25fr) minmax(130px, 1fr) minmax(100px, 1fr) minmax(40px, .25fr);
+    gap: .5rem;
+  }
+
+  .calendar-select {
+    font-size: .98rem;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-reservas-layout {
+    padding: .75rem;
+  }
+
+  .calendar-topbar {
+    grid-template-columns: minmax(38px, .25fr) minmax(110px, 1fr) minmax(90px, 1fr) minmax(38px, .25fr);
+  }
+
+  .inline-row {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .slot-toggle-btn {
+    width: 100%;
+  }
+}
+

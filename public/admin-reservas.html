@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Privado - Reservas</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/admin-reservas.css">
+</head>
+<body class="admin-reservas-page">
+  <header class="admin-header">
+    <div class="header-brand">
+      <span>Panel de Reservas</span>
+    </div>
+    <div class="header-actions">
+      <a class="btn-ghost" href="/admin">Volver a mesas</a>
+      <button class="btn-ghost" id="logoutBtn">Cerrar sesion</button>
+    </div>
+  </header>
+
+  <main class="admin-reservas-layout">
+    <section class="panel panel-calendar">
+      <div class="calendar-topbar">
+        <button id="prevMonthBtn" class="btn-ghost" type="button" aria-label="Mes anterior" title="Mes anterior">&larr;</button>
+        <select id="monthSelect" aria-label="Seleccionar mes" class="calendar-select"></select>
+        <select id="yearSelect" aria-label="Seleccionar ano" class="calendar-select"></select>
+        <button id="nextMonthBtn" class="btn-ghost" type="button" aria-label="Mes siguiente" title="Mes siguiente">&rarr;</button>
+      </div>
+      <div class="calendar-weekdays">
+        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </section>
+
+    <section class="panel panel-day">
+      <h2 id="dayTitle">Selecciona un dia</h2>
+
+      <div class="slots-settings">
+        <div class="slot-settings-card">
+          <h3>Comida - 14:00</h3>
+          <div class="inline-row">
+            <input id="lunchCapacity" type="number" min="1" value="20">
+            <button id="saveLunchBtn" class="btn-secondary" type="button">Guardar</button>
+            <button id="toggleLunchBtn" class="btn-danger slot-toggle-btn" type="button">Cerrar turno</button>
+          </div>
+          <p id="lunchStatus" class="slot-status"></p>
+        </div>
+
+        <div class="slot-settings-card">
+          <h3>Cena - 21:00</h3>
+          <div class="inline-row">
+            <input id="dinnerCapacity" type="number" min="1" value="20">
+            <button id="saveDinnerBtn" class="btn-secondary" type="button">Guardar</button>
+            <button id="toggleDinnerBtn" class="btn-danger slot-toggle-btn" type="button">Cerrar turno</button>
+          </div>
+          <p id="dinnerStatus" class="slot-status"></p>
+        </div>
+      </div>
+
+      <h3 class="new-reservation-title">Nueva reserva</h3>
+      <form id="adminReservationForm" class="reservation-form" autocomplete="off">
+        <div class="inline-row form-row-3">
+          <input id="adminResName" type="text" placeholder="Nombre" required>
+          <input id="adminResPhone" type="tel" placeholder="Telefono" required>
+          <input id="adminResPersons" type="number" min="1" max="30" value="2" required>
+        </div>
+        <div class="inline-row reservation-slot-row">
+          <select id="adminResSlot">
+            <option value="lunch">Comida - 14:00</option>
+            <option value="dinner">Cena - 21:00</option>
+          </select>
+          <button class="btn-primary" type="submit">Hacer reserva</button>
+        </div>
+        <div id="adminReservationError" class="error-msg hidden"></div>
+      </form>
+
+      <h3 class="day-reservations-title">Reservas del dia</h3>
+      <div id="dayReservations" class="day-reservations"></div>
+    </section>
+  </main>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/admin-reservas.js"></script>
+</body>
+</html>

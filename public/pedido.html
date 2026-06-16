@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuevo Pedido — Mesa</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/mesa.css">
+<link rel="stylesheet" href="/css/pedido.css">
+</head>
+<body class="mesa-page pedido-page">
+
+  <header class="mesa-header">
+    <div class="header-brand">
+      <button class="btn-back" id="backBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+        <path d="M14 18c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v2a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8v-2Z" stroke="#c9a84c" stroke-width="1.5"/>
+        <path d="M24 28v6M20 34h8" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="19" cy="12" r="1.5" fill="#c9a84c"/>
+        <circle cx="24" cy="10" r="1.5" fill="#c9a84c"/>
+        <circle cx="29" cy="12" r="1.5" fill="#c9a84c"/>
+      </svg>
+      <div>
+        <span class="brand-name">El Rincón</span>
+        <span class="mesa-label" id="mesaLabel">Mesa —</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="cart-btn" id="cartBtn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4ZM3 6h18M16 10a4 4 0 0 1-8 0" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <a class="reserve-header-btn" href="/reservas"><span class="label-full">Reservar mesa</span><span class="label-short">Reservar</span></a>
+    </div>
+  </header>
+
+  <!-- NAV CATEGORÍAS -->
+  <nav class="category-nav" id="categoryNav">
+    <button class="cat-btn active" data-cat="tapas">Tapas</button>
+    <button class="cat-btn" data-cat="raciones">Raciones</button>
+    <button class="cat-btn" data-cat="bebidas">Bebidas</button>
+    <button class="cat-btn" data-cat="postres">Postres</button>
+  </nav>
+
+  <!-- PRODUCTOS CON CANTIDAD -->
+  <main class="products-area" id="productsArea">
+    <section class="products-section" id="tapas">
+      <h2 class="section-title">Tapas</h2>
+      <div class="products-grid" id="grid-tapas"></div>
+    </section>
+    <section class="products-section" id="raciones">
+      <h2 class="section-title">Raciones</h2>
+      <div class="products-grid" id="grid-raciones"></div>
+    </section>
+    <section class="products-section" id="bebidas">
+      <h2 class="section-title">Bebidas</h2>
+      <div class="products-grid" id="grid-bebidas"></div>
+    </section>
+    <section class="products-section" id="postres">
+      <h2 class="section-title">Postres</h2>
+      <div class="products-grid" id="grid-postres"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mesa-footer">
+    <div class="footer-actions footer-between keep-row-mobile keep-row-mobile-3">
+      <button class="footer-btn btn-outline waiter-btn" id="callWaiterPedidoBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="label-full">Llamar camarero</span>
+        <span class="label-short">Camarero</span>
+      </button>
+      <button class="footer-btn btn-outline" id="cancelarPedidoBtn">
+        <span class="label-full">Cancelar pedido</span>
+        <span class="label-short">Cancelar</span>
+      </button>
+      <button class="footer-btn btn-gold has-total" id="finalizarPedidoBtn" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m9 11 3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="label-full">Finalizar Pedido</span>
+        <span class="label-short">Finalizar</span>
+        <span class="pedido-total" id="pedidoTotal">0,00 €</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- MODAL CONFIRMAR PEDIDO -->
+  <div class="modal-overlay modal-center-mobile hidden" id="confirmModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Confirmar Pedido</h3>
+        <button class="modal-close" id="closeConfirmModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="confirmItems" class="confirm-items"></div>
+        <div class="bill-total">
+          <span>TOTAL</span>
+          <span id="confirmTotal"></span>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelConfirmBtn">Cancelar</button>
+        <button class="btn-primary" id="confirmOrderBtn"><span class="label-full">Confirmar pedido</span><span class="label-short">Confirmar</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ÉXITO -->
+  <div class="modal-overlay hidden" id="successModal">
+    <div class="modal">
+      <div class="modal-body center">
+        <div class="success-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#c9a84c" stroke-width="1.5"/><path d="m8 12 3 3 5-5" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>¡Pedido enviado!</h3>
+        <p>Tu pedido ha sido recibido. En breve te lo traeremos.</p>
+      </div>
+      <div class="modal-footer center">
+        <button class="btn-primary" id="backToMenuBtn">Volver a la carta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="waiterToast">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z" stroke="currentColor" stroke-width="1.5"/></svg>
+    El camarero está en camino
+  </div>
+
+  <div class="modal-overlay hidden" id="tableFinalizedModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Cuenta finalizada</h3>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-secondary);line-height:1.45">
+          Su cuenta ha sido finalizada. Pongase en contacto con su camarero en caso de error.
+        </p>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-primary" id="finalizedCallWaiterBtn"><span class="label-full">Llamar camarero</span><span class="label-short">Camarero</span></button>
+        <button class="btn-ghost" id="finalizedCloseBtn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/pedido.js"></script>
+</body>
+</html>
