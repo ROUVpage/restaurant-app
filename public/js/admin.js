@@ -15,6 +15,7 @@ let paypalConnectPollTimer = null;
 let lastTablesSignature = '';
 let lastOrdersSignature = '';
 let isFinalizingCashCall = false;
+const billCache = new Map(); // tableId → { table, items, total }
 
 function setAdminBusyState(enabled) {
   document.body.classList.toggle('admin-busy', Boolean(enabled));
@@ -330,6 +331,11 @@ function startRealtimeUpdates() {
 
     if (type === 'order_created' || type === 'order_item_fulfilled' || type === 'order_completed') {
       queueRealtimeRefresh('all');
+      const evtTableId1 = String(data.tableId || '');
+      if (evtTableId1) billCache.delete(evtTableId1);
+      if (evtTableId1 && evtTableId1 === String(currentBillTableId) && !document.getElementById('billModal').classList.contains('hidden')) {
+        refreshOpenBillModal();
+      }
       return;
     }
 
@@ -340,6 +346,11 @@ function startRealtimeUpdates() {
 
     if (type === 'bill_item_updated' || type === 'table_paid') {
       queueRealtimeRefresh('tables');
+      const evtTableId2 = String(data.tableId || '');
+      if (evtTableId2) billCache.delete(evtTableId2);
+      if (evtTableId2 && evtTableId2 === String(currentBillTableId) && !document.getElementById('billModal').classList.contains('hidden')) {
+        refreshOpenBillModal();
+      }
       return;
     }
 
@@ -669,30 +680,56 @@ async function finalizeCashPaymentCall(tableId, callId, actionBtn = null) {
   }
 }
 
+async function refreshOpenBillModal() {
+  if (!currentBillTableId || document.getElementById('billModal').classList.contains('hidden')) return;
+  const data = await api('GET', `/api/tables/${currentBillTableId}/bill`);
+  if (data.error || document.getElementById('billModal').classList.contains('hidden')) return;
+  billCache.set(String(currentBillTableId), data);
+  renderBillItems(document.getElementById('billItems'), data.items, true);
+  document.getElementById('billTotal').textContent = fmt(data.total);
+}
+
 // -- BILL MODAL -------------------------------------------------------------
 
 async function openBill(tableId, status) {
   currentBillTableId = tableId;
   currentBillTableStatus = status;
 
+  const cached = billCache.get(String(tableId));
+  if (cached) {
+    if (status === 'paid') {
+      document.getElementById('paidTableNumber').textContent = cached.table.number;
+      renderBillItems(document.getElementById('paidBillItems'), cached.items, false);
+      document.getElementById('paidBillTotal').textContent = fmt(cached.total);
+      document.getElementById('paidModal').classList.remove('hidden');
+    } else {
+      document.getElementById('billTableNumber').textContent = cached.table.number;
+      renderBillItems(document.getElementById('billItems'), cached.items, true);
+      document.getElementById('billTotal').textContent = fmt(cached.total);
+      document.getElementById('billModal').classList.remove('hidden');
+    }
+  }
+
   const data = await api('GET', `/api/tables/${tableId}/bill`);
   if (data.error) {
-    alert(data.error);
+    if (!cached) alert(data.error);
     return;
   }
+
+  billCache.set(String(tableId), data);
 
   if (status === 'paid') {
     document.getElementById('paidTableNumber').textContent = data.table.number;
     renderBillItems(document.getElementById('paidBillItems'), data.items, false);
     document.getElementById('paidBillTotal').textContent = fmt(data.total);
-    document.getElementById('paidModal').classList.remove('hidden');
+    if (!cached) document.getElementById('paidModal').classList.remove('hidden');
     return;
   }
 
   document.getElementById('billTableNumber').textContent = data.table.number;
   renderBillItems(document.getElementById('billItems'), data.items, true);
   document.getElementById('billTotal').textContent = fmt(data.total);
-  document.getElementById('billModal').classList.remove('hidden');
+  if (!cached) document.getElementById('billModal').classList.remove('hidden');
 }
 
 function renderBillItems(container, items, editable) {
@@ -703,7 +740,7 @@ function renderBillItems(container, items, editable) {
   }
 
   container.innerHTML = items.map((item) => `
-    <div class="bill-item" data-product-id="${item.product_id}">
+    <div class="bill-item" data-product-id="${item.product_id}" data-price="${item.product_price}">
       <span class="bill-item-name">${item.product_name}</span>
       ${editable ? `
         <div class="bill-item-controls">
@@ -722,12 +759,35 @@ function renderBillItems(container, items, editable) {
       btn.addEventListener('click', async () => {
         const row = btn.closest('.bill-item');
         const productId = row.dataset.productId;
+        const price = Number(row.dataset.price);
         const delta = Number(btn.dataset.delta);
-        await api('PATCH', `/api/tables/${currentBillTableId}/items/${productId}`, { delta });
-        const data = await api('GET', `/api/tables/${currentBillTableId}/bill`);
-        if (data.error) return;
-        renderBillItems(container, data.items, true);
-        document.getElementById('billTotal').textContent = fmt(data.total);
+        const qtyEl = row.querySelector('.qty-num');
+        const priceEl = row.querySelector('.bill-item-price');
+        const newQty = Number(qtyEl.textContent) + delta;
+
+        // Optimistic DOM update
+        if (newQty <= 0) {
+          row.remove();
+        } else {
+          qtyEl.textContent = newQty;
+          priceEl.textContent = fmt(price * newQty);
+        }
+        const newTotal = Array.from(container.querySelectorAll('.bill-item')).reduce((sum, r) => {
+          return sum + Number(r.dataset.price) * Number(r.querySelector('.qty-num').textContent);
+        }, 0);
+        document.getElementById('billTotal').textContent = fmt(newTotal);
+        billCache.delete(String(currentBillTableId));
+
+        const result = await api('PATCH', `/api/tables/${currentBillTableId}/items/${productId}`, { delta });
+        if (result.error) {
+          // Revert on error
+          const fallback = await api('GET', `/api/tables/${currentBillTableId}/bill`);
+          if (!fallback.error && !document.getElementById('billModal').classList.contains('hidden')) {
+            billCache.set(String(currentBillTableId), fallback);
+            renderBillItems(container, fallback.items, true);
+            document.getElementById('billTotal').textContent = fmt(fallback.total);
+          }
+        }
       });
     });
   }

@@ -1807,7 +1807,7 @@ async function startServer() {
     else dbRun('UPDATE order_items SET quantity = ? WHERE id = ?', [newQty, item.id]);
     saveDb();
     const tableForBill = dbGet('SELECT token FROM tables WHERE id = ?', [tableId]);
-    emitAdminUpdate('bill_item_updated');
+    emitAdminUpdate('bill_item_updated', { tableId: Number(tableId) });
     if (tableForBill) emitTableUpdateByToken(tableForBill.token, 'bill_updated');
     res.json({ success: true });
   });
@@ -1966,7 +1966,7 @@ async function startServer() {
       db.run('COMMIT');
 
       saveDb();
-      emitAdminUpdate('order_created', { orderId });
+      emitAdminUpdate('order_created', { orderId, tableId: table.id });
       emitTableUpdateByToken(table.token, 'bill_updated');
       return res.json({ success: true, orderId });
     } catch (error) {
