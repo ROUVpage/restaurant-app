@@ -16,6 +16,20 @@ let lastTablesSignature = '';
 let lastOrdersSignature = '';
 let isFinalizingCashCall = false;
 const billCache = new Map(); // tableId → { table, items, total }
+let billModalRefreshInterval = null;
+
+function startBillModalRefresh() {
+  if (billModalRefreshInterval) return;
+  billModalRefreshInterval = setInterval(() => {
+    refreshOpenBillModal();
+  }, 8000);
+}
+
+function stopBillModalRefresh() {
+  if (!billModalRefreshInterval) return;
+  clearInterval(billModalRefreshInterval);
+  billModalRefreshInterval = null;
+}
 
 function setAdminBusyState(enabled) {
   document.body.classList.toggle('admin-busy', Boolean(enabled));
@@ -736,6 +750,7 @@ async function openBill(tableId, status) {
   renderBillItems(document.getElementById('billItems'), data.items, true);
   document.getElementById('billTotal').textContent = fmt(data.total);
   if (!cached) document.getElementById('billModal').classList.remove('hidden');
+  startBillModalRefresh();
 }
 
 function renderBillItems(container, items, editable) {
@@ -844,9 +859,11 @@ document.addEventListener('visibilitychange', () => {
 
 document.getElementById('closeBillModal')?.addEventListener('click', () => {
   document.getElementById('billModal').classList.add('hidden');
+  stopBillModalRefresh();
 });
 document.getElementById('closeBillBtn')?.addEventListener('click', () => {
   document.getElementById('billModal').classList.add('hidden');
+  stopBillModalRefresh();
 });
 document.getElementById('closePaidModal')?.addEventListener('click', () => {
   document.getElementById('paidModal').classList.add('hidden');

@@ -130,6 +130,7 @@ function startMesaRealtime() {
   const productsPromise = apiCached('/api/products', { ttlMs: 120000 });
 
   const tableData = await tablePromise;
+  currentMesaTableId = null; // will be set after init
   startMesaRealtime();
 
   if (tableData.error) {
@@ -165,6 +166,13 @@ function startMesaRealtime() {
 
   await updatePayTotal(tableData.id);
   currentMesaTableId = tableData.id;
+
+  // Fallback poll every 15s in case SSE misses an event
+  setInterval(() => {
+    if (currentMesaTableId && document.visibilityState === 'visible') {
+      updatePayTotal(currentMesaTableId);
+    }
+  }, 15000);
 
   const products = await productsPromise;
   renderProducts(products);
