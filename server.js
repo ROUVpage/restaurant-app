@@ -1803,8 +1803,16 @@ async function startServer() {
     `, [tableId, productId]);
     if (!item) return res.status(404).json({ error: 'Producto no encontrado' });
     const newQty = item.quantity + delta;
-    if (newQty <= 0) dbRun('DELETE FROM order_items WHERE id = ?', [item.id]);
-    else dbRun('UPDATE order_items SET quantity = ? WHERE id = ?', [newQty, item.id]);
+    if (newQty <= 0) {
+      dbRun('DELETE FROM order_items WHERE id = ?', [item.id]);
+      // Auto-delete the order if it has no items left
+      const remaining = dbGet('SELECT COUNT(*) as c FROM order_items WHERE order_id = ?', [item.order_id]);
+      if (remaining && remaining.c === 0) {
+        dbRun('DELETE FROM orders WHERE id = ?', [item.order_id]);
+      }
+    } else {
+      dbRun('UPDATE order_items SET quantity = ? WHERE id = ?', [newQty, item.id]);
+    }
     saveDb();
     const tableForBill = dbGet('SELECT token FROM tables WHERE id = ?', [tableId]);
     emitAdminUpdate('bill_item_updated', { tableId: Number(tableId) });
