@@ -322,7 +322,7 @@ async function initPayPalButtons() {
   renderBill(bill);
   startPagarRealtime();
 
-  // Poll every 1s: update bill AND detect if table was finalized from the bar
+  // Poll every 3s: update bill AND detect if table was finalized from the bar
   setInterval(() => {
     if (!currentTableId || isCashConfirmSubmitting || isPayPalSubmitting) return;
     if (document.visibilityState !== 'visible') return;
@@ -338,7 +338,7 @@ async function initPayPalButtons() {
         location.replace(`/mesa/${token}`);
       }
     });
-  }, 1000);
+  }, 3000);
 
   // If already paid, show confirmation and hide pay button
   if (tableData.status === 'paid') {

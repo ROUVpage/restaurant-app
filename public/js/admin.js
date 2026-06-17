@@ -304,7 +304,7 @@ function startPolling() {
   pollInterval = setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     loadAll();
-  }, 20000);
+  }, 5000);
 }
 
 function queueRealtimeRefresh(scope = 'all') {

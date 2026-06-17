@@ -54,7 +54,7 @@ function startPedidoStatusPoll() {
     api('GET', `/api/table/by-token/${token}`).then((t) => {
       if (t.error || t.status !== 'open') openTableFinalizedModal();
     });
-  }, 1000);
+  }, 3000);
 }
 
 (async function init() {
