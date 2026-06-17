@@ -313,6 +313,10 @@ async function initPayPalButtons() {
   paypalConfigPromise = apiCached('/api/paypal/config', { ttlMs: 20000, timeoutMs: 9000 })
     .then((config) => {
       paypalConfig = config;
+      // Pre-load SDK immediately so buttons appear instantly when modal opens
+      if (config?.enabled && config?.clientId) {
+        loadPayPalSdk(config).catch(() => {});
+      }
       return config;
     });
 

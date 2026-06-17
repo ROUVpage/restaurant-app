@@ -304,7 +304,7 @@ function startPolling() {
   pollInterval = setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     loadAll();
-  }, 5000);
+  }, 2000);
 }
 
 function queueRealtimeRefresh(scope = 'all') {
@@ -392,12 +392,13 @@ async function loadTables() {
   if (tablesLoadPromise) return tablesLoadPromise;
   tablesLoadPromise = (async () => {
     const tables = await api('GET', '/api/tables');
+    if (!Array.isArray(tables)) return; // skip on API error, keep current display
     const signature = JSON.stringify(
-      (tables || []).map((t) => [t.id, t.number, t.persons, t.status, Number(t.total || 0)])
+      tables.map((t) => [t.id, t.number, t.persons, t.status, Number(t.total || 0)])
     );
     if (signature === lastTablesSignature) return;
     lastTablesSignature = signature;
-    renderTables(tables || []);
+    renderTables(tables);
   })();
 
   try {
@@ -415,8 +416,11 @@ async function loadOrders() {
       api('GET', '/api/waiter-calls/pending')
     ]);
 
-    const safeOrders = Array.isArray(orders) ? orders : [];
-    const safeCalls = Array.isArray(waiterCalls) ? waiterCalls : [];
+    // Skip render on API error — keep current display rather than wiping it
+    if (!Array.isArray(orders) || !Array.isArray(waiterCalls)) return;
+
+    const safeOrders = orders;
+    const safeCalls = waiterCalls;
 
     const signature = JSON.stringify({
       orders: safeOrders.map((o) => [
