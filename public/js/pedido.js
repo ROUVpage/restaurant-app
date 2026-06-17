@@ -52,7 +52,7 @@ function startPedidoStatusPoll() {
     if (document.visibilityState !== 'visible') return;
     if (document.getElementById('tableFinalizedModal') && !document.getElementById('tableFinalizedModal').classList.contains('hidden')) return;
     api('GET', `/api/table/by-token/${token}`).then((t) => {
-      if (!t.error && t.status !== 'open') openTableFinalizedModal();
+      if (t.error || t.status !== 'open') openTableFinalizedModal();
     });
   }, 1000);
 }

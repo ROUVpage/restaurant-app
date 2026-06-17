@@ -181,7 +181,11 @@ function startMesaRealtime() {
 async function updatePayTotal(tableId) {
   const bill = await api('GET', `/api/tables/${tableId}/bill`);
   const payTotalEl = document.getElementById('payTotal');
-  if (bill.error) return;
+  if (bill.error) {
+    // Table was deleted (finalized by bar) — show finalized modal
+    if (!viewState.unauthorizedTable) openTableFinalizedModal();
+    return;
+  }
   if (payTotalEl) payTotalEl.textContent = fmt(bill.total || 0);
   if (bill.table && bill.table.status !== 'open' && !viewState.unauthorizedTable) {
     openTableFinalizedModal();

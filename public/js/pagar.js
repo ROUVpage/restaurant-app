@@ -327,7 +327,11 @@ async function initPayPalButtons() {
     if (!currentTableId || isCashConfirmSubmitting || isPayPalSubmitting) return;
     if (document.visibilityState !== 'visible') return;
     api('GET', `/api/tables/${currentTableId}/bill`).then((b) => {
-      if (b.error) return;
+      if (b.error) {
+        // Table was deleted (finalized by bar)
+        if (!isCashConfirmSubmitting && !isPayPalSubmitting) location.replace(`/mesa/${token}`);
+        return;
+      }
       billTotal = b.total;
       renderBill(b);
       if (b.table && b.table.status !== 'open') {
