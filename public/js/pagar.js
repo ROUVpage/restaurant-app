@@ -322,14 +322,19 @@ async function initPayPalButtons() {
   renderBill(bill);
   startPagarRealtime();
 
-  // Fallback poll every 3s in case SSE misses an event
+  // Poll every 1s: update bill AND detect if table was finalized from the bar
   setInterval(() => {
     if (!currentTableId || isCashConfirmSubmitting || isPayPalSubmitting) return;
     if (document.visibilityState !== 'visible') return;
     api('GET', `/api/tables/${currentTableId}/bill`).then((b) => {
-      if (!b.error) { billTotal = b.total; renderBill(b); }
+      if (b.error) return;
+      billTotal = b.total;
+      renderBill(b);
+      if (b.table && b.table.status !== 'open') {
+        location.replace(`/mesa/${token}`);
+      }
     });
-  }, 3000);
+  }, 1000);
 
   // If already paid, show confirmation and hide pay button
   if (tableData.status === 'paid') {

@@ -167,12 +167,11 @@ function startMesaRealtime() {
   await updatePayTotal(tableData.id);
   currentMesaTableId = tableData.id;
 
-  // Fallback poll every 3s in case SSE misses an event
+  // Poll every 1s: update total AND detect if table was finalized from the bar
   setInterval(() => {
-    if (currentMesaTableId && document.visibilityState === 'visible') {
-      updatePayTotal(currentMesaTableId);
-    }
-  }, 3000);
+    if (!currentMesaTableId || document.visibilityState !== 'visible') return;
+    updatePayTotal(currentMesaTableId);
+  }, 1000);
 
   const products = await productsPromise;
   renderProducts(products);
@@ -182,8 +181,10 @@ function startMesaRealtime() {
 async function updatePayTotal(tableId) {
   const bill = await api('GET', `/api/tables/${tableId}/bill`);
   const payTotalEl = document.getElementById('payTotal');
-  if (payTotalEl && !bill.error) {
-    payTotalEl.textContent = fmt(bill.total || 0);
+  if (bill.error) return;
+  if (payTotalEl) payTotalEl.textContent = fmt(bill.total || 0);
+  if (bill.table && bill.table.status !== 'open' && !viewState.unauthorizedTable) {
+    openTableFinalizedModal();
   }
 }
 

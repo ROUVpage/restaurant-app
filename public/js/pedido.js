@@ -31,11 +31,30 @@ function startPedidoRealtime() {
     }
   });
 
+  pedidoEvents.addEventListener('connected', () => {
+    api('GET', `/api/table/by-token/${token}`).then((t) => {
+      if (!t.error && t.status !== 'open') openTableFinalizedModal();
+    });
+  });
+
   pedidoEvents.onerror = () => {
     try { pedidoEvents.close(); } catch (_) {}
     pedidoEvents = null;
     setTimeout(startPedidoRealtime, 2500);
   };
+}
+
+let pedidoStatusInterval = null;
+
+function startPedidoStatusPoll() {
+  if (pedidoStatusInterval || !token || isAdminOrderFlow) return;
+  pedidoStatusInterval = setInterval(() => {
+    if (document.visibilityState !== 'visible') return;
+    if (document.getElementById('tableFinalizedModal') && !document.getElementById('tableFinalizedModal').classList.contains('hidden')) return;
+    api('GET', `/api/table/by-token/${token}`).then((t) => {
+      if (!t.error && t.status !== 'open') openTableFinalizedModal();
+    });
+  }, 1000);
 }
 
 (async function init() {
@@ -77,6 +96,7 @@ function startPedidoRealtime() {
   setupNav();
   wireProductQtyEvents();
   startPedidoRealtime();
+  startPedidoStatusPoll();
 })();
 
 function renderProducts(products) {
