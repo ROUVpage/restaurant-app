@@ -364,6 +364,11 @@ function renderBill(data) {
   `).join('');
   document.getElementById('billTotal').textContent = fmt(data.total);
   document.getElementById('precioTotal').textContent = fmt(data.total);
+  // Keep cash confirm modal and PayPal modal amounts in sync
+  const cashAmountEl = document.getElementById('cashConfirmAmount');
+  if (cashAmountEl) cashAmountEl.textContent = fmt(data.total);
+  const paypalAmountEl = document.getElementById('paypalAmount');
+  if (paypalAmountEl) paypalAmountEl.textContent = fmt(data.total);
 }
 
 // Back
