@@ -348,7 +348,9 @@ function startRealtimeUpdates() {
       queueRealtimeRefresh('tables');
       const evtTableId2 = String(data.tableId || '');
       if (evtTableId2) billCache.delete(evtTableId2);
-      if (evtTableId2 && evtTableId2 === String(currentBillTableId) && !document.getElementById('billModal').classList.contains('hidden')) {
+      // bill_item_updated is the admin's own action — already handled optimistically, skip re-render.
+      // table_paid comes from payment flow, refresh modal if open.
+      if (type === 'table_paid' && evtTableId2 && evtTableId2 === String(currentBillTableId) && !document.getElementById('billModal').classList.contains('hidden')) {
         refreshOpenBillModal();
       }
       return;
@@ -761,13 +763,18 @@ function renderBillItems(container, items, editable) {
   if (editable) {
     container.querySelectorAll('.qty-btn').forEach((btn) => {
       btn.addEventListener('click', async () => {
+        if (btn.disabled) return;
         const row = btn.closest('.bill-item');
+        if (!row || !row.isConnected) return;
         const productId = row.dataset.productId;
         const price = Number(row.dataset.price);
         const delta = Number(btn.dataset.delta);
         const qtyEl = row.querySelector('.qty-num');
         const priceEl = row.querySelector('.bill-item-price');
         const newQty = Number(qtyEl.textContent) + delta;
+
+        // Block buttons for this row while in flight
+        row.querySelectorAll('.qty-btn').forEach((b) => { b.disabled = true; });
 
         // Optimistic DOM update
         if (newQty <= 0) {
@@ -791,6 +798,8 @@ function renderBillItems(container, items, editable) {
             renderBillItems(container, fallback.items, true);
             document.getElementById('billTotal').textContent = fmt(fallback.total);
           }
+        } else if (row.isConnected) {
+          row.querySelectorAll('.qty-btn').forEach((b) => { b.disabled = false; });
         }
       });
     });
