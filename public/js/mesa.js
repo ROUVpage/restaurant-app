@@ -167,12 +167,12 @@ function startMesaRealtime() {
   await updatePayTotal(tableData.id);
   currentMesaTableId = tableData.id;
 
-  // Fallback poll every 15s in case SSE misses an event
+  // Fallback poll every 3s in case SSE misses an event
   setInterval(() => {
     if (currentMesaTableId && document.visibilityState === 'visible') {
       updatePayTotal(currentMesaTableId);
     }
-  }, 15000);
+  }, 3000);
 
   const products = await productsPromise;
   renderProducts(products);

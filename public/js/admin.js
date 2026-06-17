@@ -22,7 +22,7 @@ function startBillModalRefresh() {
   if (billModalRefreshInterval) return;
   billModalRefreshInterval = setInterval(() => {
     refreshOpenBillModal();
-  }, 8000);
+  }, 3000);
 }
 
 function stopBillModalRefresh() {

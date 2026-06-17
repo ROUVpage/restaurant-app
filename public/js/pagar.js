@@ -322,14 +322,14 @@ async function initPayPalButtons() {
   renderBill(bill);
   startPagarRealtime();
 
-  // Fallback poll every 15s in case SSE misses an event
+  // Fallback poll every 3s in case SSE misses an event
   setInterval(() => {
     if (!currentTableId || isCashConfirmSubmitting || isPayPalSubmitting) return;
     if (document.visibilityState !== 'visible') return;
     api('GET', `/api/tables/${currentTableId}/bill`).then((b) => {
       if (!b.error) { billTotal = b.total; renderBill(b); }
     });
-  }, 15000);
+  }, 3000);
 
   // If already paid, show confirmation and hide pay button
   if (tableData.status === 'paid') {
