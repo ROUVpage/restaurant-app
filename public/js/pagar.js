@@ -187,6 +187,15 @@ function startPagarRealtime() {
       }
       try { pagarEvents.close(); } catch (_) {}
       pagarEvents = null;
+      return;
+    }
+    if (data.type === 'bill_updated' && currentTableId && !isCashConfirmSubmitting && !isPayPalSubmitting) {
+      api('GET', `/api/tables/${currentTableId}/bill`).then((bill) => {
+        if (!bill.error) {
+          billTotal = bill.total;
+          renderBill(bill);
+        }
+      });
     }
   });
 

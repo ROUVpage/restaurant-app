@@ -1,10 +1,10 @@
 // ── MESA (CUSTOMER VIEW) ──────────────────────────────────────────────────
 
 const token = getTableToken();
-let billPollInterval = null;
 let mesaEvents = null;
 let authorizationRetryInterval = null;
 let authorizationEvents = null;
+let currentMesaTableId = null;
 
 const viewState = {
   activeToken: token,
@@ -102,6 +102,10 @@ function startMesaRealtime() {
       mesaEvents = null;
       return;
     }
+    if (data.type === 'bill_updated') {
+      if (currentMesaTableId) updatePayTotal(currentMesaTableId);
+      return;
+    }
     if (data.type === 'table_reopened' || data.type === 'table_created') {
       location.replace(`/mesa/${token}`);
       return;
@@ -156,12 +160,11 @@ function startMesaRealtime() {
   }
 
   await updatePayTotal(tableData.id);
+  currentMesaTableId = tableData.id;
 
   const products = await productsPromise;
   renderProducts(products);
   setupNav();
-
-  billPollInterval = setInterval(() => updatePayTotal(tableData.id), 5000);
 })();
 
 async function updatePayTotal(tableId) {

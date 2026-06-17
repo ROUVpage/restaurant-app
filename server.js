@@ -1806,7 +1806,9 @@ async function startServer() {
     if (newQty <= 0) dbRun('DELETE FROM order_items WHERE id = ?', [item.id]);
     else dbRun('UPDATE order_items SET quantity = ? WHERE id = ?', [newQty, item.id]);
     saveDb();
+    const tableForBill = dbGet('SELECT token FROM tables WHERE id = ?', [tableId]);
     emitAdminUpdate('bill_item_updated');
+    if (tableForBill) emitTableUpdateByToken(tableForBill.token, 'bill_updated');
     res.json({ success: true });
   });
 
@@ -1965,6 +1967,7 @@ async function startServer() {
 
       saveDb();
       emitAdminUpdate('order_created', { orderId });
+      emitTableUpdateByToken(table.token, 'bill_updated');
       return res.json({ success: true, orderId });
     } catch (error) {
       try { db.run('ROLLBACK'); } catch (_) {}
@@ -1993,9 +1996,14 @@ async function startServer() {
   });
 
   app.patch('/api/orders/:id/complete', (req, res) => {
+    const orderRow = dbGet('SELECT table_id FROM orders WHERE id = ?', [req.params.id]);
     dbRun('UPDATE orders SET status = ? WHERE id = ?', ['fulfilled', req.params.id]);
     saveDb();
     emitAdminUpdate('order_completed');
+    if (orderRow) {
+      const tableForOrder = dbGet('SELECT token FROM tables WHERE id = ?', [orderRow.table_id]);
+      if (tableForOrder) emitTableUpdateByToken(tableForOrder.token, 'bill_updated');
+    }
     res.json({ success: true });
   });
 
