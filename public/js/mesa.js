@@ -112,6 +112,10 @@ function startMesaRealtime() {
     }
   });
 
+  mesaEvents.addEventListener('connected', () => {
+    if (currentMesaTableId) updatePayTotal(currentMesaTableId);
+  });
+
   mesaEvents.onerror = () => {
     try { mesaEvents.close(); } catch (_) {}
     mesaEvents = null;

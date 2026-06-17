@@ -357,6 +357,10 @@ function startRealtimeUpdates() {
     queueRealtimeRefresh('all');
   });
 
+  realtimeSource.addEventListener('connected', () => {
+    loadAll();
+  });
+
   realtimeSource.onerror = () => {
     try { realtimeSource.close(); } catch (_) {}
     realtimeSource = null;
