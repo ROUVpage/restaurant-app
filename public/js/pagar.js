@@ -271,26 +271,21 @@ async function initPayPalButtons() {
     window.paypal?.FUNDING?.CARD
   ].filter(Boolean);
 
-  const renderedSources = [];
-  for (const source of preferredSources) {
+  // Build slots and filter eligible sources first.
+  const slots = preferredSources.map((source) => {
     const mount = document.createElement('div');
     mount.className = 'paypal-button-slot';
-    container.appendChild(mount);
-
     const instance = window.paypal.Buttons(buildPayPalButtonConfig(source));
-    if (!instance || !instance.isEligible || !instance.isEligible()) {
-      mount.remove();
-      continue;
-    }
+    return { source, mount, instance };
+  }).filter(({ instance }) => instance?.isEligible?.());
 
-    // Render each eligible funding source in its own slot.
-    await instance.render(mount);
-    renderedSources.push(source);
-  }
-
-  if (renderedSources.length === 0) {
+  if (slots.length === 0) {
     throw new Error('No hay metodos de pago disponibles en este momento');
   }
+
+  // Append all mounts then render in parallel.
+  slots.forEach(({ mount }) => container.appendChild(mount));
+  await Promise.all(slots.map(({ instance, mount }) => instance.render(mount)));
 
   const note = document.getElementById('paypalNote');
   note.textContent = 'Metodos disponibles: PayPal y tarjeta de debito/credito.';
@@ -316,9 +311,11 @@ async function initPayPalButtons() {
   paypalConfigPromise = apiCached('/api/paypal/config', { ttlMs: 20000, timeoutMs: 9000 })
     .then((config) => {
       paypalConfig = config;
-      // Pre-load SDK immediately so buttons appear instantly when modal opens
+      // Pre-load SDK and pre-render buttons so modal opens instantly
       if (config?.enabled && config?.clientId) {
-        loadPayPalSdk(config).catch(() => {});
+        loadPayPalSdk(config)
+          .then(() => initPayPalButtons())
+          .catch(() => {});
       }
       return config;
     });
