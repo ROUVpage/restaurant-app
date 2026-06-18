@@ -678,9 +678,8 @@ async function finalizeCashPaymentCall(tableId, callId, actionBtn = null) {
       return;
     }
 
-    // Resolve notification and delete orders — keep the table row (status stays 'paid').
+    // Resolve notification only — keep table and orders intact.
     if (callId) await api('PATCH', `/api/waiter-calls/${callId}/resolve`);
-    await api('DELETE', `/api/tables/${tableId}/orders`);
     await loadAll();
 
     // Write ticket to the pre-opened window (stays open even after awaits).
