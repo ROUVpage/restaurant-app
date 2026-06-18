@@ -1892,6 +1892,7 @@ async function startServer() {
       SELECT
         o.id as order_id,
         o.table_id,
+        o.status as order_status,
         t.number as table_number,
         o.created_at,
         oi.id as item_id,
@@ -1916,6 +1917,7 @@ async function startServer() {
           table_id: row.table_id,
           table_number: row.table_number,
           created_at: row.created_at,
+          status: row.order_status,
           items: []
         });
       }

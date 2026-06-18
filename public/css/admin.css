@@ -388,6 +388,12 @@
   letter-spacing: .03em;
 }
 .btn-complete-order:hover { background: rgba(201,168,76,.15); }
+.order-fulfilled-label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: #4caf50;
+  letter-spacing: .03em;
+}
 .btn-resolve-call {
   border-color: rgba(66,165,245,.4);
   color: var(--accent-blue);

@@ -598,7 +598,7 @@ function renderOrders(orders, waiterCalls = []) {
       </div>
       <div class="order-card-footer">
         <span class="order-total">${fmt(o.total)}</span>
-        <button class="btn-complete-order" data-order-id="${o.id}">Pedido finalizado</button>
+        ${o.status !== 'fulfilled' ? `<button class="btn-complete-order" data-order-id="${o.id}">Pedido finalizado</button>` : `<span class="order-fulfilled-label">✓ Completado</span>`}
       </div>
     </div>
   `).join('');
