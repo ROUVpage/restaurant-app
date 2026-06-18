@@ -1037,7 +1037,6 @@ document.getElementById('confirmNewTable')?.addEventListener('click', async () =
 
   newTableModal.classList.add('hidden');
   await loadAll();
-  await openTableQr(result.id, result.number);
 });
 
 document.getElementById('closeQrModal')?.addEventListener('click', () => {
