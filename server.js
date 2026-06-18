@@ -1881,7 +1881,7 @@ async function startServer() {
       FROM orders o
       JOIN tables t ON t.id = o.table_id
       LEFT JOIN order_items oi ON oi.order_id = o.id
-      WHERE o.status = 'pending' AND t.status = 'open'
+      WHERE o.status = 'pending' AND t.status IN ('open', 'paid')
       ORDER BY o.created_at ASC, oi.id ASC
     `);
 
