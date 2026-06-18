@@ -1507,6 +1507,10 @@ async function startServer() {
         return res.status(409).json({ error: 'El importe capturado no coincide con la cuenta de la mesa' });
       }
 
+      // Remove all previous pending waiter calls for this table so only the payment notification remains.
+      dbRun('DELETE FROM waiter_calls WHERE table_id = ? AND status = ?', [table.id, 'pending']);
+      dbRun('DELETE FROM waiter_calls WHERE table_token = ? AND status = ?', [tableToken, 'pending']);
+
       // Mark table as paid
       markTableAsPaid(table.id);
 
@@ -1838,25 +1842,17 @@ async function startServer() {
       return res.status(400).json({ error: 'No hay importe para cobrar en esta mesa' });
     }
 
-    const existing = dbGet(
-      "SELECT id FROM waiter_calls WHERE table_id = ? AND status = ? AND source IN (?, ?) ORDER BY id DESC LIMIT 1",
-      [table.id, 'pending', 'pagar', 'paypal']
-    );
-
-    let callId;
-    if (existing) {
-      dbRun(
-        "UPDATE waiter_calls SET created_at = strftime('%s','now'), source = ? WHERE id = ?",
-        ['pagar', existing.id]
-      );
-      callId = existing.id;
-    } else {
-      const info = dbRun(
-        'INSERT INTO waiter_calls (table_id, source, status, table_token, table_number) VALUES (?, ?, ?, ?, ?)',
-        [table.id, 'pagar', 'pending', tableToken, table.number]
-      );
-      callId = info.lastInsertRowid;
+    // Remove all previous pending waiter calls for this table so only the payment notification remains.
+    dbRun('DELETE FROM waiter_calls WHERE table_id = ? AND status = ?', [table.id, 'pending']);
+    if (table.token) {
+      dbRun('DELETE FROM waiter_calls WHERE table_token = ? AND status = ?', [table.token, 'pending']);
     }
+
+    const info = dbRun(
+      'INSERT INTO waiter_calls (table_id, source, status, table_token, table_number) VALUES (?, ?, ?, ?, ?)',
+      [table.id, 'pagar', 'pending', tableToken, table.number]
+    );
+    const callId = info.lastInsertRowid;
 
     if (table.status !== 'paid') {
       markTableAsPaid(table.id);
