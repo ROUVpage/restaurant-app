@@ -443,6 +443,17 @@ function emitTableUpdateByToken(token, type, payload = {}) {
   if (clients.size === 0) tableSseClients.delete(token);
 }
 
+// Emits bill_updated with the current bill embedded so clients can render
+// immediately without an extra HTTP round-trip.
+function emitBillUpdated(tableId, token) {
+  if (!token) return;
+  const bill = getTableBillData(tableId);
+  const payload = bill
+    ? { bill: { items: bill.items, total: bill.total, tableStatus: bill.table ? bill.table.status : null } }
+    : {};
+  emitTableUpdateByToken(token, 'bill_updated', payload);
+}
+
 function emitReservationUpdate(type, payload = {}) {
   const message = `event: update\ndata: ${JSON.stringify({ type, ts: Date.now(), ...payload })}\n\n`;
   reservationsSseClients.forEach((res) => {
@@ -1818,9 +1829,9 @@ async function startServer() {
       dbRun('UPDATE order_items SET quantity = ? WHERE id = ?', [newQty, item.id]);
     }
     saveDb();
-    const tableForBill = dbGet('SELECT token FROM tables WHERE id = ?', [tableId]);
+    const tableForBill = dbGet('SELECT id, token FROM tables WHERE id = ?', [tableId]);
     emitAdminUpdate('bill_item_updated', { tableId: Number(tableId) });
-    if (tableForBill) emitTableUpdateByToken(tableForBill.token, 'bill_updated');
+    if (tableForBill) emitBillUpdated(tableForBill.id, tableForBill.token);
     res.json({ success: true });
   });
 
@@ -1971,7 +1982,7 @@ async function startServer() {
 
       saveDb();
       emitAdminUpdate('order_created', { orderId, tableId: table.id });
-      emitTableUpdateByToken(table.token, 'bill_updated');
+      emitBillUpdated(table.id, table.token);
       return res.json({ success: true, orderId });
     } catch (error) {
       try { db.run('ROLLBACK'); } catch (_) {}
@@ -2005,8 +2016,8 @@ async function startServer() {
     saveDb();
     emitAdminUpdate('order_completed');
     if (orderRow) {
-      const tableForOrder = dbGet('SELECT token FROM tables WHERE id = ?', [orderRow.table_id]);
-      if (tableForOrder) emitTableUpdateByToken(tableForOrder.token, 'bill_updated');
+      const tableForOrder = dbGet('SELECT id, token FROM tables WHERE id = ?', [orderRow.table_id]);
+      if (tableForOrder) emitBillUpdated(tableForOrder.id, tableForOrder.token);
     }
     res.json({ success: true });
   });

@@ -190,12 +190,15 @@ function startPagarRealtime() {
       return;
     }
     if (data.type === 'bill_updated' && currentTableId && !isCashConfirmSubmitting && !isPayPalSubmitting) {
-      api('GET', `/api/tables/${currentTableId}/bill`).then((bill) => {
-        if (!bill.error) {
-          billTotal = bill.total;
-          renderBill(bill);
-        }
-      });
+      if (data.bill) {
+        // Data embedded in event — apply immediately without a round-trip.
+        billTotal = data.bill.total;
+        renderBill(data.bill);
+      } else {
+        api('GET', `/api/tables/${currentTableId}/bill`).then((bill) => {
+          if (!bill.error) { billTotal = bill.total; renderBill(bill); }
+        });
+      }
     }
   });
 
