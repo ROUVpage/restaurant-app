@@ -54,7 +54,7 @@ async function probeAuthorizationNow() {
 
 function startAuthorizationWatcher() {
   if (!viewState.activeToken || authorizationRetryInterval) return;
-  authorizationRetryInterval = setInterval(probeAuthorizationNow, 2000);
+  authorizationRetryInterval = setInterval(probeAuthorizationNow, 8000);
 }
 
 function startAuthorizationRealtimeWatcher() {
