@@ -1766,6 +1766,17 @@ async function startServer() {
     res.json(dbGet('SELECT * FROM tables WHERE id = ?', [info.lastInsertRowid]));
   });
 
+  // Deletes only the orders for a table (keeps the table row intact).
+  app.delete('/api/tables/:id/orders', (req, res) => {
+    const table = dbGet('SELECT id FROM tables WHERE id = ?', [req.params.id]);
+    if (!table) return res.status(404).json({ error: 'Mesa no encontrada' });
+    dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [req.params.id]);
+    dbRun('DELETE FROM orders WHERE table_id = ?', [req.params.id]);
+    saveDb();
+    emitAdminUpdate('order_completed');
+    res.json({ success: true });
+  });
+
   app.delete('/api/tables/:id', (req, res) => {
     const table = dbGet('SELECT token, number, status FROM tables WHERE id = ?', [req.params.id]);
     dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [req.params.id]);

@@ -534,7 +534,7 @@ function renderOrders(orders, waiterCalls = []) {
           </div>
           <div class="order-card-footer">
             <span class="order-total">${fmt(c.table_total || 0)}</span>
-            <button class="btn-complete-order btn-finalize-cash" data-call-id="${c.id}" data-table-id="${c.table_id}">Finalizar e imprimir ticket</button>
+            <button class="btn-complete-order btn-finalize-cash" data-call-id="${c.id}" data-table-id="${c.table_id}">Imprimir ticket</button>
           </div>
         </div>
       `;
@@ -678,28 +678,22 @@ async function finalizeCashPaymentCall(tableId, callId, actionBtn = null) {
       return;
     }
 
-    const result = await api('DELETE', `/api/tables/${tableId}`, null, { timeoutMs: 20000 });
-    if (result.error) {
-      if (printWin) { try { printWin.close(); } catch (_) {} }
-      alert(result.error);
-      await loadAll();
-      return;
-    }
-
+    // Resolve notification and delete orders — keep the table row (status stays 'paid').
     if (callId) await api('PATCH', `/api/waiter-calls/${callId}/resolve`);
+    await api('DELETE', `/api/tables/${tableId}/orders`);
     await loadAll();
 
     // Write ticket to the pre-opened window (stays open even after awaits).
     renderTicketInWindow(printWin, bill);
   } catch (err) {
     if (printWin) { try { printWin.close(); } catch (_) {} }
-    alert('No se pudo finalizar la mesa en este momento.');
+    alert('No se pudo procesar en este momento.');
     try { await loadAll(); } catch (_) {}
   } finally {
     isFinalizingCashCall = false;
     if (actionBtn) {
       actionBtn.disabled = false;
-      actionBtn.textContent = initialLabel || 'Finalizar e imprimir ticket';
+      actionBtn.textContent = initialLabel || 'Imprimir ticket';
     }
   }
 }
@@ -892,28 +886,26 @@ function openFinalizeTableModal(data) {
   document.getElementById('finalizeTableModal').classList.remove('hidden');
 }
 
-async function finalizeTable(printTicketFirst) {
-  if (!currentFinalizeTableData || !currentBillTableId) return;
+// "Imprimir ticket" — only prints the ticket, does NOT delete the table.
+async function printFinalizeTable() {
+  if (!currentFinalizeTableData) return;
+  const win = window.open('', '_blank', 'width=380,height=600');
+  renderTicketInWindow(win, currentFinalizeTableData);
+  document.getElementById('finalizeTableModal').classList.add('hidden');
+}
 
-  const dataToprint = printTicketFirst ? currentFinalizeTableData : null;
-
-  // Open print window synchronously before any awaits (user-gesture context).
-  const printWin = dataToprint ? window.open('', '_blank', 'width=380,height=600') : null;
+// "Eliminar mesa" — deletes the table (and its orders) without printing.
+async function deleteTable() {
+  if (!currentBillTableId) return;
 
   const result = await api('DELETE', `/api/tables/${currentBillTableId}`);
-  if (result.error) {
-    if (printWin) { try { printWin.close(); } catch (_) {} }
-    alert(result.error);
-    return;
-  }
+  if (result.error) { alert(result.error); return; }
 
   document.getElementById('billModal').classList.add('hidden');
   document.getElementById('paidModal').classList.add('hidden');
   document.getElementById('finalizeTableModal').classList.add('hidden');
   currentFinalizeTableData = null;
   await loadAll();
-
-  if (printWin) renderTicketInWindow(printWin, dataToprint);
 }
 
 document.getElementById('finalizeBillTableBtn')?.addEventListener('click', async () => {
@@ -934,8 +926,8 @@ document.getElementById('closeFinalizeTableModal')?.addEventListener('click', ()
 document.getElementById('cancelFinalizeTableBtn')?.addEventListener('click', () => {
   document.getElementById('finalizeTableModal').classList.add('hidden');
 });
-document.getElementById('finalizeWithPrintBtn')?.addEventListener('click', () => finalizeTable(true));
-document.getElementById('finalizeWithoutPrintBtn')?.addEventListener('click', () => finalizeTable(false));
+document.getElementById('finalizeWithPrintBtn')?.addEventListener('click', () => printFinalizeTable());
+document.getElementById('finalizeWithoutPrintBtn')?.addEventListener('click', () => deleteTable());
 
 // -- PRINT ------------------------------------------------------------------
 
