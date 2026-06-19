@@ -2232,6 +2232,13 @@ async function startServer() {
   app.get('/mesa/:token/pagar', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pagar.html')));
   app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
+  // Global error handler — always returns JSON so clients can parse the error
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    console.error('[Express error]', err);
+    res.status(500).json({ error: err.message || 'Error interno del servidor' });
+  });
+
   app.listen(PORT, () => {
     const lanIp = getFirstLanIPv4();
     console.log(`\n🍽️  Restaurant App corriendo en http://localhost:${PORT}`);

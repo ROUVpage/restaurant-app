@@ -46,7 +46,7 @@ async function api(method, path, body, options = {}) {
       try {
         data = JSON.parse(text);
       } catch (_) {
-        data = { error: 'Respuesta inválida del servidor' };
+        data = { error: res.ok ? 'Respuesta inválida del servidor' : `Error del servidor (${res.status})` };
       }
     }
     if (!res.ok) {
