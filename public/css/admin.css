@@ -389,11 +389,11 @@
 }
 .btn-complete-order:hover { background: rgba(201,168,76,.15); }
 .btn-close-payment {
-  background: rgba(255,255,255,.05);
-  border-color: rgba(255,255,255,.15);
+  background: transparent;
+  border-color: rgba(255,255,255,.18);
   color: var(--text-muted);
 }
-.btn-close-payment:hover { background: rgba(255,255,255,.1); }
+.btn-close-payment:hover { background: rgba(255,255,255,.06); color: var(--text-primary); }
 .order-fulfilled-label {
   font-size: .82rem;
   font-weight: 600;

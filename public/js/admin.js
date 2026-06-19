@@ -535,7 +535,7 @@ function renderOrders(orders, waiterCalls = []) {
           <div class="order-card-footer">
             <span class="order-total">${fmt(c.table_total || 0)}</span>
             <button class="btn-complete-order btn-finalize-cash" data-call-id="${c.id}" data-table-id="${c.table_id}">Imprimir ticket</button>
-            <button class="btn-resolve-call btn-close-payment" data-call-id="${c.id}">Cerrar</button>
+            <button class="btn-complete-order btn-resolve-call btn-close-payment" data-call-id="${c.id}">Cerrar</button>
           </div>
         </div>
       `;

@@ -1716,6 +1716,7 @@ async function startServer() {
       FROM tables t
       LEFT JOIN orders o ON o.table_id = t.id
       LEFT JOIN order_items oi ON oi.order_id = o.id
+      WHERE t.status != 'archived'
       GROUP BY t.id
       ORDER BY t.number ASC
     `);
@@ -1730,6 +1731,7 @@ async function startServer() {
     if (existing) return res.status(409).json({ error: 'Mesa ya existe y está abierta' });
 
     // Reuse the same QR token for the same table number.
+
     let persistedToken = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [number]);
     if (!persistedToken) {
       const generatedToken = uuidv4();
@@ -1737,7 +1739,7 @@ async function startServer() {
       persistedToken = { token: generatedToken };
     }
 
-    const reusableTable = dbGet('SELECT * FROM tables WHERE number = ? ORDER BY id DESC LIMIT 1', [number]);
+    const reusableTable = dbGet('SELECT * FROM tables WHERE number = ? AND status != ? ORDER BY id DESC LIMIT 1', [number, 'archived']);
 
     if (reusableTable) {
       // Reset previous session data for this table and reopen with the same token.
@@ -1779,12 +1781,12 @@ async function startServer() {
 
   app.delete('/api/tables/:id', (req, res) => {
     const table = dbGet('SELECT token, number, status FROM tables WHERE id = ?', [req.params.id]);
-    // Orders are kept in DB for history — only waiter calls are resolved and table row deleted.
+    // Archive the table row instead of deleting it — preserves history.
+    dbRun('UPDATE tables SET status = ? WHERE id = ?', ['archived', req.params.id]);
     dbRun('UPDATE waiter_calls SET status = ? WHERE table_id = ? AND status = ?', ['resolved', req.params.id, 'pending']);
     if (table?.token) {
       dbRun('UPDATE waiter_calls SET status = ? WHERE table_token = ? AND status = ?', ['resolved', table.token, 'pending']);
     }
-    dbRun('DELETE FROM tables WHERE id = ?', [req.params.id]);
     saveDb();
     emitAdminUpdate('table_deleted');
     emitAdminUpdate('waiter_call_resolved');
@@ -1797,7 +1799,7 @@ async function startServer() {
 
   app.get('/api/table/by-token/:token', (req, res) => {
     const { token } = req.params;
-    let table = dbGet('SELECT * FROM tables WHERE token = ?', [token]);
+    let table = dbGet('SELECT * FROM tables WHERE token = ? AND status != ?', [token, 'archived']);
 
     // Fallback: allow numeric table URLs like /mesa/12 before token QR exists.
     if (!table && /^\d+$/.test(token)) {
@@ -1895,7 +1897,7 @@ async function startServer() {
         t.number as table_number,
         o.created_at,
         ROW_NUMBER() OVER (
-          PARTITION BY DATE(datetime(o.created_at, 'unixepoch', 'localtime'))
+          PARTITION BY DATE(datetime(o.created_at - 3600, 'unixepoch', 'localtime'))
           ORDER BY o.id
         ) as daily_number,
         oi.id as item_id,
