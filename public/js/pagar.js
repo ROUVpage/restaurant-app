@@ -342,7 +342,7 @@ async function initPayPalButtons() {
         location.replace(`/mesa/${token}`);
       }
     });
-  }, 8000);
+  }, 2000);
 
   // If already paid, show confirmation and hide pay button
   if (tableData.status === 'paid') {
