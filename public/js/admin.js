@@ -5,7 +5,7 @@ let currentBillTableStatus = null;
 let pollInterval = null;
 let realtimeSource = null;
 let realtimeDebounceTimer = null;
-let currentFinalizeTableData = null;
+let currentTables = [];
 let tablesLoadPromise = null;
 let ordersLoadPromise = null;
 let realtimeNeedsTables = false;
@@ -398,6 +398,7 @@ async function loadTables() {
     );
     if (signature === lastTablesSignature) return;
     lastTablesSignature = signature;
+    currentTables = tables;
     renderTables(tables);
   })();
 
@@ -1000,6 +1001,8 @@ async function openTableQr(tableId, tableNumber) {
 }
 
 document.getElementById('newTableBtn')?.addEventListener('click', () => {
+  document.getElementById('newTableError').classList.add('hidden');
+  document.getElementById('newTableError').textContent = '';
   document.getElementById('tableNumber').value = '';
   document.getElementById('tablePersons').value = '';
   newTableModal.classList.remove('hidden');
@@ -1007,23 +1010,38 @@ document.getElementById('newTableBtn')?.addEventListener('click', () => {
 
 document.getElementById('closeNewTableModal')?.addEventListener('click', () => {
   newTableModal.classList.add('hidden');
+  document.getElementById('newTableError').classList.add('hidden');
 });
 document.getElementById('cancelNewTable')?.addEventListener('click', () => {
   newTableModal.classList.add('hidden');
+  document.getElementById('newTableError').classList.add('hidden');
 });
 
 document.getElementById('confirmNewTable')?.addEventListener('click', async () => {
   const number = parseInt(document.getElementById('tableNumber').value, 10);
   const persons = parseInt(document.getElementById('tablePersons').value, 10);
+  const errorEl = document.getElementById('newTableError');
+
+  const showError = (msg) => {
+    errorEl.textContent = msg;
+    errorEl.classList.remove('hidden');
+  };
 
   if (!number || !persons) {
-    alert('Completa todos los campos');
+    showError('Completa todos los campos');
+    return;
+  }
+
+  // Client-side check to avoid a 409 round-trip
+  const alreadyOpen = currentTables.some((t) => t.number === number && t.status === 'open');
+  if (alreadyOpen) {
+    showError(`La mesa ${number} ya existe y está abierta`);
     return;
   }
 
   const result = await api('POST', '/api/tables', { number, persons });
   if (result.error) {
-    alert(result.error);
+    showError(result.error);
     return;
   }
 
