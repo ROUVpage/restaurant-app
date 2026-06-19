@@ -5,6 +5,7 @@ let mesaEvents = null;
 let authorizationRetryInterval = null;
 let authorizationEvents = null;
 let currentMesaTableId = null;
+let payTotalPollInterval = null;
 
 const viewState = {
   activeToken: token,
@@ -41,7 +42,11 @@ async function probeAuthorizationNow() {
   const tableData = await api('GET', `/api/table/by-token/${viewState.activeToken}`);
 
   setViewState({ authorizationCheckInFlight: false });
-  if (tableData.error) return;
+  if (tableData.error) {
+    // Table is gone — stop polling, rely on SSE for table_reopened
+    clearAuthorizationWatcher();
+    return;
+  }
 
   // Only auto-recover when the table is truly reopened and operational.
   if (tableData.status !== 'open') return;
@@ -168,7 +173,7 @@ function startMesaRealtime() {
   currentMesaTableId = tableData.id;
 
   // Poll every 4s: update total AND detect if table was finalized from the bar
-  setInterval(() => {
+  payTotalPollInterval = setInterval(() => {
     if (!currentMesaTableId || document.visibilityState !== 'visible') return;
     updatePayTotal(currentMesaTableId);
   }, 4000);
@@ -182,7 +187,9 @@ async function updatePayTotal(tableId) {
   const bill = await api('GET', `/api/tables/${tableId}/bill`);
   const payTotalEl = document.getElementById('payTotal');
   if (bill.error) {
-    // Table was deleted (finalized by bar) — show finalized modal
+    // Table gone — stop polling to avoid repeated 404s; SSE handles re-open
+    clearInterval(payTotalPollInterval);
+    payTotalPollInterval = null;
     if (!viewState.unauthorizedTable) openTableFinalizedModal();
     return;
   }
