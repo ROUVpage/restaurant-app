@@ -535,6 +535,7 @@ function renderOrders(orders, waiterCalls = []) {
           <div class="order-card-footer">
             <span class="order-total">${fmt(c.table_total || 0)}</span>
             <button class="btn-complete-order btn-finalize-cash" data-call-id="${c.id}" data-table-id="${c.table_id}">Imprimir ticket</button>
+            <button class="btn-resolve-call btn-close-payment" data-call-id="${c.id}">Cerrar</button>
           </div>
         </div>
       `;
@@ -578,7 +579,7 @@ function renderOrders(orders, waiterCalls = []) {
   const ordersHtml = ordersWithTotal.map((o) => `
     <div class="order-card" data-order-id="${o.id}">
       <div class="order-card-header">
-        <span class="order-card-title">Mesa ${o.table_number} - Pedido #${o.id}</span>
+        <span class="order-card-title">Mesa ${o.table_number} - Pedido #${o.daily_number || o.id}</span>
         <span class="order-card-time">${timeSince(o.created_at)}</span>
       </div>
       <div class="order-items-list">

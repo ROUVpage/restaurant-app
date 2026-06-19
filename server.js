@@ -1779,8 +1779,7 @@ async function startServer() {
 
   app.delete('/api/tables/:id', (req, res) => {
     const table = dbGet('SELECT token, number, status FROM tables WHERE id = ?', [req.params.id]);
-    dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [req.params.id]);
-    dbRun('DELETE FROM orders WHERE table_id = ?', [req.params.id]);
+    // Orders are kept in DB for history — only waiter calls are resolved and table row deleted.
     dbRun('UPDATE waiter_calls SET status = ? WHERE table_id = ? AND status = ?', ['resolved', req.params.id, 'pending']);
     if (table?.token) {
       dbRun('UPDATE waiter_calls SET status = ? WHERE table_token = ? AND status = ?', ['resolved', table.token, 'pending']);
@@ -1895,6 +1894,10 @@ async function startServer() {
         o.status as order_status,
         t.number as table_number,
         o.created_at,
+        ROW_NUMBER() OVER (
+          PARTITION BY DATE(datetime(o.created_at, 'unixepoch', 'localtime'))
+          ORDER BY o.id
+        ) as daily_number,
         oi.id as item_id,
         oi.product_id,
         oi.product_name,
@@ -1913,6 +1916,7 @@ async function startServer() {
       if (!map.has(row.order_id)) {
         map.set(row.order_id, {
           id: row.order_id,
+          daily_number: row.daily_number,
           table_id: row.table_id,
           table_number: row.table_number,
           created_at: row.created_at,
