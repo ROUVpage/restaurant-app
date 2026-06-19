@@ -1739,7 +1739,7 @@ async function startServer() {
       persistedToken = { token: generatedToken };
     }
 
-    const reusableTable = dbGet('SELECT * FROM tables WHERE number = ? AND status != ? ORDER BY id DESC LIMIT 1', [number, 'archived']);
+    const reusableTable = dbGet('SELECT * FROM tables WHERE number = ? ORDER BY id DESC LIMIT 1', [number]);
 
     if (reusableTable) {
       // Reset previous session data for this table and reopen with the same token.
