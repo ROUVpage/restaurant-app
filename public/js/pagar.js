@@ -213,7 +213,7 @@ function startPagarRealtime() {
   pagarEvents.onerror = () => {
     try { pagarEvents.close(); } catch (_) {}
     pagarEvents = null;
-    setTimeout(startPagarRealtime, 2500);
+    setTimeout(startPagarRealtime, 1000);
   };
 }
 
@@ -342,7 +342,7 @@ async function initPayPalButtons() {
         location.replace(`/mesa/${token}`);
       }
     });
-  }, 3000);
+  }, 8000);
 
   // If already paid, show confirmation and hide pay button
   if (tableData.status === 'paid') {

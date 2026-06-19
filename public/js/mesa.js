@@ -119,7 +119,7 @@ function startMesaRealtime() {
   mesaEvents.onerror = () => {
     try { mesaEvents.close(); } catch (_) {}
     mesaEvents = null;
-    setTimeout(startMesaRealtime, 2500);
+    setTimeout(startMesaRealtime, 1000);
   };
 }
 
@@ -171,7 +171,7 @@ function startMesaRealtime() {
   setInterval(() => {
     if (!currentMesaTableId || document.visibilityState !== 'visible') return;
     updatePayTotal(currentMesaTableId);
-  }, 3000);
+  }, 8000);
 
   const products = await productsPromise;
   renderProducts(products);

@@ -1147,7 +1147,7 @@ async function startServer() {
       }
 
       if (/\.(css|js)$/i.test(filePath)) {
-        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+        res.setHeader('Cache-Control', 'public, max-age=60, must-revalidate');
         return;
       }
 

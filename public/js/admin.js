@@ -304,7 +304,7 @@ function startPolling() {
   pollInterval = setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     loadAll();
-  }, 2000);
+  }, 8000);
 }
 
 function queueRealtimeRefresh(scope = 'all') {
@@ -380,7 +380,7 @@ function startRealtimeUpdates() {
   realtimeSource.onerror = () => {
     try { realtimeSource.close(); } catch (_) {}
     realtimeSource = null;
-    setTimeout(startRealtimeUpdates, 2000);
+    setTimeout(startRealtimeUpdates, 1000);
   };
 }
 
