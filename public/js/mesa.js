@@ -171,7 +171,7 @@ function startMesaRealtime() {
   setInterval(() => {
     if (!currentMesaTableId || document.visibilityState !== 'visible') return;
     updatePayTotal(currentMesaTableId);
-  }, 8000);
+  }, 6000);
 
   const products = await productsPromise;
   renderProducts(products);
