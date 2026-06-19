@@ -167,11 +167,11 @@ function startMesaRealtime() {
   await updatePayTotal(tableData.id);
   currentMesaTableId = tableData.id;
 
-  // Poll every 3s: update total AND detect if table was finalized from the bar
+  // Poll every 4s: update total AND detect if table was finalized from the bar
   setInterval(() => {
     if (!currentMesaTableId || document.visibilityState !== 'visible') return;
     updatePayTotal(currentMesaTableId);
-  }, 6000);
+  }, 4000);
 
   const products = await productsPromise;
   renderProducts(products);
