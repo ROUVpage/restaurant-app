@@ -1,0 +1,1 @@
+@"C:\Program Files\k6\k6.exe" run --env TOTAL_VUS=50 --env FAILED_CAPTURE_CAP=500 --env FAILED_BODY_LIMIT=4000 load-tests/k6_multi_scenarios.js > load-tests/k6_run_output_utf8.txt 2>load-tests/k6_run_error.txt

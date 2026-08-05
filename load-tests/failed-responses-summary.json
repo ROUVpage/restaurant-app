@@ -1,133 +1,68 @@
 {
-  "total": 400,
+  "total": 207,
   "by": [
     {
       "url": "https://restaurant-app-6678.onrender.com/api/orders",
-      "status": 404,
-      "count": 229,
+      "status": 400,
+      "count": 207,
       "vus": {
-        "8": 21,
-        "13": 21,
-        "14": 21,
-        "15": 21,
-        "16": 20,
-        "20": 21,
-        "27": 21,
-        "30": 21,
-        "32": 21,
-        "33": 20,
-        "34": 21
+        "28": 18,
+        "41": 19,
+        "42": 19,
+        "43": 19,
+        "44": 19,
+        "45": 19,
+        "46": 19,
+        "47": 19,
+        "48": 18,
+        "49": 19,
+        "50": 19
       },
       "samples": [
         {
-          "ts": 1785939328796,
-          "vu": 32,
+          "ts": 1785940497522,
+          "vu": 41,
           "iter": 0,
           "url": "https://restaurant-app-6678.onrender.com/api/orders",
           "method": "POST",
-          "status": 404,
-          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+          "status": 400,
+          "body": "{\"error\":\"Precio inválido en el pedido\"}"
         },
         {
-          "ts": 1785939328825,
-          "vu": 27,
+          "ts": 1785940497524,
+          "vu": 49,
           "iter": 0,
           "url": "https://restaurant-app-6678.onrender.com/api/orders",
           "method": "POST",
-          "status": 404,
-          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+          "status": 400,
+          "body": "{\"error\":\"Precio inválido en el pedido\"}"
         },
         {
-          "ts": 1785939328942,
-          "vu": 13,
+          "ts": 1785940497603,
+          "vu": 48,
           "iter": 0,
           "url": "https://restaurant-app-6678.onrender.com/api/orders",
           "method": "POST",
-          "status": 404,
-          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+          "status": 400,
+          "body": "{\"error\":\"Precio inválido en el pedido\"}"
         },
         {
-          "ts": 1785939328942,
-          "vu": 8,
+          "ts": 1785940497605,
+          "vu": 46,
           "iter": 0,
           "url": "https://restaurant-app-6678.onrender.com/api/orders",
           "method": "POST",
-          "status": 404,
-          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+          "status": 400,
+          "body": "{\"error\":\"Precio inválido en el pedido\"}"
         },
         {
-          "ts": 1785939329042,
-          "vu": 14,
+          "ts": 1785940497605,
+          "vu": 28,
           "iter": 0,
           "url": "https://restaurant-app-6678.onrender.com/api/orders",
           "method": "POST",
-          "status": 404,
-          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
-        }
-      ]
-    },
-    {
-      "url": "https://restaurant-app-6678.onrender.com/api/reservations",
-      "status": 409,
-      "count": 171,
-      "vus": {
-        "1": 16,
-        "2": 15,
-        "4": 16,
-        "6": 16,
-        "7": 15,
-        "19": 16,
-        "21": 15,
-        "25": 16,
-        "28": 15,
-        "29": 16,
-        "31": 15
-      },
-      "samples": [
-        {
-          "ts": 1785939329311,
-          "vu": 4,
-          "iter": 0,
-          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
-          "method": "POST",
-          "status": 409,
-          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
-        },
-        {
-          "ts": 1785939329326,
-          "vu": 25,
-          "iter": 0,
-          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
-          "method": "POST",
-          "status": 409,
-          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
-        },
-        {
-          "ts": 1785939329342,
-          "vu": 1,
-          "iter": 0,
-          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
-          "method": "POST",
-          "status": 409,
-          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
-        },
-        {
-          "ts": 1785939329497,
-          "vu": 29,
-          "iter": 0,
-          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
-          "method": "POST",
-          "status": 409,
-          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
-        },
-        {
-          "ts": 1785939329501,
-          "vu": 19,
-          "iter": 0,
-          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
-          "method": "POST",
-          "status": 409,
-          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
+          "status": 400,
+          "body": "{\"error\":\"Precio inválido en el pedido\"}"
         }
       ]
     }

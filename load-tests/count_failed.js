@@ -1,0 +1,1 @@
+const fs=require('fs');const p='load-tests/failed-responses-captured.json';try{const a=JSON.parse(fs.readFileSync(p,'utf8'));console.log(a.length);}catch(e){console.error('ERR',e.message);process.exit(1);} 

@@ -1,10 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 const inFile = path.join(__dirname, 'k6_run_output_utf8.txt');
+const errFile = path.join(__dirname, 'k6_run_error.txt');
 const outFile = path.join(__dirname, 'failed-responses-captured.json');
 // Try to read as utf8, fall back to utf16le if needed
 let txt = '';
-try { txt = fs.readFileSync(inFile, 'utf8'); } catch (e) { txt = fs.readFileSync(inFile, 'utf16le'); }
+try { txt = fs.readFileSync(inFile, 'utf8'); } catch (e) { try { txt = fs.readFileSync(inFile, 'utf16le'); } catch (e2) { txt = ''; } }
+// Also include stderr output if present (k6 sometimes logs FAILED_RESPONSE to stderr)
+try {
+  const errTxt = fs.readFileSync(errFile, 'utf8');
+  if (errTxt) txt += '\n' + errTxt;
+} catch (e) {
+  try {
+    const errTxt = fs.readFileSync(errFile, 'utf16le');
+    if (errTxt) txt += '\n' + errTxt;
+  } catch (e2) {}
+}
 const lines = txt.split(/\r?\n/);
 const results = [];
 for (const line of lines) {
