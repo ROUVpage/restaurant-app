@@ -48,7 +48,6 @@ function renderTrackingData(payload) {
   document.getElementById('resultCode').textContent = codeText;
   document.getElementById('resultEta').textContent = etaText;
   document.getElementById('resultStatusText').textContent = statusText;
-  document.getElementById('resultCodeInline').textContent = codeText;
   document.getElementById('resultMeta').textContent = `${modeText} · ${createdAtText}`;
 
   const itemsContainer = document.getElementById('resultItems');

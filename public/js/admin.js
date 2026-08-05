@@ -843,25 +843,27 @@ function renderOnlineOrderInfo(order) {
   currentOnlineOrderInfo = order;
   document.getElementById('onlineOrderInfoCode').textContent = order.orderCode || '-';
 
-  const modeLabel = String(order.mode) === 'pickup' ? 'Recoger' : 'A domicilio';
-  const statusLabel = getOnlineStatusLabel(order.status, order.mode);
-  const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
+  const normalizedMode = String(order.mode || '').toLowerCase();
+  const isPickup = normalizedMode === 'pickup';
+  const modeLabel = isPickup ? 'Recoger' : 'A domicilio';
+  const statusLabel = getOnlineStatusLabel(order.status, normalizedMode);
+  const addressLabel = order.address || (isPickup ? 'Recogida en local' : '-');
   const paymentLabel = getPaymentLabel(order.paymentMethod);
-  const isPickup = String(order.mode) === 'pickup';
-  const shouldShowPayment = !isPickup;
-  const shouldShowEstimatedTime = isPickup;
-  const etaMinutes = String(order.mode) === 'pickup' ? 25 : 40;
+  const etaMinutes = isPickup ? 25 : 40;
   const expectedReadyDate = new Date(Number(order.createdAt || 0) * 1000 + etaMinutes * 60000);
   const expectedReadyAt = Number.isNaN(expectedReadyDate.getTime())
     ? '-'
     : expectedReadyDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
+  const timingOrPaymentRow = isPickup
+    ? `<div><span class="meta-label">Hora estimada:</span><span class="meta-value">${expectedReadyAt}</span></div>`
+    : `<div><span class="meta-label">Pago:</span><span class="meta-value">${paymentLabel}</span></div>`;
+
   document.getElementById('onlineOrderMeta').innerHTML = `
     <div><span class="meta-label">ID:</span><span class="meta-value">${order.id}</span></div>
     <div><span class="meta-label">Estado:</span><span class="meta-value">${statusLabel}</span></div>
     <div><span class="meta-label">Modo:</span><span class="meta-value">${modeLabel}</span></div>
-    ${shouldShowPayment ? `<div><span class="meta-label">Pago:</span><span class="meta-value">${paymentLabel}</span></div>` : ''}
-    ${shouldShowEstimatedTime ? `<div><span class="meta-label">Hora estimada:</span><span class="meta-value">${expectedReadyAt}</span></div>` : ''}
+    ${timingOrPaymentRow}
     <div><span class="meta-label">Telefono:</span><span class="meta-value">${order.phone || '-'}</span></div>
     <div><span class="meta-label">Direccion:</span><span class="meta-value">${addressLabel}</span></div>
   `;

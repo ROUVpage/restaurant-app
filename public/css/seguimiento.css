@@ -85,9 +85,21 @@
 
 .result-head {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: .8rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .2rem;
+}
+
+.result-code-title {
+  margin: 0;
+  color: #a8b5ce;
+  font-size: .74rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+#resultCode {
+  margin: 0;
 }
 
 .result-label {
