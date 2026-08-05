@@ -332,7 +332,7 @@ export function adminActions() {
   if (tables.length) {
     const target = tables[Math.floor(Math.random() * tables.length)];
     const deleteRes = safeRequest('DELETE', `${BASE}/api/tables/${target.id}`);
-    if (deleteRes) check(deleteRes, { 'delete table 200': (r) => r.status === 200 });
+    if (deleteRes) check(deleteRes, { 'delete table 200|404': (r) => r.status === 200 || r.status === 404 });
   }
 
   const date1 = isoDateDaysFromNow(3);

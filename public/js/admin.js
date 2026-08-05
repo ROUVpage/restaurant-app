@@ -54,7 +54,25 @@ function isExpectedConcurrentError(errorMessage) {
   const msg = String(errorMessage || '').toLowerCase();
   const status = getApiErrorStatus(msg);
   if (status === 404 || status === 409) return true;
-  return msg.includes('no encontrado') || msg.includes('ya existe') || msg.includes('mesa cerrada') || msg.includes('no autorizada');
+  return msg.includes('no encontrado')
+    || msg.includes('ya existe')
+    || msg.includes('mesa cerrada')
+    || msg.includes('no autorizada')
+    || msg.includes('unique constraint failed: tables.token');
+}
+
+function isTableCreateRecoverableError(errorMessage) {
+  const msg = String(errorMessage || '').toLowerCase();
+  const status = getApiErrorStatus(msg);
+  if (status === 409) return true;
+  return (status === 500 && msg.includes('unique constraint failed: tables.token'))
+    || (msg.includes('ya existe') && msg.includes('abierta'));
+}
+
+function pickExistingTableByNumber(number) {
+  const open = currentTables.find((t) => Number(t.number) === Number(number) && t.status === 'open');
+  if (open) return open;
+  return currentTables.find((t) => Number(t.number) === Number(number));
 }
 
 async function withActionLock(actionKey, btn, loadingLabel, actionFn) {
@@ -1174,15 +1192,18 @@ document.getElementById('confirmNewTable')?.addEventListener('click', async () =
   try {
     const result = await api('POST', '/api/tables', { number, persons });
     if (result.error) {
-      const msg = String(result.error || '').toLowerCase();
-      if (msg.includes('ya existe') && msg.includes('abierta')) {
+      if (isTableCreateRecoverableError(result.error)) {
         await loadAll();
-        const existingOpen = currentTables.find((t) => t.number === number && t.status === 'open');
-        if (existingOpen) {
+        const existingTable = pickExistingTableByNumber(number);
+        if (existingTable) {
           newTableModal.classList.add('hidden');
-          await openBill(existingOpen.id, existingOpen.status);
+          showAdminNotice('La mesa ya estaba activa. Se ha abierto su cuenta.', 'info');
+          await openBill(existingTable.id, existingTable.status);
           return;
         }
+        showAdminNotice('Se detecto una colision de creacion. Vista actualizada.', 'info');
+        newTableModal.classList.add('hidden');
+        return;
       }
       showError(result.error);
       return;
