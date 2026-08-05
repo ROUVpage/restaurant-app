@@ -490,6 +490,8 @@ function renderOrders(orders, waiterCalls = []) {
   const waiterSourceLabel = (source) => {
     if (source === 'pagar') return 'pagina de pago (efectivo)';
     if (source === 'paypal') return 'pago PayPal';
+    if (source === 'tarjeta') return 'pago con tarjeta';
+    if (source === 'datafono') return 'pago con datafono';
     if (source === 'pedido') return 'pagina de pedido';
     if (source === 'mesa_no_autorizada') return 'mesa no autorizada';
     if (source === 'mesa_cerrada') return 'mesa cerrada tras pago';
@@ -516,14 +518,20 @@ function renderOrders(orders, waiterCalls = []) {
   empty.classList.add('hidden');
 
   const waiterHtml = waiterCalls.map((c) => {
-    const isPaymentCall = (c.source === 'pagar' || c.source === 'paypal') && Number(c.table_id) > 0;
+    const isPaymentCall = (c.source === 'pagar' || c.source === 'paypal' || c.source === 'tarjeta' || c.source === 'datafono') && Number(c.table_id) > 0;
     const isClosedTableNotice = (
       c.source === 'mesa_cerrada' || c.source === 'mesa_finalizada' || c.source === 'mesa_finalizado' || c.source === 'pedido_finalizada' || c.source === 'pagar_finalizada'
       || c.source === 'pedido_finalizado' || c.source === 'pagar_finalizado'
     );
 
     if (isPaymentCall) {
-      const paymentTitle = c.source === 'paypal' ? 'Pago PayPal' : 'Pago en efectivo';
+      const paymentTitle = c.source === 'paypal'
+        ? 'Pago PayPal'
+        : c.source === 'tarjeta'
+          ? 'Pago con tarjeta'
+          : c.source === 'datafono'
+            ? 'Pago con datafono'
+            : 'Pago en efectivo';
       return `
         <div class="order-card waiter-call-card" data-call-id="${c.id}">
           <div class="order-card-header">

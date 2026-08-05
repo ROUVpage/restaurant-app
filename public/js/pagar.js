@@ -10,6 +10,7 @@ let paypalSdkLoaded = false;
 let paypalButtonsReady = false;
 let isCashConfirmSubmitting = false;
 let isPayPalSubmitting = false; /*PP*/
+let cardPaymentChoiceResolver = null;
 
 function setCashConfirmSubmitting(submitting) {
   isCashConfirmSubmitting = Boolean(submitting);
@@ -98,6 +99,25 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function closeCardPaymentChoiceModal(choice = 'cancel') {
+  const modal = document.getElementById('cardPaymentChoiceModal');
+  if (modal) modal.classList.add('hidden');
+  if (cardPaymentChoiceResolver) {
+    cardPaymentChoiceResolver(choice);
+    cardPaymentChoiceResolver = null;
+  }
+}
+
+function askCardPaymentChoice() {
+  const modal = document.getElementById('cardPaymentChoiceModal');
+  const amount = document.getElementById('cardPaymentChoiceAmount');
+  if (amount) amount.textContent = fmt(billTotal);
+  if (modal) modal.classList.remove('hidden');
+  return new Promise((resolve) => {
+    cardPaymentChoiceResolver = resolve;
+  });
+}
+
 async function completeCashPaymentFlow() { /*FOUND-FLOW*/
   const MAX_ATTEMPTS = 3;
   const RETRY_DELAYS_MS = [450, 900];
@@ -132,6 +152,28 @@ function buildPayPalButtonConfig(fundingSource) {
       shape: 'rect',
       label: fundingSource === window.paypal?.FUNDING?.CARD ? 'pay' : 'paypal'
     },
+    onClick: async (_data, actions) => {
+      if (fundingSource !== window.paypal?.FUNDING?.CARD) {
+        return actions.resolve();
+      }
+
+      const choice = await askCardPaymentChoice();
+      if (choice === 'now') {
+        return actions.resolve();
+      }
+
+      if (choice === 'datafono') {
+        const result = await api('POST', '/api/waiter-calls', { tableToken: token, source: 'datafono' });
+        if (result.error) {
+          alert(result.error);
+          return actions.reject();
+        }
+        document.getElementById('paypalModal').classList.add('hidden');
+        showToast('waiterToast');
+      }
+
+      return actions.reject();
+    },
     createOrder: async () => {
       const result = await api('POST', '/api/paypal/orders/create', { tableToken: token });
       if (result.error || !result.orderId) {
@@ -140,7 +182,10 @@ function buildPayPalButtonConfig(fundingSource) {
       return result.orderId;
     },
     onApprove: async (data) => {
-      const result = await api('POST', `/api/paypal/orders/${data.orderID}/capture`, { tableToken: token });
+      const result = await api('POST', `/api/paypal/orders/${data.orderID}/capture`, {
+        tableToken: token,
+        fundingSource: fundingSource === window.paypal?.FUNDING?.CARD ? 'card' : 'paypal'
+      });
       if (result.error) {
         alert(result.error);
         return;
@@ -416,6 +461,19 @@ document.getElementById('closePaypalModal').addEventListener('click', () => {
 document.getElementById('cancelPaypalBtn').addEventListener('click', () => {
   if (isPayPalSubmitting) return;
   document.getElementById('paypalModal').classList.add('hidden');
+  closeCardPaymentChoiceModal('cancel');
+});
+
+document.getElementById('closeCardPaymentChoiceModal').addEventListener('click', () => {
+  closeCardPaymentChoiceModal('cancel');
+});
+
+document.getElementById('payCardNowBtn').addEventListener('click', () => {
+  closeCardPaymentChoiceModal('now');
+});
+
+document.getElementById('payWithDataphoneBtn').addEventListener('click', () => {
+  closeCardPaymentChoiceModal('datafono');
 });
 
 document.getElementById('closeCashConfirmModal').addEventListener('click', () => {

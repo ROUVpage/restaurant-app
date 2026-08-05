@@ -1074,8 +1074,16 @@ async function startServer() {
     if (!RESERVATION_SLOTS[resolvedSlot]) return { ok: false, error: 'Turno inválido' };
 
     const cleanName = String(name || '').trim();
-    const cleanPhone = String(phone || '').replace(/\s+/g, '').trim();
+    let cleanPhone = String(phone || '').replace(/\D+/g, '').trim();
     const parsedPersons = Number(persons);
+
+    // Normalize common international/local formats like +34 600 000 000 or 0034 600000000
+    if (cleanPhone.startsWith('34') && cleanPhone.length === 11) {
+      cleanPhone = cleanPhone.slice(2);
+    }
+    if (cleanPhone.startsWith('0') && cleanPhone.length === 10) {
+      cleanPhone = cleanPhone.slice(1);
+    }
 
     // Be more permissive with names: allow digits and common chars (keeps validation lightweight)
     if (!/^[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9' \-]{1,79}$/.test(cleanName)) {
@@ -1503,7 +1511,7 @@ async function startServer() {
       return res.status(503).json({ error: 'PayPal no está configurado en el servidor' });
     }
 
-    const { tableToken } = req.body || {};
+    const { tableToken, fundingSource } = req.body || {};
     const { orderId } = req.params;
     if (!tableToken) return res.status(400).json({ error: 'Falta token de mesa' });
     if (!orderId) return res.status(400).json({ error: 'Falta orderId de PayPal' });
@@ -1546,9 +1554,10 @@ async function startServer() {
       markTableAsPaid(table.id);
 
       // Create waiter call for payment notification
+      const paymentSource = String(fundingSource || '').toLowerCase() === 'card' ? 'tarjeta' : 'paypal';
       const callInfo = dbRun(
         'INSERT INTO waiter_calls (table_id, source, status, table_token, table_number) VALUES (?, ?, ?, ?, ?)',
-        [table.id, 'paypal', 'pending', tableToken, table.number]
+        [table.id, paymentSource, 'pending', tableToken, table.number]
       );
       saveDb();
       emitAdminUpdate('waiter_call_created', { callId: callInfo.lastInsertRowid });
@@ -1800,13 +1809,19 @@ async function startServer() {
   });
 
   app.delete('/api/tables/:id', (req, res) => {
-    const table = dbGet('SELECT token, number, status FROM tables WHERE id = ?', [req.params.id]);
-    // Archive the table row instead of deleting it — preserves history.
-    dbRun('UPDATE tables SET status = ? WHERE id = ?', ['archived', req.params.id]);
-    dbRun('UPDATE waiter_calls SET status = ? WHERE table_id = ? AND status = ?', ['resolved', req.params.id, 'pending']);
-    if (table?.token) {
-      dbRun('UPDATE waiter_calls SET status = ? WHERE table_token = ? AND status = ?', ['resolved', table.token, 'pending']);
+    const table = dbGet('SELECT id, token, number, status FROM tables WHERE id = ?', [req.params.id]);
+    if (!table) return res.status(404).json({ error: 'Mesa no encontrada' });
+
+    // Hard-delete the table session and every pending/previous notice tied to it.
+    dbRun('DELETE FROM waiter_calls WHERE table_id = ?', [table.id]);
+    if (table.token) {
+      dbRun('DELETE FROM waiter_calls WHERE table_token = ?', [table.token]);
     }
+
+    dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [table.id]);
+    dbRun('DELETE FROM orders WHERE table_id = ?', [table.id]);
+    dbRun('DELETE FROM tables WHERE id = ?', [table.id]);
+
     saveDb();
     emitAdminUpdate('table_deleted');
     emitAdminUpdate('waiter_call_resolved');
@@ -1878,7 +1893,12 @@ async function startServer() {
     if (!tableToken) return res.status(400).json({ error: 'Falta token de mesa' });
 
     const table = dbGet('SELECT * FROM tables WHERE token = ? AND status IN (?, ?)', [tableToken, 'open', 'paid']);
-    if (!table) return res.status(404).json({ error: 'Mesa no encontrada' });
+    if (!table) {
+      // If the table was removed during concurrent admin actions, delete stale notices by token.
+      dbRun('DELETE FROM waiter_calls WHERE table_token = ?', [tableToken]);
+      saveDb();
+      return res.status(404).json({ error: 'Mesa no encontrada' });
+    }
 
     const bill = getTableBillData(table.id);
     if (!bill || Number(bill.total) <= 0) {
@@ -1965,57 +1985,94 @@ async function startServer() {
   app.post('/api/orders', (req, res) => {
     // Accept either { tableToken } or { table } (numeric table number) for compatibility with external clients/tests.
     let { tableToken, items, clientRequestId, table } = req.body || {};
-    if (!tableToken && Number.isInteger(Number(table))) {
-      const t = dbGet('SELECT token FROM tables WHERE number = ? AND status IN (?, ?) ORDER BY id DESC LIMIT 1', [Number(table), 'open', 'paid']);
-      if (t && t.token) tableToken = t.token;
+    const requestedTableNumber = Number.isInteger(Number(table)) ? Number(table) : null;
+
+    if (!tableToken && requestedTableNumber) {
+      const persisted = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [requestedTableNumber]);
+      if (persisted && persisted.token) {
+        tableToken = persisted.token;
+      } else {
+        const t = dbGet('SELECT token FROM tables WHERE number = ? AND status IN (?, ?) ORDER BY id DESC LIMIT 1', [requestedTableNumber, 'open', 'paid']);
+        if (t && t.token) tableToken = t.token;
+      }
     }
 
     let tableRow = tableToken ? dbGet('SELECT * FROM tables WHERE token = ? AND status = ?', [tableToken, 'open']) : null;
+    if (!tableRow && tableToken) {
+      const existingTable = dbGet('SELECT * FROM tables WHERE token = ? ORDER BY id DESC LIMIT 1', [tableToken]);
+      if (existingTable) {
+        if (existingTable.status !== 'open') {
+          dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [existingTable.id]);
+          dbRun('DELETE FROM orders WHERE table_id = ?', [existingTable.id]);
+          dbRun('DELETE FROM waiter_calls WHERE table_id = ? OR table_token = ?', [existingTable.id, tableToken]);
+          dbRun('UPDATE tables SET persons = ?, status = ?, created_at = ? WHERE id = ?', [2, 'open', Math.floor(Date.now() / 1000), existingTable.id]);
+          saveDb();
+          emitAdminUpdate('table_created');
+          emitTableUpdateByToken(tableToken, 'table_reopened', { tableNumber: existingTable.number });
+        }
+        tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [existingTable.id]);
+      }
+    }
+
     if (!tableRow) {
-      // Attempt to recover: if token exists in table_tokens, reuse number; otherwise create or reopen a table session.
-      try {
-        let tokenToUse = tableToken || uuidv4();
-        let tableNumber = null;
-        if (tableToken) {
-          const known = dbGet('SELECT table_number FROM table_tokens WHERE token = ?', [tableToken]);
-          if (known && known.table_number) tableNumber = known.table_number;
-        }
-        if (!tableNumber && Number.isInteger(Number(table))) {
-          tableNumber = Number(table);
-          const persisted = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [tableNumber]);
-          if (persisted && persisted.token) tokenToUse = persisted.token;
-        }
-        if (!tableNumber) {
-          const maxRow = dbGet('SELECT MAX(number) as m FROM tables');
-          tableNumber = (maxRow && Number(maxRow.m)) ? Number(maxRow.m) + 1 : 1;
-        }
+      let tableNumber = requestedTableNumber;
+      let tokenToUse = tableToken || uuidv4();
 
-        // Ensure table_tokens mapping exists
-        const existingTokenRow = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [tableNumber]);
-        if (!existingTokenRow) {
-          dbRun('INSERT INTO table_tokens (table_number, token) VALUES (?, ?)', [tableNumber, tokenToUse]);
+      if (tableNumber != null) {
+        const persisted = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [tableNumber]);
+        if (persisted && persisted.token) {
+          tokenToUse = persisted.token;
         } else {
-          tokenToUse = existingTokenRow.token || tokenToUse;
+          dbRun('INSERT OR IGNORE INTO table_tokens (table_number, token) VALUES (?, ?)', [tableNumber, tokenToUse]);
+          const persistedAgain = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [tableNumber]);
+          if (persistedAgain && persistedAgain.token) tokenToUse = persistedAgain.token;
         }
+      }
 
-        const existingTableByToken = dbGet('SELECT * FROM tables WHERE token = ? ORDER BY id DESC LIMIT 1', [tokenToUse]);
-        if (existingTableByToken) {
-          // If the token already exists on a closed/paid table, reopen it rather than insert a duplicate token row.
-          if (existingTableByToken.status !== 'open') {
-            dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [existingTableByToken.id]);
-            dbRun('DELETE FROM orders WHERE table_id = ?', [existingTableByToken.id]);
-            dbRun('DELETE FROM waiter_calls WHERE table_id = ? OR table_token = ?', [existingTableByToken.id, tokenToUse]);
-            dbRun('UPDATE tables SET number = ?, persons = ?, status = ?, created_at = ? WHERE id = ?', [tableNumber, 2, 'open', Math.floor(Date.now() / 1000), existingTableByToken.id]);
+      let attempt = 0;
+      let lastError = null;
+      while (!tableRow && attempt < 4) {
+        attempt += 1;
+        try {
+          const existingTableByToken = dbGet('SELECT * FROM tables WHERE token = ? ORDER BY id DESC LIMIT 1', [tokenToUse]);
+          if (existingTableByToken) {
+            if (existingTableByToken.status !== 'open') {
+              dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [existingTableByToken.id]);
+              dbRun('DELETE FROM orders WHERE table_id = ?', [existingTableByToken.id]);
+              dbRun('DELETE FROM waiter_calls WHERE table_id = ? OR table_token = ?', [existingTableByToken.id, tokenToUse]);
+              dbRun('UPDATE tables SET number = ?, persons = ?, status = ?, created_at = ? WHERE id = ?', [tableNumber || existingTableByToken.number, 2, 'open', Math.floor(Date.now() / 1000), existingTableByToken.id]);
+              saveDb();
+              emitAdminUpdate('table_created');
+              emitTableUpdateByToken(tokenToUse, 'table_reopened', { tableNumber: tableNumber || existingTableByToken.number });
+            }
+            tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [existingTableByToken.id]);
+            break;
           }
-          tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [existingTableByToken.id]);
-        } else {
+
+          if (tableNumber == null) {
+            const maxRow = dbGet('SELECT MAX(number) as m FROM tables');
+            tableNumber = (maxRow && Number(maxRow.m)) ? Number(maxRow.m) + 1 : 1;
+          }
+
           const info = dbRun('INSERT INTO tables (number, persons, token, status) VALUES (?, ?, ?, ?)', [tableNumber, 2, tokenToUse, 'open']);
           saveDb();
           emitAdminUpdate('table_created');
           emitTableUpdateByToken(tokenToUse, 'table_created', { tableNumber });
           tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [info.lastInsertRowid]);
+          break;
+        } catch (e) {
+          lastError = e;
+          const msg = String(e.message || '').toLowerCase();
+          if (msg.includes('unique') || msg.includes('constraint') || msg.includes('token')) {
+            tokenToUse = uuidv4();
+            continue;
+          }
+          break;
         }
-      } catch (e) {
+      }
+
+      if (!tableRow) {
+        console.error('Failed to recover or create table for order:', String(lastError && lastError.message), { tableToken, table, requestedTableNumber });
         return res.status(404).json({ error: 'Mesa no encontrada o cerrada' });
       }
     }
@@ -2144,7 +2201,7 @@ async function startServer() {
     if (!tableToken) return res.status(400).json({ error: 'Falta token de mesa' });
 
     const sourceValue = String(source || '').trim().toLowerCase();
-    const isPaymentSource = sourceValue === 'pagar' || sourceValue === 'paypal';
+    const isPaymentSource = sourceValue === 'pagar' || sourceValue === 'paypal' || sourceValue === 'tarjeta' || sourceValue === 'datafono';
     const finalizedSources = [
       'mesa_finalizada',
       'mesa_finalizado',
