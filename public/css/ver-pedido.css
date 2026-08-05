@@ -26,6 +26,29 @@
   gap: .55rem;
 }
 
+.paypal-preview-box {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,.02);
+  padding: .8rem .9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .7rem;
+}
+
+.paypal-preview-brand {
+  color: #9dc2ff;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.paypal-preview-amount {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
 .ver-pedido-page .footer-actions .footer-btn {
   min-height: 48px;
 }

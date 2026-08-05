@@ -58,6 +58,13 @@ function renderCart() {
   finalizeOrderBtn.disabled = totals.units === 0;
 }
 
+function openPaypalPaymentModal() {
+  const totals = getOnlineCartTotals(cartItems);
+  const amountEl = document.getElementById('paypalPayAmount');
+  if (amountEl) amountEl.textContent = fmt(totals.total || 0);
+  openModal('paypalPaymentModal');
+}
+
 function updateItemQuantity(productId, delta) {
   const next = [];
   for (const item of cartItems) {
@@ -132,6 +139,7 @@ async function submitOnlineOrder(paymentMethod) {
 
   closeModal('phoneModal');
   closeModal('paymentChoiceModal');
+  closeModal('paypalPaymentModal');
   closeModal('pickupInfoModal');
   document.getElementById('orderCodeLabel').textContent = response.orderCode || '-';
 
@@ -201,12 +209,25 @@ document.querySelectorAll('.pay-method-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
     const method = String(btn.dataset.method || '').trim();
     if (!method) return;
+    if (method === 'paypal') {
+      closeModal('paymentChoiceModal');
+      openPaypalPaymentModal();
+      return;
+    }
     submitOnlineOrder(method);
   });
 });
 
 document.getElementById('closePaymentChoiceModal').addEventListener('click', () => closeModal('paymentChoiceModal'));
 document.getElementById('cancelPaymentChoiceBtn').addEventListener('click', () => closeModal('paymentChoiceModal'));
+document.getElementById('closePaypalPaymentModal').addEventListener('click', () => closeModal('paypalPaymentModal'));
+document.getElementById('cancelPaypalPaymentBtn').addEventListener('click', () => {
+  closeModal('paypalPaymentModal');
+  openModal('paymentChoiceModal');
+});
+document.getElementById('confirmPaypalPaymentBtn').addEventListener('click', () => {
+  submitOnlineOrder('paypal');
+});
 
 document.getElementById('closePickupInfoModal').addEventListener('click', () => closeModal('pickupInfoModal'));
 document.getElementById('cancelPickupInfoBtn').addEventListener('click', () => closeModal('pickupInfoModal'));

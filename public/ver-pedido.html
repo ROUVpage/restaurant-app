@@ -95,7 +95,7 @@
           </button>
           <button class="btn-ghost pay-method-btn" data-method="dataphone">
             <span class="pay-method-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M10 7h4M10 11h4M10 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="7" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 9.5c1.5 0 2.5 1 2.5 2.5v1c0 1.5-1 2.5-2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </span>
             <span>Pagar con datafono</span>
           </button>
@@ -103,6 +103,26 @@
       </div>
       <div class="modal-footer keep-row-mobile">
         <button class="btn-ghost" id="cancelPaymentChoiceBtn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="paypalPaymentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Pago con PayPal</h3>
+        <button class="modal-close" id="closePaypalPaymentModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-lead">Vas a realizar el pago online con PayPal.</p>
+        <div class="paypal-preview-box">
+          <div class="paypal-preview-brand">PayPal</div>
+          <div class="paypal-preview-amount" id="paypalPayAmount">0,00 €</div>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelPaypalPaymentBtn">Cancelar</button>
+        <button class="btn-primary" id="confirmPaypalPaymentBtn">Pagar ahora</button>
       </div>
     </div>
   </div>
