@@ -1116,7 +1116,17 @@ async function startServer() {
     if (!slotData) return { error: 'Turno no válido', code: 400 };
     if (!slotData.open) return { error: 'Este turno está marcado como ocupado', code: 409 };
     if (slotData.available <= 0) {
-      return { error: 'No hay hueco disponible para este turno', code: 409 };
+      // When fully booked, accept reservation as waitlist instead of failing.
+      const info = dbRun(
+        'INSERT INTO reservations (reservation_date, slot, name, phone, persons, status, source) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [reservationDate, slot, name, phone, persons, 'waitlist', source || 'public']
+      );
+      const reservation = dbGet('SELECT * FROM reservations WHERE id = ?', [info.lastInsertRowid]);
+      sendReservationNotification(reservation).catch(() => {});
+      saveDb();
+      emitAdminUpdate('reservation_waitlisted', { reservationId: reservation.id, date: reservationDate, slot });
+      emitReservationUpdate('reservation_waitlisted', { reservationId: reservation.id, date: reservationDate, slot });
+      return { reservation, availability: getAvailabilityForDate(reservationDate), waitlist: true };
     }
 
     const info = dbRun(
@@ -1960,8 +1970,43 @@ async function startServer() {
       if (t && t.token) tableToken = t.token;
     }
 
-    const tableRow = tableToken ? dbGet('SELECT * FROM tables WHERE token = ? AND status = ?', [tableToken, 'open']) : null;
-    if (!tableRow) return res.status(404).json({ error: 'Mesa no encontrada o cerrada' });
+    let tableRow = tableToken ? dbGet('SELECT * FROM tables WHERE token = ? AND status = ?', [tableToken, 'open']) : null;
+    if (!tableRow) {
+      // Attempt to recover: if token exists in table_tokens, reuse number; otherwise create a new table row so orders can be accepted.
+      try {
+        let tokenToUse = tableToken || uuidv4();
+        let tableNumber = null;
+        if (tableToken) {
+          const known = dbGet('SELECT table_number FROM table_tokens WHERE token = ?', [tableToken]);
+          if (known && known.table_number) tableNumber = known.table_number;
+        }
+        if (!tableNumber && Number.isInteger(Number(table))) {
+          tableNumber = Number(table);
+          const persisted = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [tableNumber]);
+          if (persisted && persisted.token) tokenToUse = persisted.token;
+        }
+        if (!tableNumber) {
+          const maxRow = dbGet('SELECT MAX(number) as m FROM tables');
+          tableNumber = (maxRow && Number(maxRow.m)) ? Number(maxRow.m) + 1 : 1;
+        }
+
+        // Ensure table_tokens mapping exists
+        const existingTokenRow = dbGet('SELECT token FROM table_tokens WHERE table_number = ?', [tableNumber]);
+        if (!existingTokenRow) {
+          dbRun('INSERT INTO table_tokens (table_number, token) VALUES (?, ?)', [tableNumber, tokenToUse]);
+        } else {
+          tokenToUse = existingTokenRow.token || tokenToUse;
+        }
+
+        const info = dbRun('INSERT INTO tables (number, persons, token, status) VALUES (?, ?, ?, ?)', [tableNumber, 2, tokenToUse, 'open']);
+        saveDb();
+        emitAdminUpdate('table_created');
+        emitTableUpdateByToken(tokenToUse, 'table_created', { tableNumber });
+        tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [info.lastInsertRowid]);
+      } catch (e) {
+        return res.status(404).json({ error: 'Mesa no encontrada o cerrada' });
+      }
+    }
     if (!items || items.length === 0) return res.status(400).json({ error: 'Pedido vacío' });
     if (!Array.isArray(items)) return res.status(400).json({ error: 'Formato de pedido inválido' });
     if (items.length > 120) return res.status(400).json({ error: 'Demasiados productos en un solo pedido' });

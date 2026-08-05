@@ -1,0 +1,135 @@
+{
+  "total": 400,
+  "by": [
+    {
+      "url": "https://restaurant-app-6678.onrender.com/api/orders",
+      "status": 404,
+      "count": 229,
+      "vus": {
+        "8": 21,
+        "13": 21,
+        "14": 21,
+        "15": 21,
+        "16": 20,
+        "20": 21,
+        "27": 21,
+        "30": 21,
+        "32": 21,
+        "33": 20,
+        "34": 21
+      },
+      "samples": [
+        {
+          "ts": 1785939328796,
+          "vu": 32,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/orders",
+          "method": "POST",
+          "status": 404,
+          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+        },
+        {
+          "ts": 1785939328825,
+          "vu": 27,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/orders",
+          "method": "POST",
+          "status": 404,
+          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+        },
+        {
+          "ts": 1785939328942,
+          "vu": 13,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/orders",
+          "method": "POST",
+          "status": 404,
+          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+        },
+        {
+          "ts": 1785939328942,
+          "vu": 8,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/orders",
+          "method": "POST",
+          "status": 404,
+          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+        },
+        {
+          "ts": 1785939329042,
+          "vu": 14,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/orders",
+          "method": "POST",
+          "status": 404,
+          "body": "{\"error\":\"Mesa no encontrada o cerrada\"}"
+        }
+      ]
+    },
+    {
+      "url": "https://restaurant-app-6678.onrender.com/api/reservations",
+      "status": 409,
+      "count": 171,
+      "vus": {
+        "1": 16,
+        "2": 15,
+        "4": 16,
+        "6": 16,
+        "7": 15,
+        "19": 16,
+        "21": 15,
+        "25": 16,
+        "28": 15,
+        "29": 16,
+        "31": 15
+      },
+      "samples": [
+        {
+          "ts": 1785939329311,
+          "vu": 4,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
+          "method": "POST",
+          "status": 409,
+          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
+        },
+        {
+          "ts": 1785939329326,
+          "vu": 25,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
+          "method": "POST",
+          "status": 409,
+          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
+        },
+        {
+          "ts": 1785939329342,
+          "vu": 1,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
+          "method": "POST",
+          "status": 409,
+          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
+        },
+        {
+          "ts": 1785939329497,
+          "vu": 29,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
+          "method": "POST",
+          "status": 409,
+          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
+        },
+        {
+          "ts": 1785939329501,
+          "vu": 19,
+          "iter": 0,
+          "url": "https://restaurant-app-6678.onrender.com/api/reservations",
+          "method": "POST",
+          "status": 409,
+          "body": "{\"error\":\"No hay hueco disponible para este turno\"}"
+        }
+      ]
+    }
+  ]
+}
