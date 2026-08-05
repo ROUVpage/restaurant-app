@@ -170,6 +170,17 @@ function normalizeDate(value) {
   return null;
 }
 
+function normalizeSpanishPhone(rawPhone) {
+  let cleanPhone = String(rawPhone || '').replace(/\D+/g, '').trim();
+  if (cleanPhone.startsWith('34') && cleanPhone.length === 11) {
+    cleanPhone = cleanPhone.slice(2);
+  }
+  if (cleanPhone.startsWith('0') && cleanPhone.length === 10) {
+    cleanPhone = cleanPhone.slice(1);
+  }
+  return cleanPhone;
+}
+
 function getDateRangeForMonth(monthValue) {
   if (!/^\d{4}-\d{2}$/.test(monthValue || '')) return null;
   const [year, month] = monthValue.split('-').map(Number);
@@ -937,6 +948,26 @@ async function startServer() {
     status TEXT DEFAULT 'disconnected',
     updated_at INTEGER DEFAULT (strftime('%s','now'))
   )`);
+  db.run(`CREATE TABLE IF NOT EXISTS online_orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_code TEXT UNIQUE NOT NULL,
+    phone TEXT NOT NULL,
+    mode TEXT NOT NULL,
+    address TEXT,
+    payment_method TEXT,
+    status TEXT DEFAULT 'received',
+    total REAL NOT NULL DEFAULT 0,
+    created_at INTEGER DEFAULT (strftime('%s','now')),
+    updated_at INTEGER DEFAULT (strftime('%s','now'))
+  )`);
+  db.run(`CREATE TABLE IF NOT EXISTS online_order_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    online_order_id INTEGER NOT NULL,
+    product_id TEXT NOT NULL,
+    product_name TEXT NOT NULL,
+    product_price REAL NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1
+  )`);
 
   // Backward-compatible schema upgrades for waiter calls metadata.
   const waiterCallsColumns = dbAll('PRAGMA table_info(waiter_calls)');
@@ -973,6 +1004,8 @@ async function startServer() {
   db.run('CREATE INDEX IF NOT EXISTS idx_waiter_calls_status_table_created ON waiter_calls(status, table_id, created_at)');
   db.run('CREATE INDEX IF NOT EXISTS idx_waiter_calls_token_status_created ON waiter_calls(table_token, status, created_at)');
   db.run('CREATE INDEX IF NOT EXISTS idx_reservations_date_slot_status ON reservations(reservation_date, slot, status)');
+  db.run('CREATE INDEX IF NOT EXISTS idx_online_orders_phone_created ON online_orders(phone, created_at)');
+  db.run('CREATE INDEX IF NOT EXISTS idx_online_order_items_order_id ON online_order_items(online_order_id)');
 
   function getDaySettings(date) {
     const row = dbGet('SELECT * FROM reservation_day_settings WHERE reservation_date = ?', [date]);
@@ -1074,16 +1107,8 @@ async function startServer() {
     if (!RESERVATION_SLOTS[resolvedSlot]) return { ok: false, error: 'Turno inválido' };
 
     const cleanName = String(name || '').trim();
-    let cleanPhone = String(phone || '').replace(/\D+/g, '').trim();
+    const cleanPhone = normalizeSpanishPhone(phone);
     const parsedPersons = Number(persons);
-
-    // Normalize common international/local formats like +34 600 000 000 or 0034 600000000
-    if (cleanPhone.startsWith('34') && cleanPhone.length === 11) {
-      cleanPhone = cleanPhone.slice(2);
-    }
-    if (cleanPhone.startsWith('0') && cleanPhone.length === 10) {
-      cleanPhone = cleanPhone.slice(1);
-    }
 
     // Be more permissive with names: allow digits and common chars (keeps validation lightweight)
     if (!/^[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9' \-]{1,79}$/.test(cleanName)) {
@@ -1315,6 +1340,157 @@ async function startServer() {
 
   // ── PRODUCTS ──────────────────────────────────────────────────────────────
   app.get('/api/products', (req, res) => res.json(PRODUCTS));
+
+  // ── ONLINE ORDERS ─────────────────────────────────────────────────────────
+  app.post('/api/online-orders', (req, res) => {
+    const { phone, mode, address, paymentMethod, items } = req.body || {};
+
+    const normalizedPhone = normalizeSpanishPhone(phone);
+    if (!/^([67]\d{8})$/.test(normalizedPhone)) {
+      return res.status(400).json({ error: 'Telefono invalido: debe tener 9 digitos y empezar por 6 o 7' });
+    }
+
+    const normalizedMode = String(mode || '').toLowerCase() === 'pickup' ? 'pickup' : 'delivery';
+    const normalizedAddress = String(address || '').trim();
+
+    if (normalizedMode === 'delivery' && normalizedAddress.length < 5) {
+      return res.status(400).json({ error: 'Direccion de entrega invalida' });
+    }
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Pedido vacio' });
+    }
+
+    const paymentMap = {
+      paypal: 'paypal',
+      cash: 'efectivo',
+      dataphone: 'datafono',
+      pickup_local: 'recoger_en_local'
+    };
+    const normalizedPaymentMethod = paymentMap[String(paymentMethod || '').toLowerCase()] || String(paymentMethod || '').toLowerCase();
+
+    const sanitizedItems = [];
+    for (const rawItem of items) {
+      const productId = String(rawItem?.productId || rawItem?.product_id || '').trim();
+      const quantity = Number(rawItem?.quantity || rawItem?.qty || 0);
+      if (!productId || !Number.isInteger(quantity) || quantity <= 0 || quantity > 100) {
+        return res.status(400).json({ error: 'Formato de productos invalido' });
+      }
+
+      let catalogItem = null;
+      for (const categoryItems of Object.values(PRODUCTS)) {
+        const found = categoryItems.find((item) => item.id === productId);
+        if (found) {
+          catalogItem = found;
+          break;
+        }
+      }
+
+      if (!catalogItem) {
+        return res.status(400).json({ error: `Producto no valido: ${productId}` });
+      }
+
+      sanitizedItems.push({
+        productId,
+        productName: catalogItem.name,
+        productPrice: Number(catalogItem.price || 0),
+        quantity
+      });
+    }
+
+    const total = sanitizedItems.reduce((sum, item) => sum + Number(item.productPrice) * Number(item.quantity), 0);
+    if (!(total > 0)) {
+      return res.status(400).json({ error: 'Total de pedido invalido' });
+    }
+
+    const orderCode = `ON-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`;
+
+    try {
+      db.run('BEGIN');
+      const orderInfo = dbRun(
+        `INSERT INTO online_orders (order_code, phone, mode, address, payment_method, status, total)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          orderCode,
+          normalizedPhone,
+          normalizedMode,
+          normalizedAddress || null,
+          normalizedPaymentMethod || null,
+          'received',
+          total
+        ]
+      );
+
+      const onlineOrderId = orderInfo.lastInsertRowid;
+      sanitizedItems.forEach((item) => {
+        dbRun(
+          `INSERT INTO online_order_items (online_order_id, product_id, product_name, product_price, quantity)
+           VALUES (?, ?, ?, ?, ?)`,
+          [onlineOrderId, item.productId, item.productName, item.productPrice, item.quantity]
+        );
+      });
+
+      db.run('COMMIT');
+      saveDb();
+      emitAdminUpdate('online_order_created', { onlineOrderId, orderCode, mode: normalizedMode });
+
+      return res.json({
+        success: true,
+        orderId: onlineOrderId,
+        orderCode,
+        status: 'received',
+        etaMinutes: normalizedMode === 'pickup' ? 25 : 40
+      });
+    } catch (_) {
+      try { db.run('ROLLBACK'); } catch (_) {}
+      return res.status(500).json({ error: 'No se pudo registrar el pedido online' });
+    }
+  });
+
+  app.get('/api/online-orders/track', (req, res) => {
+    const normalizedPhone = normalizeSpanishPhone(req.query.phone);
+    if (!/^([67]\d{8})$/.test(normalizedPhone)) {
+      return res.status(400).json({ error: 'Telefono invalido' });
+    }
+
+    const order = dbGet(
+      `SELECT * FROM online_orders WHERE phone = ? ORDER BY created_at DESC, id DESC LIMIT 1`,
+      [normalizedPhone]
+    );
+
+    if (!order) {
+      return res.status(404).json({ error: 'No hemos encontrado pedidos para ese telefono' });
+    }
+
+    const items = dbAll(
+      `SELECT product_id, product_name, product_price, quantity
+       FROM online_order_items
+       WHERE online_order_id = ?
+       ORDER BY id ASC`,
+      [order.id]
+    );
+
+    return res.json({
+      order: {
+        id: order.id,
+        orderCode: order.order_code,
+        phone: order.phone,
+        mode: order.mode,
+        address: order.address,
+        paymentMethod: order.payment_method,
+        status: order.status,
+        total: Number(order.total || 0),
+        createdAt: order.created_at,
+        updatedAt: order.updated_at
+      },
+      items: items.map((item) => ({
+        productId: item.product_id,
+        productName: item.product_name,
+        productPrice: Number(item.product_price || 0),
+        quantity: Number(item.quantity || 0)
+      }))
+    });
+  });
 
   // ── WEBHOOK TEST (diagnóstico) ───────────────────────────────────────────
   app.get('/api/test-webhook', async (req, res) => {
@@ -2485,6 +2661,11 @@ async function startServer() {
   app.get('/reservas', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reservas.html')));
   app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy.html')));
   app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'public', 'terms.html')));
+  app.get('/inicio', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+  app.get('/carta', (req, res) => res.sendFile(path.join(__dirname, 'public', 'carta.html')));
+  app.get('/pedido-online', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pedido-online.html')));
+  app.get('/ver-pedido', (req, res) => res.sendFile(path.join(__dirname, 'public', 'ver-pedido.html')));
+  app.get('/seguimiento', (req, res) => res.sendFile(path.join(__dirname, 'public', 'seguimiento.html')));
   app.get('/mesa/:token', (req, res) => res.sendFile(path.join(__dirname, 'public', 'mesa.html')));
   app.get('/mesa/:token/pedido', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pedido.html')));
   app.get('/mesa/:token/pagar', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pagar.html')));

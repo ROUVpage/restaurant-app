@@ -3,60 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carta del Restaurante</title>
+<title>El Rincón - Inicio</title>
 <link rel="stylesheet" href="/css/main.css">
-<link rel="stylesheet" href="/css/mesa.css">
 <link rel="stylesheet" href="/css/index.css">
 </head>
-<body class="mesa-page generic-menu-page">
+<body class="home-page">
 
-  <header class="mesa-header">
-    <div class="header-brand">
-      <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
-        <path d="M14 18c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v2a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8v-2Z" stroke="#c9a84c" stroke-width="1.5"/>
-        <path d="M24 28v6M20 34h8" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
-        <circle cx="19" cy="12" r="1.5" fill="#c9a84c"/>
-        <circle cx="24" cy="10" r="1.5" fill="#c9a84c"/>
-        <circle cx="29" cy="12" r="1.5" fill="#c9a84c"/>
-      </svg>
-      <div>
-        <span class="brand-name">El Rincón</span>
-        <span class="mesa-label">Carta general</span>
-      </div>
-    </div>
-    <div class="header-actions">
-      <div class="header-info">Nuestra carta</div>
-      <a class="reserve-header-btn" href="/reservas"><span class="label-full">Reservar mesa</span><span class="label-short">Reservar</span></a>
-    </div>
+  <header class="home-header">
+    <div class="home-brand">El Rincón</div>
+    <nav class="home-nav">
+      <a href="/carta">Nuestra carta</a>
+      <a href="/seguimiento">Seguimiento pedido</a>
+      <a href="/reservas">Reservar mesa</a>
+    </nav>
   </header>
 
-  <nav class="category-nav" id="categoryNav">
-    <button class="cat-btn active" data-cat="tapas">Tapas</button>
-    <button class="cat-btn" data-cat="raciones">Raciones</button>
-    <button class="cat-btn" data-cat="bebidas">Bebidas</button>
-    <button class="cat-btn" data-cat="postres">Postres</button>
-  </nav>
+  <main class="home-hero">
+    <section class="order-widget" aria-label="Tipo de pedido">
+      <div class="order-mode-toggle" role="tablist" aria-label="Modo de entrega">
+        <button id="modeDeliveryBtn" class="mode-btn active" type="button" role="tab" aria-selected="true">A domicilio</button>
+        <button id="modePickupBtn" class="mode-btn" type="button" role="tab" aria-selected="false">Recoger</button>
+      </div>
 
-  <main class="products-area" id="productsArea">
-    <section class="products-section" id="tapas">
-      <h2 class="section-title">Tapas</h2>
-      <div class="products-grid" id="grid-tapas"></div>
-    </section>
-    <section class="products-section" id="raciones">
-      <h2 class="section-title">Raciones</h2>
-      <div class="products-grid" id="grid-raciones"></div>
-    </section>
-    <section class="products-section" id="bebidas">
-      <h2 class="section-title">Bebidas</h2>
-      <div class="products-grid" id="grid-bebidas"></div>
-    </section>
-    <section class="products-section" id="postres">
-      <h2 class="section-title">Postres</h2>
-      <div class="products-grid" id="grid-postres"></div>
+      <div class="order-input-row">
+        <input id="orderLocationInput" type="text" autocomplete="street-address" placeholder="Introduce tu direccion">
+        <button id="startOrderBtn" type="button">Haz tu pedido</button>
+      </div>
+      <p id="orderHint" class="order-hint">Te llevamos el pedido a la direccion indicada.</p>
     </section>
   </main>
 
-  <script src="/js/utils.js"></script>
   <script src="/js/index.js"></script>
 </body>
 </html>

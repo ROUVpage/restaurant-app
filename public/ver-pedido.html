@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ver pedido</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/mesa.css">
+<link rel="stylesheet" href="/css/ver-pedido.css">
+</head>
+<body class="mesa-page ver-pedido-page">
+
+  <header class="mesa-header">
+    <div class="header-brand">
+      <button class="btn-back" id="backBtn" aria-label="Volver">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+        <path d="M14 18c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v2a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8v-2Z" stroke="#c9a84c" stroke-width="1.5"/>
+        <path d="M24 28v6M20 34h8" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="19" cy="12" r="1.5" fill="#c9a84c"/>
+        <circle cx="24" cy="10" r="1.5" fill="#c9a84c"/>
+        <circle cx="29" cy="12" r="1.5" fill="#c9a84c"/>
+      </svg>
+      <div>
+        <span class="brand-name">Resumen de pedido</span>
+        <span class="mesa-label" id="orderContextLabel">Pedido online</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="ver-main">
+    <section class="bill-container">
+      <div class="bill-header">
+        <h2>Tu pedido</h2>
+        <p id="orderAddressLine"></p>
+      </div>
+      <div id="orderItems" class="bill-items"></div>
+      <div class="bill-total bill-total-lg">
+        <span>TOTAL</span>
+        <span id="orderTotal">0,00 €</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mesa-footer">
+    <div class="footer-actions keep-row-mobile keep-row-mobile-2">
+      <button class="footer-btn btn-outline" id="continueShoppingBtn">Seguir pidiendo</button>
+      <button class="footer-btn btn-gold" id="finalizeOrderBtn" disabled>Finalizar pedido</button>
+    </div>
+  </footer>
+
+  <div class="modal-overlay hidden" id="phoneModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Numero de telefono</h3>
+        <button class="modal-close" id="closePhoneModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-lead">Lo necesitamos para que puedas seguir tu pedido.</p>
+        <div class="form-group">
+          <label for="phoneInput">Telefono</label>
+          <input id="phoneInput" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Ejemplo: 612345678" maxlength="15">
+        </div>
+        <p id="phoneError" class="form-error hidden-error"></p>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelPhoneBtn">Cancelar</button>
+        <button class="btn-primary" id="confirmPhoneBtn">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="paymentChoiceModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Metodo de pago</h3>
+        <button class="modal-close" id="closePaymentChoiceModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-lead">Selecciona como quieres pagar tu pedido a domicilio.</p>
+        <div class="payment-grid">
+          <button class="btn-primary pay-method-btn" data-method="paypal">PayPal</button>
+          <button class="btn-secondary pay-method-btn" data-method="cash">Efectivo</button>
+          <button class="btn-ghost pay-method-btn" data-method="dataphone">Datafono</button>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelPaymentChoiceBtn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="pickupInfoModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Pedido para recoger</h3>
+        <button class="modal-close" id="closePickupInfoModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-lead">En 25 minutos tu pedido estara listo para recoger en el local.</p>
+        <p class="pickup-address" id="pickupAddressLine">Calle del local - Recogida en barra</p>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="cancelPickupInfoBtn">Cancelar</button>
+        <button class="btn-primary" id="confirmPickupInfoBtn">Confirmar pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="successModal">
+    <div class="modal">
+      <div class="modal-body center">
+        <h3>Pedido confirmado</h3>
+        <p class="modal-lead">Hemos recibido tu pedido.</p>
+        <p class="order-code">Codigo: <strong id="orderCodeLabel">-</strong></p>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="newOrderBtn">Nuevo pedido</button>
+        <button class="btn-primary" id="goTrackingBtn">Ir a seguimiento</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/online-cart.js"></script>
+  <script src="/js/ver-pedido.js"></script>
+</body>
+</html>

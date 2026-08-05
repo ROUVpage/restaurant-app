@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seguimiento del pedido</title>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/seguimiento.css">
+</head>
+<body class="tracking-page">
+
+  <header class="tracking-header">
+    <a class="tracking-back" href="/inicio" aria-label="Volver a inicio">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Inicio
+    </a>
+    <h1>Seguimiento del pedido</h1>
+    <a class="tracking-link" href="/carta">Ver carta</a>
+  </header>
+
+  <main class="tracking-main">
+    <section class="tracking-card">
+      <h2>Introduce tu telefono</h2>
+      <p>Te mostramos el ultimo pedido vinculado a ese numero.</p>
+
+      <div class="tracking-form">
+        <input id="trackPhoneInput" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Ejemplo: 612345678" maxlength="15">
+        <button id="trackOrderBtn" class="btn-primary" type="button">Buscar pedido</button>
+      </div>
+      <p id="trackError" class="track-error hidden"></p>
+    </section>
+
+    <section class="tracking-result hidden" id="trackingResult">
+      <div class="result-head">
+        <div>
+          <p class="result-label">Codigo</p>
+          <h3 id="resultCode">-</h3>
+        </div>
+        <span class="status-pill" id="resultStatus">-</span>
+      </div>
+      <p class="result-meta" id="resultMeta">-</p>
+      <div class="result-items" id="resultItems"></div>
+      <div class="result-total">
+        <span>Total</span>
+        <strong id="resultTotal">0,00 €</strong>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/online-cart.js"></script>
+  <script src="/js/seguimiento.js"></script>
+</body>
+</html>

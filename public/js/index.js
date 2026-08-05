@@ -1,43 +1,61 @@
-// Generic menu landing (no table context, no actions).
+const LOCAL_PICKUP_ADDRESS = 'Calle del local - Recogida en barra';
+const ONLINE_ORDER_CONTEXT_KEY = 'online_order_context_v1';
 
-(async function initGenericMenu() {
-  setupNav();
-  const products = await apiCached('/api/products', { ttlMs: 120000 });
-  renderProducts(products);
-})();
+const state = {
+  mode: 'delivery'
+};
 
-function renderProducts(products) {
-  for (const [cat, items] of Object.entries(products)) {
-    const grid = document.getElementById(`grid-${cat}`);
-    if (!grid) continue;
-    grid.innerHTML = items.map(p => `
-      <div class="product-card">
-        <div class="product-name">${p.name}</div>
-        <div class="product-price">${fmt(p.price)}</div>
-        <div class="product-desc">${p.description}</div>
-      </div>
-    `).join('');
+const modeDeliveryBtn = document.getElementById('modeDeliveryBtn');
+const modePickupBtn = document.getElementById('modePickupBtn');
+const orderLocationInput = document.getElementById('orderLocationInput');
+const startOrderBtn = document.getElementById('startOrderBtn');
+const orderHint = document.getElementById('orderHint');
+
+function setMode(nextMode) {
+  state.mode = nextMode === 'pickup' ? 'pickup' : 'delivery';
+  const isPickup = state.mode === 'pickup';
+
+  modeDeliveryBtn.classList.toggle('active', !isPickup);
+  modeDeliveryBtn.setAttribute('aria-selected', String(!isPickup));
+  modePickupBtn.classList.toggle('active', isPickup);
+  modePickupBtn.setAttribute('aria-selected', String(isPickup));
+
+  if (isPickup) {
+    orderLocationInput.value = LOCAL_PICKUP_ADDRESS;
+    orderLocationInput.placeholder = 'Direccion del local';
+    orderHint.textContent = 'Recogida en local. Te avisaremos cuando este listo.';
+  } else {
+    if (orderLocationInput.value === LOCAL_PICKUP_ADDRESS) {
+      orderLocationInput.value = '';
+    }
+    orderLocationInput.placeholder = 'Introduce tu direccion';
+    orderHint.textContent = 'Te llevamos el pedido a la direccion indicada.';
   }
 }
 
-function setupNav() {
-  const area = document.getElementById('productsArea');
-  const btns = document.querySelectorAll('.cat-btn');
-  const sections = document.querySelectorAll('.products-section');
+modeDeliveryBtn?.addEventListener('click', () => setMode('delivery'));
+modePickupBtn?.addEventListener('click', () => setMode('pickup'));
 
-  area?.classList.add('section-paged');
+startOrderBtn?.addEventListener('click', () => {
+  const rawAddress = (orderLocationInput?.value || '').trim();
+  if (!rawAddress) {
+    orderLocationInput?.focus();
+    return;
+  }
 
-  const activateSection = (cat) => {
-    btns.forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
-    sections.forEach(s => s.classList.toggle('active', s.id === cat));
-  };
+  try {
+    localStorage.setItem(ONLINE_ORDER_CONTEXT_KEY, JSON.stringify({
+      mode: state.mode,
+      address: rawAddress
+    }));
+  } catch (_) {}
 
-  btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      activateSection(btn.dataset.cat);
-    });
+  const params = new URLSearchParams({
+    mode: state.mode,
+    address: rawAddress
   });
 
-  const initiallyActive = document.querySelector('.cat-btn.active')?.dataset.cat || sections[0]?.id;
-  if (initiallyActive) activateSection(initiallyActive);
-}
+  location.href = `/pedido-online?${params.toString()}`;
+});
+
+setMode('delivery');

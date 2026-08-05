@@ -1,0 +1,28 @@
+.generic-menu-page {
+  padding-bottom: 0;
+}
+
+.carta-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.carta-actions a {
+  color: var(--text-primary);
+  font-size: .9rem;
+}
+
+.carta-actions a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+  .carta-actions {
+    gap: .65rem;
+  }
+
+  .carta-actions a {
+    font-size: .82rem;
+  }
+}

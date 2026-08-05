@@ -1,0 +1,45 @@
+.pedido-online-page {
+  background: radial-gradient(circle at 0% 0%, rgba(201, 168, 76, .12), transparent 28%), var(--bg-base);
+}
+
+.context-pill {
+  border: 1px solid rgba(201, 168, 76, .6);
+  color: #ffe2a3;
+  border-radius: 999px;
+  padding: .32rem .66rem;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.online-context {
+  padding: .65rem 1.25rem;
+  color: var(--text-secondary);
+  font-size: .86rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, .02);
+}
+
+.product-qty-row {
+  margin-top: .6rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.qty-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.online-footer-actions .footer-btn {
+  min-height: 48px;
+}
+
+@media (max-width: 760px) {
+  .online-context {
+    font-size: .8rem;
+    padding: .58rem 1rem;
+  }
+}
