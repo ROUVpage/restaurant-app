@@ -1403,7 +1403,19 @@ async function startServer() {
       return res.status(400).json({ error: 'Total de pedido invalido' });
     }
 
-    const orderCode = `ON-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`;
+    let orderCode = null;
+    for (let attempt = 0; attempt < 25; attempt += 1) {
+      const candidate = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
+      const exists = dbGet('SELECT id FROM online_orders WHERE order_code = ? LIMIT 1', [candidate]);
+      if (!exists) {
+        orderCode = candidate;
+        break;
+      }
+    }
+
+    if (!orderCode) {
+      return res.status(503).json({ error: 'No se pudo generar codigo de pedido. Intenta de nuevo.' });
+    }
 
     try {
       db.run('BEGIN');

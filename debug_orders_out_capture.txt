@@ -1,0 +1,38 @@
+﻿requestStatus 404
+requestBody {"table":1,"items":[{"productId":"tap1","productName":"Patatas Bravas","productPrice":4.5,"quantity":1}]}
+responseBody {"error":"Mesa no encontrada o cerrada"}
+tablesNumber1 [
+  {
+    "columns": [
+      "id",
+      "number",
+      "token",
+      "status",
+      "created_at"
+    ],
+    "values": [
+      [
+        10,
+        1,
+        "55001c68-a8ab-452f-9dce-6bb0c2de58dc",
+        "archived",
+        1785943692
+      ]
+    ]
+  }
+]
+tableTokens1 [
+  {
+    "columns": [
+      "table_number",
+      "token"
+    ],
+    "values": [
+      [
+        1,
+        "55001c68-a8ab-452f-9dce-6bb0c2de58dc"
+      ]
+    ]
+  }
+]
+

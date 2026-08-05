@@ -1,7 +1,7 @@
 [
   {
-    "ts": 1785940497522,
-    "vu": 41,
+    "ts": 1785941453575,
+    "vu": 25,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -9,8 +9,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497524,
-    "vu": 49,
+    "ts": 1785941453711,
+    "vu": 13,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -18,8 +18,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497603,
-    "vu": 48,
+    "ts": 1785941453793,
+    "vu": 15,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -27,8 +27,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497605,
-    "vu": 46,
+    "ts": 1785941453711,
+    "vu": 20,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -36,8 +36,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497605,
-    "vu": 28,
+    "ts": 1785941453711,
+    "vu": 16,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -45,8 +45,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497614,
-    "vu": 43,
+    "ts": 1785941453711,
+    "vu": 11,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -54,8 +54,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497616,
-    "vu": 44,
+    "ts": 1785941453711,
+    "vu": 14,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -63,8 +63,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497703,
-    "vu": 47,
+    "ts": 1785941453711,
+    "vu": 17,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -72,8 +72,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497717,
-    "vu": 45,
+    "ts": 1785941453865,
+    "vu": 19,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -81,8 +81,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497759,
-    "vu": 50,
+    "ts": 1785941454255,
+    "vu": 24,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -90,8 +90,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940497936,
-    "vu": 42,
+    "ts": 1785941454280,
+    "vu": 18,
     "iter": 0,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -99,8 +99,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940498982,
-    "vu": 49,
+    "ts": 1785941455239,
+    "vu": 11,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -108,8 +108,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499003,
-    "vu": 41,
+    "ts": 1785941455263,
+    "vu": 14,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -117,8 +117,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499023,
-    "vu": 46,
+    "ts": 1785941455267,
+    "vu": 15,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -126,8 +126,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499023,
-    "vu": 43,
+    "ts": 1785941455267,
+    "vu": 17,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -135,8 +135,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499027,
-    "vu": 28,
+    "ts": 1785941455267,
+    "vu": 20,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -144,8 +144,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499042,
-    "vu": 48,
+    "ts": 1785941455272,
+    "vu": 16,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -153,8 +153,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499060,
-    "vu": 44,
+    "ts": 1785941455286,
+    "vu": 13,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -162,8 +162,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499208,
-    "vu": 45,
+    "ts": 1785941455287,
+    "vu": 19,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -171,8 +171,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499208,
-    "vu": 47,
+    "ts": 1785941455292,
+    "vu": 25,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -180,8 +180,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499210,
-    "vu": 50,
+    "ts": 1785941455681,
+    "vu": 18,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -189,8 +189,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940499344,
-    "vu": 42,
+    "ts": 1785941455688,
+    "vu": 24,
     "iter": 1,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -198,8 +198,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500645,
-    "vu": 49,
+    "ts": 1785941456778,
+    "vu": 13,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -207,8 +207,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500648,
-    "vu": 48,
+    "ts": 1785941456778,
+    "vu": 17,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -216,8 +216,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500651,
-    "vu": 41,
+    "ts": 1785941456779,
+    "vu": 25,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -225,8 +225,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500651,
-    "vu": 28,
+    "ts": 1785941456785,
+    "vu": 15,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -234,8 +234,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500706,
-    "vu": 46,
+    "ts": 1785941456785,
+    "vu": 14,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -243,8 +243,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500727,
-    "vu": 44,
+    "ts": 1785941456796,
+    "vu": 11,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -252,8 +252,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500727,
-    "vu": 47,
+    "ts": 1785941456797,
+    "vu": 19,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -261,8 +261,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500730,
-    "vu": 50,
+    "ts": 1785941456802,
+    "vu": 20,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -270,8 +270,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500730,
-    "vu": 45,
+    "ts": 1785941456981,
+    "vu": 16,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -279,8 +279,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940500768,
-    "vu": 42,
+    "ts": 1785941457159,
+    "vu": 24,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -288,8 +288,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940501011,
-    "vu": 43,
+    "ts": 1785941457166,
+    "vu": 18,
     "iter": 2,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -297,8 +297,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502056,
-    "vu": 49,
+    "ts": 1785941458367,
+    "vu": 25,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -306,8 +306,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502061,
-    "vu": 48,
+    "ts": 1785941458368,
+    "vu": 17,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -315,8 +315,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502096,
-    "vu": 41,
+    "ts": 1785941458370,
+    "vu": 14,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -324,8 +324,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502107,
-    "vu": 28,
+    "ts": 1785941458382,
+    "vu": 19,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -333,8 +333,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502132,
-    "vu": 46,
+    "ts": 1785941458388,
+    "vu": 13,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -342,8 +342,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502143,
-    "vu": 44,
+    "ts": 1785941458392,
+    "vu": 15,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -351,8 +351,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502152,
-    "vu": 45,
+    "ts": 1785941458474,
+    "vu": 11,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -360,8 +360,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502168,
-    "vu": 47,
+    "ts": 1785941458508,
+    "vu": 16,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -369,8 +369,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502242,
-    "vu": 42,
+    "ts": 1785941458581,
+    "vu": 24,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -378,8 +378,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502259,
-    "vu": 50,
+    "ts": 1785941458638,
+    "vu": 20,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -387,8 +387,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940502421,
-    "vu": 43,
+    "ts": 1785941458659,
+    "vu": 18,
     "iter": 3,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -396,8 +396,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503503,
-    "vu": 41,
+    "ts": 1785941459791,
+    "vu": 14,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -405,8 +405,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503503,
-    "vu": 48,
+    "ts": 1785941459791,
+    "vu": 17,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -414,8 +414,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503504,
-    "vu": 49,
+    "ts": 1785941459792,
+    "vu": 25,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -423,8 +423,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503531,
-    "vu": 28,
+    "ts": 1785941459800,
+    "vu": 19,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -432,8 +432,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503557,
-    "vu": 46,
+    "ts": 1785941459805,
+    "vu": 13,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -441,8 +441,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503570,
-    "vu": 44,
+    "ts": 1785941459814,
+    "vu": 15,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -450,8 +450,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503617,
-    "vu": 45,
+    "ts": 1785941459886,
+    "vu": 11,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -459,8 +459,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503633,
-    "vu": 47,
+    "ts": 1785941459925,
+    "vu": 16,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -468,8 +468,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503711,
-    "vu": 42,
+    "ts": 1785941459991,
+    "vu": 24,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -477,8 +477,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503771,
-    "vu": 50,
+    "ts": 1785941460060,
+    "vu": 20,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -486,8 +486,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940503921,
-    "vu": 43,
+    "ts": 1785941460071,
+    "vu": 18,
     "iter": 4,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -495,8 +495,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940504940,
-    "vu": 41,
+    "ts": 1785941461191,
+    "vu": 17,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -504,8 +504,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505010,
-    "vu": 46,
+    "ts": 1785941461217,
+    "vu": 19,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -513,8 +513,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505010,
-    "vu": 49,
+    "ts": 1785941461239,
+    "vu": 25,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -522,8 +522,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505011,
-    "vu": 44,
+    "ts": 1785941461239,
+    "vu": 13,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -531,8 +531,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505013,
-    "vu": 28,
+    "ts": 1785941461245,
+    "vu": 15,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -540,8 +540,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505030,
-    "vu": 45,
+    "ts": 1785941461262,
+    "vu": 14,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -549,8 +549,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505113,
-    "vu": 42,
+    "ts": 1785941461318,
+    "vu": 11,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -558,8 +558,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505131,
-    "vu": 47,
+    "ts": 1785941461351,
+    "vu": 16,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -567,8 +567,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505209,
-    "vu": 50,
+    "ts": 1785941461415,
+    "vu": 24,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -576,8 +576,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505255,
-    "vu": 48,
+    "ts": 1785941461488,
+    "vu": 18,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -585,8 +585,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940505335,
-    "vu": 43,
+    "ts": 1785941461497,
+    "vu": 20,
     "iter": 5,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -594,8 +594,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506357,
-    "vu": 41,
+    "ts": 1785941462616,
+    "vu": 17,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -603,8 +603,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506416,
-    "vu": 44,
+    "ts": 1785941462646,
+    "vu": 19,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -612,8 +612,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506429,
-    "vu": 28,
+    "ts": 1785941462666,
+    "vu": 14,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -621,8 +621,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506434,
-    "vu": 49,
+    "ts": 1785941462666,
+    "vu": 25,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -630,8 +630,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506448,
-    "vu": 46,
+    "ts": 1785941462670,
+    "vu": 15,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -639,8 +639,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506506,
-    "vu": 45,
+    "ts": 1785941462673,
+    "vu": 13,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -648,8 +648,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506515,
-    "vu": 42,
+    "ts": 1785941462738,
+    "vu": 11,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -657,8 +657,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506605,
-    "vu": 47,
+    "ts": 1785941462754,
+    "vu": 16,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -666,8 +666,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506661,
-    "vu": 50,
+    "ts": 1785941462834,
+    "vu": 24,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -675,8 +675,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506711,
-    "vu": 48,
+    "ts": 1785941462901,
+    "vu": 18,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -684,8 +684,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940506802,
-    "vu": 43,
+    "ts": 1785941462906,
+    "vu": 20,
     "iter": 6,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -693,8 +693,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940508824,
-    "vu": 47,
+    "ts": 1785941464027,
+    "vu": 17,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -702,8 +702,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940508830,
-    "vu": 42,
+    "ts": 1785941464049,
+    "vu": 19,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -711,8 +711,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940508830,
-    "vu": 45,
+    "ts": 1785941464079,
+    "vu": 25,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -720,8 +720,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940508833,
-    "vu": 49,
+    "ts": 1785941464093,
+    "vu": 14,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -729,8 +729,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940508834,
-    "vu": 46,
+    "ts": 1785941464093,
+    "vu": 15,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -738,8 +738,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940509039,
-    "vu": 43,
+    "ts": 1785941464095,
+    "vu": 13,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -747,8 +747,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940509039,
-    "vu": 44,
+    "ts": 1785941464197,
+    "vu": 16,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -756,8 +756,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940509039,
-    "vu": 28,
+    "ts": 1785941464284,
+    "vu": 24,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -765,8 +765,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940509055,
-    "vu": 41,
+    "ts": 1785941464320,
+    "vu": 18,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -774,8 +774,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940509057,
-    "vu": 50,
+    "ts": 1785941464326,
+    "vu": 20,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -783,8 +783,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940509111,
-    "vu": 48,
+    "ts": 1785941464457,
+    "vu": 11,
     "iter": 7,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -792,8 +792,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510256,
-    "vu": 47,
+    "ts": 1785941465440,
+    "vu": 17,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -801,8 +801,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510303,
-    "vu": 42,
+    "ts": 1785941465476,
+    "vu": 25,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -810,8 +810,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510303,
-    "vu": 46,
+    "ts": 1785941465493,
+    "vu": 13,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -819,8 +819,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510318,
-    "vu": 49,
+    "ts": 1785941465500,
+    "vu": 14,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -828,8 +828,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510319,
-    "vu": 45,
+    "ts": 1785941465503,
+    "vu": 15,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -837,8 +837,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510527,
-    "vu": 44,
+    "ts": 1785941465622,
+    "vu": 16,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -846,8 +846,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510533,
-    "vu": 41,
+    "ts": 1785941465700,
+    "vu": 24,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -855,8 +855,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510527,
-    "vu": 43,
+    "ts": 1785941465732,
+    "vu": 18,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -864,8 +864,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510546,
-    "vu": 28,
+    "ts": 1785941465753,
+    "vu": 20,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -873,8 +873,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510576,
-    "vu": 48,
+    "ts": 1785941465773,
+    "vu": 19,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -882,8 +882,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940510625,
-    "vu": 50,
+    "ts": 1785941465858,
+    "vu": 11,
     "iter": 8,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -891,8 +891,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512105,
-    "vu": 47,
+    "ts": 1785941466860,
+    "vu": 17,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -900,8 +900,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512206,
-    "vu": 46,
+    "ts": 1785941466880,
+    "vu": 25,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -909,8 +909,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512225,
-    "vu": 49,
+    "ts": 1785941466915,
+    "vu": 13,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -918,8 +918,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512310,
-    "vu": 42,
+    "ts": 1785941466925,
+    "vu": 15,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -927,8 +927,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512315,
-    "vu": 45,
+    "ts": 1785941467041,
+    "vu": 16,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -936,8 +936,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512323,
-    "vu": 44,
+    "ts": 1785941467150,
+    "vu": 18,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -945,8 +945,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512408,
-    "vu": 28,
+    "ts": 1785941467150,
+    "vu": 24,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -954,8 +954,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512411,
-    "vu": 43,
+    "ts": 1785941467164,
+    "vu": 20,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -963,8 +963,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512506,
-    "vu": 48,
+    "ts": 1785941467185,
+    "vu": 19,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -972,8 +972,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512518,
-    "vu": 50,
+    "ts": 1785941467201,
+    "vu": 14,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -981,8 +981,8 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940512622,
-    "vu": 41,
+    "ts": 1785941467512,
+    "vu": 11,
     "iter": 9,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
@@ -990,876 +990,993 @@
     "body": "{\"error\":\"Precio inválido en el pedido\"}"
   },
   {
-    "ts": 1785940513574,
-    "vu": 47,
+    "ts": 1785941468573,
+    "vu": 17,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513621,
-    "vu": 49,
+    "ts": 1785941468680,
+    "vu": 25,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513623,
-    "vu": 46,
+    "ts": 1785941468770,
+    "vu": 13,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513729,
-    "vu": 42,
+    "ts": 1785941468771,
+    "vu": 15,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513750,
-    "vu": 45,
+    "ts": 1785941468772,
+    "vu": 20,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513834,
-    "vu": 44,
+    "ts": 1785941469075,
+    "vu": 18,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513834,
-    "vu": 43,
+    "ts": 1785941469076,
+    "vu": 16,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513916,
-    "vu": 28,
+    "ts": 1785941469076,
+    "vu": 24,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513967,
-    "vu": 50,
+    "ts": 1785941469174,
+    "vu": 14,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940513967,
-    "vu": 48,
+    "ts": 1785941469176,
+    "vu": 19,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940514128,
-    "vu": 41,
+    "ts": 1785941469273,
+    "vu": 11,
     "iter": 10,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940514996,
-    "vu": 47,
+    "ts": 1785941469979,
+    "vu": 17,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515133,
-    "vu": 46,
+    "ts": 1785941470173,
+    "vu": 25,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515140,
-    "vu": 49,
+    "ts": 1785941470179,
+    "vu": 13,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515154,
-    "vu": 42,
+    "ts": 1785941470180,
+    "vu": 15,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515217,
-    "vu": 45,
+    "ts": 1785941470187,
+    "vu": 20,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515357,
-    "vu": 44,
+    "ts": 1785941470487,
+    "vu": 16,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515357,
-    "vu": 28,
+    "ts": 1785941470487,
+    "vu": 18,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515360,
-    "vu": 43,
+    "ts": 1785941470505,
+    "vu": 24,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515413,
-    "vu": 48,
+    "ts": 1785941470575,
+    "vu": 14,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515433,
-    "vu": 50,
+    "ts": 1785941470576,
+    "vu": 19,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940515553,
-    "vu": 41,
+    "ts": 1785941470697,
+    "vu": 11,
     "iter": 11,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516416,
-    "vu": 47,
+    "ts": 1785941471377,
+    "vu": 17,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516609,
-    "vu": 45,
+    "ts": 1785941471572,
+    "vu": 25,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516783,
-    "vu": 49,
+    "ts": 1785941471583,
+    "vu": 13,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516797,
-    "vu": 48,
+    "ts": 1785941471602,
+    "vu": 15,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516819,
-    "vu": 46,
+    "ts": 1785941471602,
+    "vu": 20,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516863,
-    "vu": 50,
+    "ts": 1785941471975,
+    "vu": 18,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516949,
-    "vu": 41,
+    "ts": 1785941471976,
+    "vu": 16,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940516965,
-    "vu": 42,
+    "ts": 1785941471976,
+    "vu": 24,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940517016,
-    "vu": 44,
+    "ts": 1785941471976,
+    "vu": 19,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940517035,
-    "vu": 43,
+    "ts": 1785941472072,
+    "vu": 14,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940517129,
-    "vu": 28,
+    "ts": 1785941472581,
+    "vu": 11,
     "iter": 12,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940517924,
-    "vu": 47,
+    "ts": 1785941472905,
+    "vu": 17,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518024,
-    "vu": 45,
+    "ts": 1785941472976,
+    "vu": 25,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518221,
-    "vu": 49,
+    "ts": 1785941472997,
+    "vu": 13,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518230,
-    "vu": 46,
+    "ts": 1785941473022,
+    "vu": 15,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518233,
-    "vu": 48,
+    "ts": 1785941473030,
+    "vu": 20,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518342,
-    "vu": 50,
+    "ts": 1785941473388,
+    "vu": 19,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518417,
-    "vu": 42,
+    "ts": 1785941473404,
+    "vu": 18,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518417,
-    "vu": 41,
+    "ts": 1785941473411,
+    "vu": 16,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518433,
-    "vu": 43,
+    "ts": 1785941473411,
+    "vu": 24,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518534,
-    "vu": 44,
+    "ts": 1785941473505,
+    "vu": 14,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940518625,
-    "vu": 28,
+    "ts": 1785941474012,
+    "vu": 11,
     "iter": 13,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940519375,
-    "vu": 47,
+    "ts": 1785941474318,
+    "vu": 17,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940519524,
-    "vu": 45,
+    "ts": 1785941474386,
+    "vu": 25,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520017,
-    "vu": 42,
+    "ts": 1785941474405,
+    "vu": 13,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520083,
-    "vu": 48,
+    "ts": 1785941474429,
+    "vu": 15,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520083,
-    "vu": 49,
+    "ts": 1785941474458,
+    "vu": 20,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520100,
-    "vu": 46,
+    "ts": 1785941474798,
+    "vu": 19,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520166,
-    "vu": 43,
+    "ts": 1785941474825,
+    "vu": 24,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520168,
-    "vu": 41,
+    "ts": 1785941474829,
+    "vu": 18,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520168,
-    "vu": 50,
+    "ts": 1785941474835,
+    "vu": 16,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520301,
-    "vu": 44,
+    "ts": 1785941474936,
+    "vu": 14,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520449,
-    "vu": 28,
+    "ts": 1785941475420,
+    "vu": 11,
     "iter": 14,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520861,
-    "vu": 47,
+    "ts": 1785941476317,
+    "vu": 17,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940520982,
-    "vu": 45,
+    "ts": 1785941476531,
+    "vu": 24,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521465,
-    "vu": 42,
+    "ts": 1785941476537,
+    "vu": 16,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521497,
-    "vu": 49,
+    "ts": 1785941476564,
+    "vu": 18,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521514,
-    "vu": 48,
+    "ts": 1785941476626,
+    "vu": 14,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521537,
-    "vu": 46,
+    "ts": 1785941476822,
+    "vu": 19,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521607,
-    "vu": 41,
+    "ts": 1785941476838,
+    "vu": 11,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521616,
-    "vu": 43,
+    "ts": 1785941476970,
+    "vu": 25,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521642,
-    "vu": 50,
+    "ts": 1785941477033,
+    "vu": 13,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521714,
-    "vu": 44,
+    "ts": 1785941477035,
+    "vu": 15,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940521849,
-    "vu": 28,
+    "ts": 1785941477053,
+    "vu": 20,
     "iter": 15,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940522310,
-    "vu": 47,
+    "ts": 1785941477727,
+    "vu": 17,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940522385,
-    "vu": 45,
+    "ts": 1785941477940,
+    "vu": 24,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940522902,
-    "vu": 42,
+    "ts": 1785941477946,
+    "vu": 16,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940522902,
-    "vu": 49,
+    "ts": 1785941477982,
+    "vu": 18,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523001,
-    "vu": 46,
+    "ts": 1785941478021,
+    "vu": 14,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523026,
-    "vu": 43,
+    "ts": 1785941478215,
+    "vu": 19,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523108,
-    "vu": 41,
+    "ts": 1785941478250,
+    "vu": 11,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523113,
-    "vu": 50,
+    "ts": 1785941478379,
+    "vu": 25,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523130,
-    "vu": 44,
+    "ts": 1785941478576,
+    "vu": 13,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523277,
-    "vu": 48,
+    "ts": 1785941478588,
+    "vu": 20,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523323,
-    "vu": 28,
+    "ts": 1785941478588,
+    "vu": 15,
     "iter": 16,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523716,
-    "vu": 47,
+    "ts": 1785941479142,
+    "vu": 17,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940523817,
-    "vu": 45,
+    "ts": 1785941479376,
+    "vu": 16,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524356,
-    "vu": 42,
+    "ts": 1785941479377,
+    "vu": 24,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524356,
-    "vu": 49,
+    "ts": 1785941479669,
+    "vu": 18,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524424,
-    "vu": 46,
+    "ts": 1785941479676,
+    "vu": 14,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524475,
-    "vu": 43,
+    "ts": 1785941480067,
+    "vu": 19,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524536,
-    "vu": 41,
+    "ts": 1785941480068,
+    "vu": 11,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524542,
-    "vu": 44,
+    "ts": 1785941480096,
+    "vu": 13,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524570,
-    "vu": 50,
+    "ts": 1785941480172,
+    "vu": 25,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524696,
-    "vu": 48,
+    "ts": 1785941480182,
+    "vu": 15,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940524737,
-    "vu": 28,
+    "ts": 1785941480190,
+    "vu": 20,
     "iter": 17,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940525165,
-    "vu": 47,
+    "ts": 1785941480571,
+    "vu": 17,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940525249,
-    "vu": 45,
+    "ts": 1785941480786,
+    "vu": 24,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940525791,
-    "vu": 49,
+    "ts": 1785941480857,
+    "vu": 16,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940525791,
-    "vu": 42,
+    "ts": 1785941481062,
+    "vu": 18,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940525902,
-    "vu": 46,
+    "ts": 1785941481091,
+    "vu": 14,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940526001,
-    "vu": 41,
+    "ts": 1785941481471,
+    "vu": 19,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940526001,
-    "vu": 43,
+    "ts": 1785941481471,
+    "vu": 11,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940526301,
-    "vu": 44,
+    "ts": 1785941481506,
+    "vu": 13,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   },
   {
-    "ts": 1785940526311,
-    "vu": 50,
+    "ts": 1785941481570,
+    "vu": 25,
     "iter": 18,
     "url": "https://restaurant-app-6678.onrender.com/api/orders",
     "method": "POST",
-    "status": 400,
-    "body": "{\"error\":\"Precio inválido en el pedido\"}"
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941481598,
+    "vu": 20,
+    "iter": 18,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941481600,
+    "vu": 15,
+    "iter": 18,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941481981,
+    "vu": 17,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482202,
+    "vu": 24,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482300,
+    "vu": 16,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482469,
+    "vu": 18,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482515,
+    "vu": 14,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482965,
+    "vu": 11,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482977,
+    "vu": 13,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482977,
+    "vu": 19,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941482988,
+    "vu": 25,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941483022,
+    "vu": 20,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
+  },
+  {
+    "ts": 1785941483022,
+    "vu": 15,
+    "iter": 19,
+    "url": "https://restaurant-app-6678.onrender.com/api/orders",
+    "method": "POST",
+    "status": 500,
+    "body": "{\"error\":\"No se pudo registrar el pedido\"}"
   }
 ]

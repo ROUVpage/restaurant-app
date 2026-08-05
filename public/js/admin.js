@@ -841,7 +841,7 @@ document.getElementById('ordersQueue')?.addEventListener('click', async (e) => {
 
 function renderOnlineOrderInfo(order) {
   currentOnlineOrderInfo = order;
-  document.getElementById('onlineOrderInfoCode').textContent = order.orderCode || `#${order.id}`;
+  document.getElementById('onlineOrderInfoCode').textContent = order.orderCode || '-';
 
   const modeLabel = String(order.mode) === 'pickup' ? 'Recoger' : 'A domicilio';
   const statusLabel = String(order.status) === 'ready' ? 'Listo para entregar' : 'Pendiente';
@@ -1290,7 +1290,7 @@ function renderOnlineTicketInWindow(win, order) {
 
   try {
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>Ticket ${order.orderCode || `Pedido ${order.id}`}</title>
+<title>Ticket Pedido ${order.orderCode || '-'}</title>
 <style>
 body{font-family:Arial,sans-serif;font-size:12px;margin:12px;color:#111}
 h2{margin:0 0 4px;font-size:16px}
@@ -1301,7 +1301,7 @@ th{text-align:left}
 .total{margin-top:10px;font-weight:700;text-align:right}
 </style></head><body>
 <h2>El Rincon</h2>
-<p><strong>Pedido:</strong> ${order.orderCode || `#${order.id}`}</p>
+<p><strong>Codigo:</strong> ${order.orderCode || '-'}</p>
 <p><strong>ID:</strong> ${order.id}</p>
 <p><strong>Estado:</strong> ${statusLabel}</p>
 <p><strong>Modo:</strong> ${modeLabel}</p>

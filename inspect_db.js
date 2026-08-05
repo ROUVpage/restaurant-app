@@ -1,0 +1,10 @@
+const fs = require('fs');
+const SQL = require('sql.js');
+const data = fs.readFileSync('restaurant.db');
+const db = new SQL.Database(data);
+const tables = db.exec("SELECT id, number, token, status, created_at FROM tables ORDER BY id DESC LIMIT 50");
+const tokens = db.exec("SELECT table_number, token FROM table_tokens ORDER BY table_number LIMIT 50");
+console.log('tables count', tables[0] ? tables[0].values.length : 0);
+if (tables[0]) tables[0].values.forEach(r => console.log('T', r));
+console.log('tokens count', tokens[0] ? tokens[0].values.length : 0);
+if (tokens[0]) tokens[0].values.forEach(r => console.log('Token', r));

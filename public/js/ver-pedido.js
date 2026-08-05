@@ -149,7 +149,7 @@ async function submitOnlineOrder(paymentMethod) {
   if (homeRedirectTimer) clearTimeout(homeRedirectTimer);
   homeRedirectTimer = setTimeout(() => {
     location.replace('/inicio');
-  }, 2600);
+  }, 3000);
 }
 
 document.getElementById('orderItems').addEventListener('click', (event) => {

@@ -1,246 +1,165 @@
 {
-  "state": {
-    "testRunDurationMs": 31745.5902,
-    "isStdOutTTY": false,
-    "isStdErrTTY": false
-  },
-  "metrics": {
-    "data_received": {
-      "type": "counter",
-      "contains": "data",
-      "values": {
-        "count": 3888680,
-        "rate": 122495.12374792768
-      }
-    },
-    "vus": {
-      "type": "gauge",
-      "contains": "default",
-      "values": {
-        "min": 23,
-        "max": 50,
-        "value": 23
-      }
-    },
-    "http_req_blocked": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "min": 0,
-        "med": 0,
-        "max": 1429.4039,
-        "p(90)": 0,
-        "p(95)": 0,
-        "avg": 46.91111371191136
-      }
-    },
-    "http_req_sending": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "avg": 0.17320498614958452,
-        "min": 0,
-        "med": 0,
-        "max": 12.3464,
-        "p(90)": 0.5035700000000001,
-        "p(95)": 0.55721
-      }
-    },
-    "http_req_waiting": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "min": 179.6931,
-        "med": 219.93255,
-        "max": 1607.5765,
-        "p(90)": 477.66412,
-        "p(95)": 612.851635,
-        "avg": 286.5397511772852
-      }
-    },
-    "iterations": {
-      "contains": "default",
-      "values": {
-        "count": 771,
-        "rate": 24.286837798340887
-      },
-      "type": "counter"
-    },
-    "http_req_tls_handshaking": {
-      "values": {
-        "med": 0,
-        "max": 202.6896,
-        "p(90)": 0,
-        "p(95)": 0,
-        "avg": 4.66675429362881,
-        "min": 0
-      },
-      "type": "trend",
-      "contains": "time"
-    },
-    "http_req_failed": {
-      "contains": "default",
-      "values": {
-        "passes": 207,
-        "fails": 1237,
-        "rate": 0.1433518005540166
-      },
-      "type": "rate"
-    },
-    "http_req_connecting": {
-      "contains": "time",
-      "values": {
-        "avg": 2.06041308864266,
-        "min": 0,
-        "med": 0,
-        "max": 66.9472,
-        "p(90)": 0,
-        "p(95)": 0
-      },
-      "type": "trend"
-    },
-    "http_req_receiving": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "max": 632.8302,
-        "p(90)": 5.101020000000001,
-        "p(95)": 8.393234999999997,
-        "avg": 3.0397469529085837,
-        "min": 0,
-        "med": 0
-      }
-    },
-    "vus_max": {
-      "values": {
-        "value": 50,
-        "min": 50,
-        "max": 50
-      },
-      "type": "gauge",
-      "contains": "default"
-    },
-    "iteration_duration": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "med": 1936.6882,
-        "max": 3803.0703,
-        "p(90)": 2489.1526,
-        "p(95)": 3212.5797000000002,
-        "avg": 1999.0499976653684,
-        "min": 1384.8756
-      }
-    },
-    "checks": {
-      "type": "rate",
-      "contains": "default",
-      "values": {
-        "fails": 207,
-        "rate": 0.8326596604688763,
-        "passes": 1030
-      },
-      "thresholds": {
-        "rate>0.99": {
-          "ok": false
-        }
-      }
-    },
-    "http_req_duration{expected_response:true}": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "max": 1608.8534,
-        "p(90)": 512.3373600000002,
-        "p(95)": 646.8210000000001,
-        "avg": 295.0760443815683,
-        "min": 179.6931,
-        "med": 221.4925
-      }
-    },
-    "http_req_duration": {
-      "type": "trend",
-      "contains": "time",
-      "values": {
-        "avg": 289.7527031163435,
-        "min": 179.6931,
-        "med": 221.0103,
-        "max": 1608.8534,
-        "p(90)": 489.95634,
-        "p(95)": 630.2406249999998
-      },
-      "thresholds": {
-        "p(95)<800": {
-          "ok": true
-        }
-      }
-    },
-    "data_sent": {
-      "type": "counter",
-      "contains": "data",
-      "values": {
-        "count": 202224,
-        "rate": 6370.144600430204
-      }
-    },
-    "http_reqs": {
-      "type": "counter",
-      "contains": "default",
-      "values": {
-        "rate": 45.48663265992768,
-        "count": 1444
-      }
-    }
-  },
   "root_group": {
-    "name": "",
-    "path": "",
-    "id": "d41d8cd98f00b204e9800998ecf8427e",
     "groups": [],
     "checks": [
         {
-          "name": "home 200",
-          "path": "::home 200",
-          "id": "d5a546618676c7c5737c4af152946908",
-          "passes": 311,
-          "fails": 0
-        },
-        {
-          "name": "reservas page 200",
-          "path": "::reservas page 200",
           "id": "cea54a71e275515907cadd1eb29de179",
-          "passes": 155,
-          "fails": 0
+          "passes": 599,
+          "fails": 0,
+          "name": "reservas page 200",
+          "path": "::reservas page 200"
         },
         {
           "name": "admin page 200",
           "path": "::admin page 200",
           "id": "57625b6505a9f9e83dcf9dc62af4a300",
-          "passes": 98,
+          "passes": 437,
           "fails": 0
         },
         {
-          "fails": 207,
-          "name": "order created 200|201",
-          "path": "::order created 200|201",
+          "name": "home 200",
+          "path": "::home 200",
+          "id": "d5a546618676c7c5737c4af152946908",
+          "passes": 1191,
+          "fails": 0
+        },
+        {
           "id": "5e449e817e2c99a8a2bdf0980fc2db0b",
-          "passes": 0
-        },
-        {
-          "name": "products 200",
-          "path": "::products 200",
-          "id": "3534a27ce5029fe37f8cb805b80d20f3",
-          "passes": 311,
-          "fails": 0
+          "passes": 801,
+          "fails": 0,
+          "name": "order created 200|201",
+          "path": "::order created 200|201"
         },
         {
           "name": "reserve 201|200",
           "path": "::reserve 201|200",
           "id": "99ac845ea16647e64c79f62d56f8d6d7",
-          "passes": 155,
+          "passes": 599,
+          "fails": 0
+        },
+        {
+          "fails": 0,
+          "name": "products 200",
+          "path": "::products 200",
+          "id": "3534a27ce5029fe37f8cb805b80d20f3",
+          "passes": 1191
+        },
+        {
+          "fails": 14,
+          "name": "modify table item 200",
+          "path": "::modify table item 200",
+          "id": "ed035d77059ce5ea87b1fc07bd04cd2d",
+          "passes": 83
+        },
+        {
+          "name": "cash payment confirm 200",
+          "path": "::cash payment confirm 200",
+          "id": "3a9e4469b6c7c4d5c1e77ac874f599aa",
+          "passes": 97,
+          "fails": 0
+        },
+        {
+          "name": "delete table 200|404",
+          "path": "::delete table 200|404",
+          "id": "6bc803ed1fbde9cd0a5cf5eec261ef58",
+          "passes": 97,
+          "fails": 0
+        },
+        {
+          "name": "shared table users order 200|201",
+          "path": "::shared table users order 200|201",
+          "id": "c269ba1d6cf574b90387116a1ec383d9",
+          "passes": 1558,
+          "fails": 0
+        },
+        {
+          "name": "second table admin order 200|201",
+          "path": "::second table admin order 200|201",
+          "id": "773f5a299d527f6f263bb3c736094b27",
+          "passes": 258,
+          "fails": 0
+        },
+        {
+          "name": "second table users order 200|201",
+          "path": "::second table users order 200|201",
+          "id": "70c2ff0c273618edfed2c241a4a71bdc",
+          "passes": 1533,
+          "fails": 0
+        },
+        {
+          "fails": 0,
+          "name": "shared table admin order 200|201",
+          "path": "::shared table admin order 200|201",
+          "id": "a9650887d708ed21eaf632243bf54035",
+          "passes": 241
+        },
+        {
+          "passes": 97,
+          "fails": 0,
+          "name": "cancel reservation 200",
+          "path": "::cancel reservation 200",
+          "id": "acae897768426185f18005d9f97b993a"
+        },
+        {
+          "path": "::create reservation next day 200|201",
+          "id": "e93e55e03ed7715ad308f8ae4046f266",
+          "passes": 97,
+          "fails": 0,
+          "name": "create reservation next day 200|201"
+        },
+        {
+          "passes": 142,
+          "fails": 0,
+          "name": "second table admin modify item 200|404",
+          "path": "::second table admin modify item 200|404",
+          "id": "e0af7b1a2cf54b12445074f0edf5a637"
+        },
+        {
+          "id": "61a8d669bea7a0245ed5aa78321ed740",
+          "passes": 223,
+          "fails": 0,
+          "name": "shared table admin modify item 200|404",
+          "path": "::shared table admin modify item 200|404"
+        },
+        {
+          "fails": 0,
+          "name": "second table admin remove item 200|404",
+          "path": "::second table admin remove item 200|404",
+          "id": "02b33b23c725633ce957bfbda084b270",
+          "passes": 142
+        },
+        {
+          "path": "::shared table admin remove item 200|404",
+          "id": "668068f36212b83d78bac0877881d590",
+          "passes": 223,
+          "fails": 0,
+          "name": "shared table admin remove item 200|404"
+        },
+        {
+          "id": "a1bb2dd0a0a6ebde34adba38868a861d",
+          "passes": 160,
+          "fails": 0,
+          "name": "shared table dataphone confirm 200|400|404",
+          "path": "::shared table dataphone confirm 200|400|404"
+        },
+        {
+          "name": "second table bill fetch for ticket 200|404",
+          "path": "::second table bill fetch for ticket 200|404",
+          "id": "94afb708a932a9fd30e2e2014e4dc90a",
+          "passes": 136,
+          "fails": 0
+        },
+        {
+          "name": "second table delete 200|404",
+          "path": "::second table delete 200|404",
+          "id": "0f09e6934af57ca623ad50a945213895",
+          "passes": 136,
           "fails": 0
         }
-      ]
+      ],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "options": {
     "summaryTrendStats": [
@@ -253,5 +172,312 @@
     ],
     "summaryTimeUnit": "",
     "noColor": false
+  },
+  "state": {
+    "isStdErrTTY": true,
+    "testRunDurationMs": 38926.8541,
+    "isStdOutTTY": true
+  },
+  "metrics": {
+    "http_req_duration": {
+      "values": {
+        "p(95)": 318.29487,
+        "avg": 243.2524383154527,
+        "min": 197.9216,
+        "med": 230.5164,
+        "max": 1041.0078,
+        "p(90)": 273.31922000000003
+      },
+      "thresholds": {
+        "p(95)<800": {
+          "ok": true
+        }
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 29388339,
+        "rate": 754963.1142682038
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 1486.885343809666,
+        "min": 813.5563,
+        "med": 1461.1567,
+        "max": 5640.5278,
+        "p(90)": 2051.64297,
+        "p(95)": 2232.4128499999993
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 16218,
+        "rate": 416.6275537791275
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "min": 336,
+        "max": 336,
+        "value": 336
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "contains": "time",
+      "values": {
+        "p(95)": 319.22078999999997,
+        "avg": 243.5486684784693,
+        "min": 197.9216,
+        "med": 230.6912,
+        "max": 1041.0078,
+        "p(90)": 273.87592000000006
+      },
+      "type": "trend"
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 14.651699734862502,
+        "min": 0,
+        "med": 0,
+        "max": 1393.8897
+      }
+    },
+    "vus": {
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 0,
+        "max": 336
+      },
+      "type": "gauge"
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.17928933284005472,
+        "min": 0,
+        "med": 0,
+        "max": 199.8157,
+        "p(90)": 0.5214,
+        "p(95)": 0.6171399999999995
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 2354453,
+        "rate": 60484.02971253719
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.998607657881651,
+        "passes": 10041,
+        "fails": 14
+      },
+      "thresholds": {
+        "rate>0.99": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 195.624,
+        "med": 227.767,
+        "max": 1025.2911,
+        "p(90)": 266.56008,
+        "p(95)": 310.0660199999999,
+        "avg": 239.44264924775044
+      }
+    },
+    "http_req_connecting": {
+      "values": {
+        "avg": 1.7561610309532583,
+        "min": 0,
+        "med": 0,
+        "max": 166.4371,
+        "p(90)": 0,
+        "p(95)": 0
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_tls_handshaking": {
+      "contains": "time",
+      "values": {
+        "med": 0,
+        "max": 1322.6911,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 12.871763435688747,
+        "min": 0
+      },
+      "type": "trend"
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.03348131705512394,
+        "passes": 543,
+        "fails": 15675
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 6914,
+        "rate": 177.61517491854036
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 3.6304997348624966,
+        "min": 0,
+        "med": 0,
+        "max": 286.4079,
+        "p(90)": 10.65271,
+        "p(95)": 16.469389999999994
+      }
+    }
+  },
+  "setup_data": {
+    "tableB": {
+      "id": 2,
+      "number": 8802,
+      "token": "c4e231e5-7ec0-4d8f-93ff-b94de1734df0"
+    },
+    "catalog": [
+      {
+        "id": "rac1",
+        "name": "Pulpo a la Gallega",
+        "price": 14
+      },
+      {
+        "id": "rac2",
+        "name": "Calamares a la Romana",
+        "price": 10
+      },
+      {
+        "id": "rac3",
+        "name": "Tabla de Quesos",
+        "price": 12
+      },
+      {
+        "id": "rac4",
+        "name": "Pimientos del Padrón",
+        "price": 7.5
+      },
+      {
+        "id": "rac5",
+        "name": "Chorizo a la Sidra",
+        "price": 8
+      },
+      {
+        "id": "beb1",
+        "name": "Cerveza Artesana",
+        "price": 3.5
+      },
+      {
+        "price": 3,
+        "id": "beb2",
+        "name": "Vino Tinto Rioja"
+      },
+      {
+        "name": "Agua Mineral",
+        "price": 1.5,
+        "id": "beb3"
+      },
+      {
+        "id": "beb4",
+        "name": "Refresco",
+        "price": 2.5
+      },
+      {
+        "name": "Zumo Natural",
+        "price": 3.5,
+        "id": "beb5"
+      },
+      {
+        "id": "beb6",
+        "name": "Café Espresso",
+        "price": 1.8
+      },
+      {
+        "id": "pos1",
+        "name": "Tarta de Queso",
+        "price": 5
+      },
+      {
+        "id": "pos2",
+        "name": "Crema Catalana",
+        "price": 4.5
+      },
+      {
+        "id": "pos3",
+        "name": "Brownie con Helado",
+        "price": 5.5
+      },
+      {
+        "id": "pos4",
+        "name": "Flan Casero",
+        "price": 4
+      },
+      {
+        "id": "tap1",
+        "name": "Patatas Bravas",
+        "price": 4.5
+      },
+      {
+        "price": 5,
+        "id": "tap2",
+        "name": "Croquetas de Jamón"
+      },
+      {
+        "id": "tap3",
+        "name": "Jamón Ibérico",
+        "price": 9
+      },
+      {
+        "id": "tap4",
+        "name": "Boquerones en Vinagre",
+        "price": 5.5
+      },
+      {
+        "name": "Gambas al Ajillo",
+        "price": 7,
+        "id": "tap5"
+      }
+    ],
+    "tableA": {
+      "id": 1,
+      "number": 8801,
+      "token": "2c543bb6-ec95-4cfb-88b1-6d81553e0018"
+    }
   }
 }
