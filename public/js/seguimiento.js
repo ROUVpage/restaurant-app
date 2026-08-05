@@ -74,11 +74,11 @@ function getTrackingStatusLabel(status, mode) {
 
   if (isPickup) {
     if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'Listo para recoger';
-    return 'En preparacion';
+    return 'En preparación';
   }
 
   if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'En camino';
-  return 'En preparacion';
+  return 'En preparación';
 }
 
 async function runTrackingSearch() {

@@ -857,15 +857,15 @@ function renderOnlineOrderInfo(order) {
 
   const timingOrPaymentRow = isPickup
     ? `<div><span class="meta-label">Hora estimada:</span><span class="meta-value">${expectedReadyAt}</span></div>`
-    : `<div><span class="meta-label">Pago:</span><span class="meta-value">${paymentLabel}</span></div>`;
+    : `<div><span class="meta-label">Forma de pago:</span><span class="meta-value">${paymentLabel}</span></div>`;
 
   document.getElementById('onlineOrderMeta').innerHTML = `
     <div><span class="meta-label">ID:</span><span class="meta-value">${order.id}</span></div>
     <div><span class="meta-label">Estado:</span><span class="meta-value">${statusLabel}</span></div>
     <div><span class="meta-label">Modo:</span><span class="meta-value">${modeLabel}</span></div>
     ${timingOrPaymentRow}
-    <div><span class="meta-label">Telefono:</span><span class="meta-value">${order.phone || '-'}</span></div>
-    <div><span class="meta-label">Direccion:</span><span class="meta-value">${addressLabel}</span></div>
+    <div><span class="meta-label">Teléfono:</span><span class="meta-value">${order.phone || '-'}</span></div>
+    <div><span class="meta-label">Dirección:</span><span class="meta-value">${addressLabel}</span></div>
   `;
 
   const items = Array.isArray(order.items) ? order.items : [];
@@ -1312,13 +1312,13 @@ th{text-align:left}
 .total{margin-top:10px;font-weight:700;text-align:right}
 </style></head><body>
 <h2>El Rincon</h2>
-<p><strong>Codigo:</strong> ${order.orderCode || '-'}</p>
+<p><strong>Código:</strong> ${order.orderCode || '-'}</p>
 <p><strong>ID:</strong> ${order.id}</p>
 <p><strong>Estado:</strong> ${statusLabel}</p>
 <p><strong>Modo:</strong> ${modeLabel}</p>
-<p><strong>Telefono:</strong> ${order.phone || '-'}</p>
-<p><strong>Direccion:</strong> ${addressLabel}</p>
-${shouldShowPayment ? `<p><strong>Pago:</strong> ${paymentLabel}</p>` : ''}
+<p><strong>Teléfono:</strong> ${order.phone || '-'}</p>
+<p><strong>Dirección:</strong> ${addressLabel}</p>
+${shouldShowPayment ? `<p><strong>Forma de pago:</strong> ${paymentLabel}</p>` : ''}
 ${shouldShowEstimatedTime ? `<p><strong>Hora estimada:</strong> ${expectedReadyAt}</p>` : ''}
 <table>
 <thead><tr><th>Producto</th><th style="text-align:center">Cant.</th><th style="text-align:right">Precio</th><th style="text-align:right">Subtotal</th></tr></thead>
@@ -1344,11 +1344,11 @@ function getOnlineStatusLabel(status, mode) {
 
   if (isPickup) {
     if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'Listo para recoger';
-    return 'En preparacion';
+    return 'En preparación';
   }
 
   if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'En camino';
-  return 'En preparacion';
+  return 'En preparación';
 }
 
 function getPaymentLabel(paymentMethod) {
