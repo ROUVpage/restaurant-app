@@ -789,11 +789,30 @@ function renderBillItems(container, items, editable) {
         const row = btn.closest('.bill-item');
         if (!row || !row.isConnected) return;
         const productId = row.dataset.productId;
+
+        const latest = await api('GET', `/api/tables/${currentBillTableId}/bill`);
+        if (latest.error || !latest.table || (latest.table.status !== 'open' && latest.table.status !== 'paid')) {
+          if (!document.getElementById('billModal').classList.contains('hidden')) {
+            document.getElementById('billModal').classList.add('hidden');
+            stopBillModalRefresh();
+          }
+          return;
+        }
+
+        const latestItem = (latest.items || []).find((it) => String(it.product_id) === String(productId));
+        if (!latestItem) {
+          billCache.set(String(currentBillTableId), latest);
+          renderBillItems(container, latest.items || [], true);
+          document.getElementById('billTotal').textContent = fmt(Number(latest.total || 0));
+          return;
+        }
+
         const price = Number(row.dataset.price);
         const delta = Number(btn.dataset.delta);
         const qtyEl = row.querySelector('.qty-num');
         const priceEl = row.querySelector('.bill-item-price');
-        const newQty = Number(qtyEl.textContent) + delta;
+        const baseQty = Number(latestItem.quantity || qtyEl.textContent || 0);
+        const newQty = baseQty + delta;
 
         // Block buttons for this row while in flight
         row.querySelectorAll('.qty-btn').forEach((b) => { b.disabled = true; });

@@ -98,6 +98,31 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function getPayableTableSnapshot() {
+  const tableData = await api('GET', `/api/table/by-token/${token}`);
+  if (tableData.error || !tableData.id) {
+    return { ok: false, error: 'La mesa ya no está disponible.' };
+  }
+
+  if (tableData.status !== 'open' && tableData.status !== 'paid') {
+    return { ok: false, error: 'La mesa ya no admite pagos en este momento.' };
+  }
+
+  const bill = await api('GET', `/api/tables/${tableData.id}/bill`);
+  if (bill.error) {
+    return { ok: false, error: 'No se pudo cargar la cuenta actual de la mesa.' };
+  }
+
+  const total = Number(bill.total || 0);
+  if (!(total > 0)) {
+    return { ok: false, error: 'No hay importe pendiente para cobrar.' };
+  }
+
+  billTotal = total;
+  renderBill(bill);
+  return { ok: true, table: tableData, bill, total };
+}
+
 function closeCardPaymentChoiceModal() {
   const modal = document.getElementById('cardPaymentChoiceModal');
   if (modal) modal.classList.add('hidden');
@@ -111,6 +136,9 @@ function openCardPaymentChoiceModal() {
 }
 
 async function completeDataphonePaymentFlow() {
+  const snapshot = await getPayableTableSnapshot();
+  if (!snapshot.ok) return { ok: false, error: snapshot.error };
+
   const MAX_ATTEMPTS = 3;
   const RETRY_DELAYS_MS = [450, 900];
 
@@ -132,6 +160,9 @@ async function completeDataphonePaymentFlow() {
 }
 
 async function completeCashPaymentFlow() { /*FOUND-FLOW*/
+  const snapshot = await getPayableTableSnapshot();
+  if (!snapshot.ok) return { ok: false, error: snapshot.error };
+
   const MAX_ATTEMPTS = 3;
   const RETRY_DELAYS_MS = [450, 900];
 
@@ -166,6 +197,10 @@ function buildPayPalButtonConfig(fundingSource) {
       label: fundingSource === window.paypal?.FUNDING?.CARD ? 'pay' : 'paypal'
     },
     createOrder: async () => {
+      const snapshot = await getPayableTableSnapshot();
+      if (!snapshot.ok) {
+        throw new Error(snapshot.error);
+      }
       const result = await api('POST', '/api/paypal/orders/create', { tableToken: token });
       if (result.error || !result.orderId) {
         throw new Error(result.error || 'No se pudo iniciar el pago PayPal');
@@ -330,6 +365,12 @@ async function initPayPalButtons() {
 }
 
 async function openPayPalModalFlow() {
+  const snapshot = await getPayableTableSnapshot();
+  if (!snapshot.ok) {
+    alert(snapshot.error);
+    return;
+  }
+
   document.getElementById('paypalAmount').textContent = fmt(billTotal);
   setPayPalSubmitting(false);
   document.getElementById('paypalModal').classList.remove('hidden');
@@ -446,6 +487,11 @@ document.getElementById('payBackBtn').addEventListener('click', () => history.ba
 
 // Confirm pay → show PayPal modal
 document.getElementById('confirmarPagoBtn').addEventListener('click', async () => {
+  const snapshot = await getPayableTableSnapshot();
+  if (!snapshot.ok) {
+    alert(snapshot.error);
+    return;
+  }
   openCardPaymentChoiceModal();
 });
 
