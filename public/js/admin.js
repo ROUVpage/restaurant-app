@@ -15,8 +15,69 @@ let paypalConnectPollTimer = null;
 let lastTablesSignature = '';
 let lastOrdersSignature = '';
 let isFinalizingCashCall = false;
+const inFlightActions = new Set();
+let adminNoticeHideTimer = null;
 const billCache = new Map(); // tableId → { table, items, total }
 let billModalRefreshInterval = null;
+
+function showAdminNotice(message, type = 'info', timeoutMs = 3200) {
+  if (!message) return;
+
+  let notice = document.getElementById('adminInlineNotice');
+  if (!notice) {
+    notice = document.createElement('div');
+    notice.id = 'adminInlineNotice';
+    notice.className = 'admin-notice hidden';
+    notice.setAttribute('role', 'status');
+    notice.setAttribute('aria-live', 'polite');
+    document.body.appendChild(notice);
+  }
+
+  notice.classList.remove('hidden', 'info', 'success', 'warn', 'error');
+  notice.classList.add(type);
+  notice.textContent = message;
+
+  if (adminNoticeHideTimer) clearTimeout(adminNoticeHideTimer);
+  adminNoticeHideTimer = setTimeout(() => {
+    notice.classList.add('hidden');
+  }, timeoutMs);
+}
+
+function getApiErrorStatus(errorMessage) {
+  const msg = String(errorMessage || '');
+  const match = msg.match(/\((\d{3})\)|HTTP\s*(\d{3})/i);
+  if (!match) return 0;
+  return Number(match[1] || match[2] || 0);
+}
+
+function isExpectedConcurrentError(errorMessage) {
+  const msg = String(errorMessage || '').toLowerCase();
+  const status = getApiErrorStatus(msg);
+  if (status === 404 || status === 409) return true;
+  return msg.includes('no encontrado') || msg.includes('ya existe') || msg.includes('mesa cerrada') || msg.includes('no autorizada');
+}
+
+async function withActionLock(actionKey, btn, loadingLabel, actionFn) {
+  if (inFlightActions.has(actionKey)) return false;
+  inFlightActions.add(actionKey);
+
+  const previousLabel = btn ? btn.textContent : '';
+  if (btn) {
+    btn.disabled = true;
+    if (loadingLabel) btn.textContent = loadingLabel;
+  }
+
+  try {
+    await actionFn();
+    return true;
+  } finally {
+    inFlightActions.delete(actionKey);
+    if (btn) {
+      btn.disabled = false;
+      if (loadingLabel) btn.textContent = previousLabel;
+    }
+  }
+}
 
 function startBillModalRefresh() {
   if (billModalRefreshInterval) return;
@@ -253,7 +314,7 @@ window.addEventListener('message', async (event) => {
 
   await loadPayPalConnectStatus();
   if (!payload.ok && payload.message) {
-    alert(payload.message);
+    showAdminNotice(payload.message, 'warn');
   }
 });
 
@@ -261,7 +322,7 @@ document.getElementById('connectPaypalBtn')?.addEventListener('click', async () 
   const btn = document.getElementById('connectPaypalBtn');
   const current = await api('POST', '/api/paypal/connect/status', { deviceId: getDeviceId() });
   if (current.error) {
-    alert(current.error);
+    showAdminNotice(current.error, 'error');
     return;
   }
 
@@ -271,10 +332,11 @@ document.getElementById('connectPaypalBtn')?.addEventListener('click', async () 
 
     const result = await api('POST', '/api/paypal/connect/disconnect', { deviceId: getDeviceId() });
     if (result.error) {
-      alert(result.error);
+      showAdminNotice(result.error, 'error');
       return;
     }
     await loadPayPalConnectStatus();
+    showAdminNotice('Cuenta PayPal desconectada', 'success');
     return;
   }
 
@@ -283,14 +345,14 @@ document.getElementById('connectPaypalBtn')?.addEventListener('click', async () 
   btn.disabled = false;
 
   if (start.error || !start.authUrl) {
-    alert(start.error || 'No se pudo iniciar la conexion con PayPal');
+    showAdminNotice(start.error || 'No se pudo iniciar la conexion con PayPal', 'error');
     await loadPayPalConnectStatus();
     return;
   }
 
   paypalConnectPopup = window.open(start.authUrl, 'paypal_connect', 'width=520,height=760');
   if (!paypalConnectPopup) {
-    alert('El navegador bloqueo la ventana de PayPal. Permite popups para continuar.');
+    showAdminNotice('El navegador bloqueo la ventana de PayPal. Permite popups para continuar.', 'warn', 4200);
     return;
   }
 
@@ -643,19 +705,38 @@ document.getElementById('ordersQueue')?.addEventListener('click', async (e) => {
     }
 
     if (actionBtn.classList.contains('btn-resolve-call')) {
-      await api('PATCH', `/api/waiter-calls/${actionBtn.dataset.callId}/resolve`);
+      await withActionLock(`resolve-call:${actionBtn.dataset.callId}`, actionBtn, 'Cerrando...', async () => {
+        const result = await api('PATCH', `/api/waiter-calls/${actionBtn.dataset.callId}/resolve`);
+        if (result.error && !isExpectedConcurrentError(result.error)) {
+          showAdminNotice(result.error, 'error');
+        }
+      });
       loadOrders();
       return;
     }
 
-    await api('PATCH', `/api/orders/${actionBtn.dataset.orderId}/complete`);
+    await withActionLock(`complete-order:${actionBtn.dataset.orderId}`, actionBtn, 'Cerrando...', async () => {
+      const result = await api('PATCH', `/api/orders/${actionBtn.dataset.orderId}/complete`);
+      if (result.error && !isExpectedConcurrentError(result.error)) {
+        showAdminNotice(result.error, 'error');
+      }
+    });
     loadOrders();
     return;
   }
 
   const row = e.target.closest('.order-item-row');
   if (!row || row.classList.contains('fulfilled')) return;
-  await api('PATCH', `/api/order-items/${row.dataset.itemId}/fulfill`);
+  const rowKey = `fulfill-item:${row.dataset.itemId}`;
+  if (inFlightActions.has(rowKey)) return;
+  inFlightActions.add(rowKey);
+  row.classList.add('is-pending');
+  const fulfillResult = await api('PATCH', `/api/order-items/${row.dataset.itemId}/fulfill`);
+  if (fulfillResult.error && !isExpectedConcurrentError(fulfillResult.error)) {
+    showAdminNotice(fulfillResult.error, 'error');
+  }
+  row.classList.remove('is-pending');
+  inFlightActions.delete(rowKey);
   loadOrders();
 });
 
@@ -696,7 +777,7 @@ async function finalizeCashPaymentCall(tableId, callId, actionBtn = null) {
     renderTicketInWindow(printWin, bill);
   } catch (err) {
     if (printWin) { try { printWin.close(); } catch (_) {} }
-    alert('No se pudo procesar en este momento.');
+    showAdminNotice('No se pudo procesar en este momento.', 'warn');
     try { await loadAll(); } catch (_) {}
   } finally {
     isFinalizingCashCall = false;
@@ -739,7 +820,12 @@ async function openBill(tableId, status) {
 
   const data = await api('GET', `/api/tables/${tableId}/bill`);
   if (data.error) {
-    if (!cached) alert(data.error);
+    if (!cached && isExpectedConcurrentError(data.error)) {
+      showAdminNotice('La mesa ha cambiado en otro dispositivo. Se actualizo la vista.', 'info');
+      await loadAll();
+      return;
+    }
+    if (!cached) showAdminNotice(data.error, 'error');
     return;
   }
 
@@ -902,7 +988,12 @@ document.getElementById('newOrderBtn')?.addEventListener('click', async () => {
   if (!currentBillTableId) return;
   const data = await api('GET', `/api/tables/${currentBillTableId}/bill`);
   if (data.error) {
-    alert(data.error);
+    if (isExpectedConcurrentError(data.error)) {
+      showAdminNotice('La mesa cambio y se recargo el estado.', 'info');
+      await loadAll();
+      return;
+    }
+    showAdminNotice(data.error, 'error');
     return;
   }
   window.open(`/mesa/${data.table.token}/pedido?from=admin`, '_blank');
@@ -926,14 +1017,28 @@ async function printFinalizeTable() {
 async function deleteTable() {
   if (!currentBillTableId) return;
 
-  const result = await api('DELETE', `/api/tables/${currentBillTableId}`);
-  if (result.error) { alert(result.error); return; }
+  const triggerBtn = document.getElementById('finalizeWithoutPrintBtn');
+  const deleted = await withActionLock(`delete-table:${currentBillTableId}`, triggerBtn, 'Eliminando...', async () => {
+    const result = await api('DELETE', `/api/tables/${currentBillTableId}`);
+    if (result.error && !isExpectedConcurrentError(result.error)) {
+      showAdminNotice(result.error, 'error');
+      return;
+    }
 
-  document.getElementById('billModal').classList.add('hidden');
-  document.getElementById('paidModal').classList.add('hidden');
-  document.getElementById('finalizeTableModal').classList.add('hidden');
-  currentFinalizeTableData = null;
-  await loadAll();
+    if (result.error && isExpectedConcurrentError(result.error)) {
+      showAdminNotice('La mesa ya no estaba disponible. Vista actualizada.', 'info');
+    } else {
+      showAdminNotice('Mesa finalizada correctamente.', 'success');
+    }
+
+    document.getElementById('billModal').classList.add('hidden');
+    document.getElementById('paidModal').classList.add('hidden');
+    document.getElementById('finalizeTableModal').classList.add('hidden');
+    currentFinalizeTableData = null;
+    await loadAll();
+  });
+
+  if (!deleted) return;
 }
 
 document.getElementById('finalizeBillTableBtn')?.addEventListener('click', async () => {
@@ -1017,7 +1122,12 @@ const qrModal = document.getElementById('qrModal');
 async function openTableQr(tableId, tableNumber) {
   const qrData = await api('GET', `/api/tables/${tableId}/qr`);
   if (qrData.error) {
-    alert(qrData.error);
+    if (isExpectedConcurrentError(qrData.error)) {
+      showAdminNotice('La mesa ya no esta disponible para mostrar QR.', 'info');
+      await loadAll();
+      return;
+    }
+    showAdminNotice(qrData.error, 'error');
     return;
   }
 
@@ -1098,7 +1208,7 @@ document.getElementById('printQrBtn')?.addEventListener('click', () => {
 
   const win = window.open('', '_blank', 'width=420,height=520');
   if (!win) {
-    alert('No se pudo abrir la ventana de impresion');
+    showAdminNotice('No se pudo abrir la ventana de impresion', 'warn');
     return;
   }
 
