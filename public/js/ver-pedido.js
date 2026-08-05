@@ -3,6 +3,11 @@ const context = getOnlineOrderContext();
 let submitInFlight = false;
 let pendingPhone = '';
 let homeRedirectTimer = null;
+let paypalConfig = null;
+let paypalConfigPromise = null;
+let paypalSdkLoaded = false;
+let paypalButtonsReady = false;
+let isPayPalSubmitting = false;
 
 const orderItemsEl = document.getElementById('orderItems');
 const orderTotalEl = document.getElementById('orderTotal');
@@ -58,11 +63,204 @@ function renderCart() {
   finalizeOrderBtn.disabled = totals.units === 0;
 }
 
-function openPaypalPaymentModal() {
+function setPayPalSubmitting(submitting) {
+  isPayPalSubmitting = Boolean(submitting);
+
+  const closeBtn = document.getElementById('closePaypalPaymentModal');
+  const cancelBtn = document.getElementById('cancelPaypalPaymentBtn');
+  const buttonsWrap = document.getElementById('paypalButtons');
+  const note = document.getElementById('paypalPaymentNote');
+
+  if (closeBtn) closeBtn.disabled = isPayPalSubmitting;
+  if (cancelBtn) {
+    cancelBtn.disabled = isPayPalSubmitting;
+    cancelBtn.textContent = isPayPalSubmitting ? 'Procesando...' : 'Cancelar';
+  }
+
+  if (buttonsWrap) {
+    buttonsWrap.style.pointerEvents = isPayPalSubmitting ? 'none' : '';
+    buttonsWrap.style.opacity = isPayPalSubmitting ? '.65' : '';
+  }
+
+  if (note && isPayPalSubmitting) {
+    note.textContent = 'Procesando pago...';
+  }
+}
+
+async function getPayPalConfig() {
+  if (paypalConfig) return paypalConfig;
+  if (!paypalConfigPromise) {
+    paypalConfigPromise = api('GET', '/api/paypal/config').then((config) => {
+      paypalConfig = config;
+      return config;
+    }).catch((error) => {
+      paypalConfigPromise = null;
+      throw error;
+    });
+  }
+  return paypalConfigPromise;
+}
+
+async function loadPayPalSdk(config) {
+  if (paypalSdkLoaded && window.paypal) return;
+  if (!config?.enabled || !config?.clientId) {
+    throw new Error('PayPal no disponible');
+  }
+
+  await new Promise((resolve, reject) => {
+    if (window.paypal) {
+      resolve();
+      return;
+    }
+
+    const existing = document.querySelector('script[data-paypal-sdk="true"]');
+    if (existing) {
+      existing.addEventListener('load', resolve, { once: true });
+      existing.addEventListener('error', () => reject(new Error('No se pudo cargar el SDK de PayPal')), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(config.clientId)}&currency=${encodeURIComponent(config.currency || 'EUR')}&intent=capture&components=buttons&enable-funding=card&disable-funding=paylater,venmo,credit`;
+    script.async = true;
+    script.dataset.paypalSdk = 'true';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('No se pudo cargar el SDK de PayPal'));
+    document.head.appendChild(script);
+  });
+
+  if (!window.paypal) {
+    throw new Error('SDK de PayPal no disponible');
+  }
+
+  paypalSdkLoaded = true;
+}
+
+function buildOnlinePayPalButtonConfig(fundingSource) {
+  const isCardFunding = fundingSource === window.paypal?.FUNDING?.CARD;
+  return {
+    fundingSource,
+    style: {
+      layout: 'vertical',
+      shape: 'rect',
+      label: isCardFunding ? 'pay' : 'paypal'
+    },
+    createOrder: async () => {
+      if (!cartItems.length) {
+        throw new Error('Tu pedido esta vacio.');
+      }
+
+      const result = await api('POST', '/api/paypal/online-orders/create', { items: cartItems });
+      if (result.error || !result.orderId) {
+        throw new Error(result.error || 'No se pudo iniciar el pago PayPal');
+      }
+      return result.orderId;
+    },
+    onApprove: async (data) => {
+      setPayPalSubmitting(true);
+      try {
+        const capture = await api('POST', `/api/paypal/online-orders/${data.orderID}/capture`, {
+          items: cartItems,
+          fundingSource: isCardFunding ? 'card' : 'paypal'
+        }, { timeoutMs: 25000 });
+
+        if (capture.error) {
+          alert(capture.error);
+          return;
+        }
+
+        const paymentMethod = isCardFunding ? 'card' : 'paypal';
+        const submitted = await submitOnlineOrder(paymentMethod, {
+          paypalOrderId: data.orderID,
+          paypalCaptureId: capture.captureId || null
+        });
+
+        if (!submitted) {
+          const note = document.getElementById('paypalPaymentNote');
+          if (note) {
+            note.textContent = 'Pago capturado. Si no se confirma el pedido, contacta con el local.';
+          }
+        }
+      } finally {
+        setPayPalSubmitting(false);
+      }
+    },
+    onCancel: () => {
+      setPayPalSubmitting(false);
+    },
+    onError: (err) => {
+      setPayPalSubmitting(false);
+      alert(err?.message || 'Error en el proceso de pago PayPal');
+    }
+  };
+}
+
+async function initPayPalButtons(config) {
+  if (paypalButtonsReady) return;
+
+  await loadPayPalSdk(config);
+
+  const container = document.getElementById('paypalButtons');
+  if (!container) throw new Error('No se encontro el contenedor de PayPal');
+  container.innerHTML = '';
+
+  const preferredSources = [window.paypal?.FUNDING?.PAYPAL, window.paypal?.FUNDING?.CARD].filter(Boolean);
+
+  const slots = preferredSources.map((source) => {
+    const mount = document.createElement('div');
+    mount.className = 'paypal-button-slot';
+    const instance = window.paypal.Buttons(buildOnlinePayPalButtonConfig(source));
+    return { mount, instance };
+  }).filter(({ instance }) => instance?.isEligible?.());
+
+  if (slots.length === 0) {
+    throw new Error('No hay metodos de pago disponibles en este momento');
+  }
+
+  slots.forEach(({ mount }) => container.appendChild(mount));
+  await Promise.all(slots.map(({ instance, mount }) => instance.render(mount)));
+
+  const note = document.getElementById('paypalPaymentNote');
+  if (note) {
+    note.textContent = 'Metodos disponibles: PayPal y tarjeta de debito/credito.';
+  }
+
+  paypalButtonsReady = true;
+}
+
+async function openPaypalPaymentModal() {
   const totals = getOnlineCartTotals(cartItems);
   const amountEl = document.getElementById('paypalPayAmount');
   if (amountEl) amountEl.textContent = fmt(totals.total || 0);
+  const note = document.getElementById('paypalPaymentNote');
+  if (note) {
+    note.textContent = 'Preparando metodos de pago...';
+  }
+  setPayPalSubmitting(false);
   openModal('paypalPaymentModal');
+
+  try {
+    const config = await getPayPalConfig();
+    if (config?.error) {
+      throw new Error(config.error);
+    }
+
+    if (!config?.enabled) {
+      if (!config?.configured) {
+        throw new Error('PayPal no esta configurado en el servidor.');
+      }
+      if (!config?.connected) {
+        throw new Error('El bar aun no ha conectado su cuenta PayPal en el panel admin.');
+      }
+      throw new Error('PayPal no esta disponible temporalmente.');
+    }
+
+    await initPayPalButtons(config);
+  } catch (error) {
+    if (note) {
+      note.textContent = error?.message || 'No se pudo iniciar PayPal';
+    }
+  }
 }
 
 function updateItemQuantity(productId, delta) {
@@ -103,12 +301,12 @@ function validatePhoneInput() {
   return value;
 }
 
-async function submitOnlineOrder(paymentMethod) {
-  if (submitInFlight) return;
+async function submitOnlineOrder(paymentMethod, extraPayload = {}) {
+  if (submitInFlight) return false;
 
   if (!cartItems.length) {
     alert('Tu pedido esta vacio.');
-    return;
+    return false;
   }
 
   submitInFlight = true;
@@ -119,7 +317,8 @@ async function submitOnlineOrder(paymentMethod) {
     mode: context.mode,
     address: context.address,
     paymentMethod,
-    items: cartItems
+    items: cartItems,
+    ...extraPayload
   };
 
   const response = await api('POST', '/api/online-orders', payload, { timeoutMs: 25000 });
@@ -129,7 +328,7 @@ async function submitOnlineOrder(paymentMethod) {
 
   if (response?.error) {
     alert(response.error);
-    return;
+    return false;
   }
 
   setOnlineOrderContext({ phone: pendingPhone });
@@ -158,6 +357,8 @@ async function submitOnlineOrder(paymentMethod) {
   homeRedirectTimer = setTimeout(() => {
     location.replace('/inicio');
   }, 3000);
+
+  return true;
 }
 
 document.getElementById('orderItems').addEventListener('click', (event) => {
@@ -206,27 +407,28 @@ document.getElementById('confirmPhoneBtn').addEventListener('click', () => {
 });
 
 document.querySelectorAll('.pay-method-btn').forEach((btn) => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     const method = String(btn.dataset.method || '').trim();
     if (!method) return;
     if (method === 'paypal') {
       closeModal('paymentChoiceModal');
-      openPaypalPaymentModal();
+      await openPaypalPaymentModal();
       return;
     }
-    submitOnlineOrder(method);
+    await submitOnlineOrder(method);
   });
 });
 
 document.getElementById('closePaymentChoiceModal').addEventListener('click', () => closeModal('paymentChoiceModal'));
 document.getElementById('cancelPaymentChoiceBtn').addEventListener('click', () => closeModal('paymentChoiceModal'));
-document.getElementById('closePaypalPaymentModal').addEventListener('click', () => closeModal('paypalPaymentModal'));
+document.getElementById('closePaypalPaymentModal').addEventListener('click', () => {
+  if (isPayPalSubmitting) return;
+  closeModal('paypalPaymentModal');
+});
 document.getElementById('cancelPaypalPaymentBtn').addEventListener('click', () => {
+  if (isPayPalSubmitting) return;
   closeModal('paypalPaymentModal');
   openModal('paymentChoiceModal');
-});
-document.getElementById('confirmPaypalPaymentBtn').addEventListener('click', () => {
-  submitOnlineOrder('paypal');
 });
 
 document.getElementById('closePickupInfoModal').addEventListener('click', () => closeModal('pickupInfoModal'));

@@ -49,6 +49,24 @@
   font-size: 1.05rem;
 }
 
+.paypal-buttons {
+  margin-top: .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.paypal-button-slot {
+  width: 100%;
+}
+
+.paypal-inline-note {
+  margin-top: .65rem;
+  color: var(--text-muted);
+  font-size: .8rem;
+  text-align: center;
+}
+
 .ver-pedido-page .footer-actions .footer-btn {
   min-height: 48px;
 }

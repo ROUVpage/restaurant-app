@@ -847,7 +847,9 @@ function renderOnlineOrderInfo(order) {
   const statusLabel = getOnlineStatusLabel(order.status, order.mode);
   const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
   const paymentLabel = getPaymentLabel(order.paymentMethod);
-  const shouldShowPayment = String(order.mode) !== 'pickup';
+  const isPickup = String(order.mode) === 'pickup';
+  const shouldShowPayment = !isPickup;
+  const shouldShowEstimatedTime = isPickup;
   const etaMinutes = String(order.mode) === 'pickup' ? 25 : 40;
   const expectedReadyDate = new Date(Number(order.createdAt || 0) * 1000 + etaMinutes * 60000);
   const expectedReadyAt = Number.isNaN(expectedReadyDate.getTime())
@@ -859,7 +861,7 @@ function renderOnlineOrderInfo(order) {
     <div><span class="meta-label">Estado:</span><span class="meta-value">${statusLabel}</span></div>
     <div><span class="meta-label">Modo:</span><span class="meta-value">${modeLabel}</span></div>
     ${shouldShowPayment ? `<div><span class="meta-label">Pago:</span><span class="meta-value">${paymentLabel}</span></div>` : ''}
-    <div><span class="meta-label">Hora estimada:</span><span class="meta-value">${expectedReadyAt}</span></div>
+    ${shouldShowEstimatedTime ? `<div><span class="meta-label">Hora estimada:</span><span class="meta-value">${expectedReadyAt}</span></div>` : ''}
     <div><span class="meta-label">Telefono:</span><span class="meta-value">${order.phone || '-'}</span></div>
     <div><span class="meta-label">Direccion:</span><span class="meta-value">${addressLabel}</span></div>
   `;
@@ -1285,8 +1287,10 @@ function renderOnlineTicketInWindow(win, order) {
   const modeLabel = String(order.mode) === 'pickup' ? 'Recoger en local' : 'A domicilio';
   const statusLabel = getOnlineStatusLabel(order.status, order.mode);
   const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
-  const paymentLabel = order.paymentMethod || '-';
-  const shouldShowPayment = String(order.mode) !== 'pickup';
+  const paymentLabel = getPaymentLabel(order.paymentMethod);
+  const isPickup = String(order.mode) === 'pickup';
+  const shouldShowPayment = !isPickup;
+  const shouldShowEstimatedTime = isPickup;
   const etaMinutes = String(order.mode) === 'pickup' ? 25 : 40;
   const expectedReadyDate = new Date(Number(order.createdAt || 0) * 1000 + etaMinutes * 60000);
   const expectedReadyAt = Number.isNaN(expectedReadyDate.getTime())
@@ -1313,7 +1317,7 @@ th{text-align:left}
 <p><strong>Telefono:</strong> ${order.phone || '-'}</p>
 <p><strong>Direccion:</strong> ${addressLabel}</p>
 ${shouldShowPayment ? `<p><strong>Pago:</strong> ${paymentLabel}</p>` : ''}
-<p><strong>Hora estimada:</strong> ${expectedReadyAt}</p>
+${shouldShowEstimatedTime ? `<p><strong>Hora estimada:</strong> ${expectedReadyAt}</p>` : ''}
 <table>
 <thead><tr><th>Producto</th><th style="text-align:center">Cant.</th><th style="text-align:right">Precio</th><th style="text-align:right">Subtotal</th></tr></thead>
 <tbody>${rows}</tbody>
@@ -1348,6 +1352,7 @@ function getOnlineStatusLabel(status, mode) {
 function getPaymentLabel(paymentMethod) {
   const value = String(paymentMethod || '').toLowerCase();
   if (value === 'paypal') return 'Pagar ahora';
+  if (value === 'card' || value === 'tarjeta') return 'Tarjeta';
   if (value === 'efectivo' || value === 'cash') return 'Pagar en efectivo';
   if (value === 'datafono' || value === 'dataphone') return 'Pagar con datafono';
   return paymentMethod || '-';

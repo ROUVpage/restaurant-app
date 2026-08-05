@@ -1857,6 +1857,144 @@ async function startServer() {
     }
   });
 
+  app.post('/api/paypal/online-orders/create', async (req, res) => {
+    if (!isPayPalConfigured()) {
+      return res.status(503).json({ error: 'PayPal no está configurado en el servidor' });
+    }
+
+    const { items } = req.body || {};
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Pedido vacio' });
+    }
+
+    const sanitizedItems = [];
+    for (const rawItem of items) {
+      const productId = String(rawItem?.productId || rawItem?.product_id || '').trim();
+      const quantity = Number(rawItem?.quantity || rawItem?.qty || 0);
+      if (!productId || !Number.isInteger(quantity) || quantity <= 0 || quantity > 100) {
+        return res.status(400).json({ error: 'Formato de productos invalido' });
+      }
+
+      let catalogItem = null;
+      for (const categoryItems of Object.values(PRODUCTS)) {
+        const found = categoryItems.find((item) => item.id === productId);
+        if (found) {
+          catalogItem = found;
+          break;
+        }
+      }
+
+      if (!catalogItem) {
+        return res.status(400).json({ error: `Producto no valido: ${productId}` });
+      }
+
+      sanitizedItems.push({
+        productId,
+        productPrice: Number(catalogItem.price || 0),
+        quantity
+      });
+    }
+
+    const total = sanitizedItems.reduce((sum, item) => sum + Number(item.productPrice) * Number(item.quantity), 0);
+    if (!(total > 0)) {
+      return res.status(400).json({ error: 'Total de pedido invalido' });
+    }
+
+    try {
+      const order = await paypalApiRequestWithTokenFallback('/v2/checkout/orders', {
+        method: 'POST',
+        requestId: `online-${Date.now()}`,
+        body: {
+          intent: 'CAPTURE',
+          purchase_units: [{
+            custom_id: 'online-order',
+            amount: {
+              currency_code: PAYPAL_CURRENCY,
+              value: toMoney(total)
+            }
+          }],
+          application_context: {
+            shipping_preference: 'NO_SHIPPING'
+          }
+        }
+      });
+
+      return res.json({ success: true, orderId: order.id, total: toMoney(total) });
+    } catch (error) {
+      return res.status(502).json({ error: error.message || 'No se pudo crear la orden PayPal online' });
+    }
+  });
+
+  app.post('/api/paypal/online-orders/:orderId/capture', async (req, res) => {
+    if (!isPayPalConfigured()) {
+      return res.status(503).json({ error: 'PayPal no está configurado en el servidor' });
+    }
+
+    const { orderId } = req.params;
+    const { items } = req.body || {};
+    if (!orderId) return res.status(400).json({ error: 'Falta orderId de PayPal' });
+    if (!Array.isArray(items) || items.length === 0) return res.status(400).json({ error: 'Pedido vacio' });
+
+    const sanitizedItems = [];
+    for (const rawItem of items) {
+      const productId = String(rawItem?.productId || rawItem?.product_id || '').trim();
+      const quantity = Number(rawItem?.quantity || rawItem?.qty || 0);
+      if (!productId || !Number.isInteger(quantity) || quantity <= 0 || quantity > 100) {
+        return res.status(400).json({ error: 'Formato de productos invalido' });
+      }
+
+      let catalogItem = null;
+      for (const categoryItems of Object.values(PRODUCTS)) {
+        const found = categoryItems.find((item) => item.id === productId);
+        if (found) {
+          catalogItem = found;
+          break;
+        }
+      }
+
+      if (!catalogItem) {
+        return res.status(400).json({ error: `Producto no valido: ${productId}` });
+      }
+
+      sanitizedItems.push({
+        productId,
+        productPrice: Number(catalogItem.price || 0),
+        quantity
+      });
+    }
+
+    const total = sanitizedItems.reduce((sum, item) => sum + Number(item.productPrice) * Number(item.quantity), 0);
+    if (!(total > 0)) {
+      return res.status(400).json({ error: 'Total de pedido invalido' });
+    }
+
+    try {
+      const capture = await paypalApiRequestWithTokenFallback(`/v2/checkout/orders/${orderId}/capture`, {
+        method: 'POST',
+        requestId: `online-capture-${Date.now()}`,
+        body: {}
+      });
+
+      const purchaseUnit = capture?.purchase_units?.[0];
+      const captureInfo = purchaseUnit?.payments?.captures?.[0];
+      const paidAmount = captureInfo?.amount?.value;
+      const paidCurrency = captureInfo?.amount?.currency_code;
+      const isCompleted = String(captureInfo?.status || '').toUpperCase() === 'COMPLETED';
+
+      if (!isCompleted) {
+        return res.status(409).json({ error: 'El pago PayPal no se completó correctamente' });
+      }
+
+      if (paidCurrency !== PAYPAL_CURRENCY || Number(paidAmount) !== Number(toMoney(total))) {
+        return res.status(409).json({ error: 'El importe capturado no coincide con el pedido online' });
+      }
+
+      return res.json({ success: true, captureId: captureInfo.id, amount: paidAmount, currency: paidCurrency });
+    } catch (error) {
+      return res.status(502).json({ error: error.message || 'No se pudo capturar el pago PayPal online' });
+    }
+  });
+
   // ── RESERVATIONS (PUBLIC) ────────────────────────────────────────────────
   app.get('/api/reservations/config', (req, res) => {
     res.json({
