@@ -26,6 +26,10 @@
   gap: .55rem;
 }
 
+.ver-pedido-page .footer-actions .footer-btn {
+  min-height: 48px;
+}
+
 .pay-method-btn {
   width: 100%;
   min-height: 44px;

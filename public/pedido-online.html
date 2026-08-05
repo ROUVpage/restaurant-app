@@ -63,11 +63,14 @@
 
   <footer class="mesa-footer">
     <div class="footer-actions keep-row-mobile keep-row-mobile-2 online-footer-actions">
-      <button class="footer-btn btn-outline" id="viewOrderBtn">
-        Ver pedido
+      <button class="footer-btn btn-outline has-total" id="viewOrderBtn">
+        <span>Ver pedido</span>
         <span class="footer-btn-total" id="cartCount">0</span>
       </button>
-      <button class="footer-btn btn-gold" id="finalizeFromMenuBtn" disabled>Finalizar pedido</button>
+      <button class="footer-btn btn-gold has-total" id="finalizeFromMenuBtn" disabled>
+        <span>Finalizar pedido</span>
+        <span class="pedido-total" id="finalizeTotal">0,00 €</span>
+      </button>
     </div>
   </footer>
 

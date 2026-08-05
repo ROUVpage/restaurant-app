@@ -99,7 +99,7 @@
         <button class="modal-close" id="closePickupInfoModal">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-lead">En 25 minutos tu pedido estara listo para recoger en el local.</p>
+        <p class="modal-lead">Vamos a confirmar tu pedido para recoger en local.</p>
         <p class="pickup-address" id="pickupAddressLine">Calle del local - Recogida en barra</p>
       </div>
       <div class="modal-footer keep-row-mobile">
@@ -109,16 +109,13 @@
     </div>
   </div>
 
-  <div class="modal-overlay hidden" id="successModal">
+  <div class="modal-overlay hidden" id="postSubmitModal">
     <div class="modal">
       <div class="modal-body center">
         <h3>Pedido confirmado</h3>
-        <p class="modal-lead">Hemos recibido tu pedido.</p>
+        <p class="modal-lead" id="postSubmitMessage">Hemos recibido tu pedido.</p>
         <p class="order-code">Codigo: <strong id="orderCodeLabel">-</strong></p>
-      </div>
-      <div class="modal-footer keep-row-mobile">
-        <button class="btn-ghost" id="newOrderBtn">Nuevo pedido</button>
-        <button class="btn-primary" id="goTrackingBtn">Ir a seguimiento</button>
+        <p class="modal-lead">Te redirigimos al inicio...</p>
       </div>
     </div>
   </div>

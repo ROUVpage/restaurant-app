@@ -55,7 +55,9 @@ function renderContext() {
   modePill.textContent = isPickup ? 'Recoger' : 'A domicilio';
 
   if (isPickup) {
-    onlineContextLine.textContent = 'Recogida en local. Tu pedido estara listo en aproximadamente 25 minutos.';
+    onlineContextLine.textContent = context.address
+      ? `Recogida en: ${context.address}`
+      : 'Recogida en local';
     return;
   }
 
@@ -176,6 +178,7 @@ function syncAllQuantities() {
 function updateFooterState() {
   const totals = getOnlineCartTotals(Array.from(cartByProduct.values()));
   document.getElementById('cartCount').textContent = String(totals.units);
+  document.getElementById('finalizeTotal').textContent = fmt(totals.total);
   document.getElementById('finalizeFromMenuBtn').disabled = totals.units === 0;
 }
 

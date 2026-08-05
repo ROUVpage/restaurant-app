@@ -2,6 +2,7 @@ let cartItems = getOnlineOrderCart();
 const context = getOnlineOrderContext();
 let submitInFlight = false;
 let pendingPhone = '';
+let homeRedirectTimer = null;
 
 const orderItemsEl = document.getElementById('orderItems');
 const orderTotalEl = document.getElementById('orderTotal');
@@ -133,7 +134,22 @@ async function submitOnlineOrder(paymentMethod) {
   closeModal('paymentChoiceModal');
   closeModal('pickupInfoModal');
   document.getElementById('orderCodeLabel').textContent = response.orderCode || '-';
-  openModal('successModal');
+
+  const postSubmitMessage = document.getElementById('postSubmitMessage');
+  if (postSubmitMessage) {
+    if (context.mode === 'pickup') {
+      const pickupPoint = context.address || 'nuestro local';
+      postSubmitMessage.textContent = `En 25 minutos tu pedido estara listo para recoger en ${pickupPoint}.`;
+    } else {
+      postSubmitMessage.textContent = 'Hemos recibido tu pedido. Te lo enviaremos lo antes posible.';
+    }
+  }
+
+  openModal('postSubmitModal');
+  if (homeRedirectTimer) clearTimeout(homeRedirectTimer);
+  homeRedirectTimer = setTimeout(() => {
+    location.replace('/inicio');
+  }, 2600);
 }
 
 document.getElementById('orderItems').addEventListener('click', (event) => {
@@ -197,12 +213,4 @@ document.getElementById('cancelPickupInfoBtn').addEventListener('click', () => c
 
 document.getElementById('confirmPickupInfoBtn').addEventListener('click', () => {
   submitOnlineOrder('pickup_local');
-});
-
-document.getElementById('newOrderBtn').addEventListener('click', () => {
-  location.href = '/pedido-online';
-});
-
-document.getElementById('goTrackingBtn').addEventListener('click', () => {
-  location.href = `/seguimiento?phone=${encodeURIComponent(pendingPhone)}`;
 });
