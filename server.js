@@ -1927,6 +1927,43 @@ async function startServer() {
     return res.json({ success: true, callId });
   });
 
+  app.post('/api/payments/dataphone/confirm', (req, res) => {
+    const { tableToken } = req.body || {};
+    if (!tableToken) return res.status(400).json({ error: 'Falta token de mesa' });
+
+    const table = dbGet('SELECT * FROM tables WHERE token = ? AND status IN (?, ?)', [tableToken, 'open', 'paid']);
+    if (!table) {
+      dbRun('DELETE FROM waiter_calls WHERE table_token = ?', [tableToken]);
+      saveDb();
+      return res.status(404).json({ error: 'Mesa no encontrada' });
+    }
+
+    const bill = getTableBillData(table.id);
+    if (!bill || Number(bill.total) <= 0) {
+      return res.status(400).json({ error: 'No hay importe para cobrar en esta mesa' });
+    }
+
+    dbRun('DELETE FROM waiter_calls WHERE table_id = ? AND status = ?', [table.id, 'pending']);
+    if (table.token) {
+      dbRun('DELETE FROM waiter_calls WHERE table_token = ? AND status = ?', [table.token, 'pending']);
+    }
+
+    const info = dbRun(
+      'INSERT INTO waiter_calls (table_id, source, status, table_token, table_number) VALUES (?, ?, ?, ?, ?)',
+      [table.id, 'datafono', 'pending', tableToken, table.number]
+    );
+    const callId = info.lastInsertRowid;
+
+    if (table.status !== 'paid') {
+      markTableAsPaid(table.id);
+    } else {
+      saveDb();
+    }
+
+    emitAdminUpdate('waiter_call_created', { callId });
+    return res.json({ success: true, callId });
+  });
+
   // ── ORDERS ────────────────────────────────────────────────────────────────
   app.get('/api/orders/pending', (req, res) => {
     const rows = dbAll(`

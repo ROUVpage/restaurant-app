@@ -10,7 +10,6 @@ let paypalSdkLoaded = false;
 let paypalButtonsReady = false;
 let isCashConfirmSubmitting = false;
 let isPayPalSubmitting = false; /*PP*/
-let cardPaymentChoiceResolver = null;
 
 function setCashConfirmSubmitting(submitting) {
   isCashConfirmSubmitting = Boolean(submitting);
@@ -99,42 +98,37 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function setCardFallbackVisible(visible) {
-  const fallback = document.getElementById('cardFallbackActions');
-  const paypalButtons = document.getElementById('paypalButtons');
-  if (!fallback || !paypalButtons) return;
-  fallback.classList.toggle('hidden', !visible);
-  paypalButtons.classList.toggle('hidden', visible);
-}
-
-async function notifyCardPayment(source) {
-  const result = await api('POST', '/api/waiter-calls', { tableToken: token, source });
-  if (result.error) {
-    alert(result.error);
-    return false;
-  }
-  showToast('waiterToast');
-  document.getElementById('paypalModal').classList.add('hidden');
-  return true;
-}
-
-function closeCardPaymentChoiceModal(choice = 'cancel') {
+function closeCardPaymentChoiceModal() {
   const modal = document.getElementById('cardPaymentChoiceModal');
   if (modal) modal.classList.add('hidden');
-  if (cardPaymentChoiceResolver) {
-    cardPaymentChoiceResolver(choice);
-    cardPaymentChoiceResolver = null;
-  }
 }
 
-function askCardPaymentChoice() {
+function openCardPaymentChoiceModal() {
   const modal = document.getElementById('cardPaymentChoiceModal');
   const amount = document.getElementById('cardPaymentChoiceAmount');
   if (amount) amount.textContent = fmt(billTotal);
   if (modal) modal.classList.remove('hidden');
-  return new Promise((resolve) => {
-    cardPaymentChoiceResolver = resolve;
-  });
+}
+
+async function completeDataphonePaymentFlow() {
+  const MAX_ATTEMPTS = 3;
+  const RETRY_DELAYS_MS = [450, 900];
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const result = await api('POST', '/api/payments/dataphone/confirm', { tableToken: token }, { timeoutMs: 25000 });
+    if (!result.error) {
+      return { ok: true };
+    }
+
+    const isConnectivityError = result.error === 'No se pudo conectar con el servidor';
+    if (!isConnectivityError || attempt === MAX_ATTEMPTS) {
+      return { ok: false, error: result.error };
+    }
+
+    await wait(RETRY_DELAYS_MS[attempt - 1] || 1200);
+  }
+
+  return { ok: false, error: 'No se pudo confirmar el pago con datafono' };
 }
 
 async function completeCashPaymentFlow() { /*FOUND-FLOW*/
@@ -170,28 +164,6 @@ function buildPayPalButtonConfig(fundingSource) {
       layout: 'vertical',
       shape: 'rect',
       label: fundingSource === window.paypal?.FUNDING?.CARD ? 'pay' : 'paypal'
-    },
-    onClick: async (_data, actions) => {
-      if (fundingSource !== window.paypal?.FUNDING?.CARD) {
-        return actions.resolve();
-      }
-
-      const choice = await askCardPaymentChoice();
-      if (choice === 'now') {
-        return actions.resolve();
-      }
-
-      if (choice === 'datafono') {
-        const result = await api('POST', '/api/waiter-calls', { tableToken: token, source: 'datafono' });
-        if (result.error) {
-          alert(result.error);
-          return actions.reject();
-        }
-        document.getElementById('paypalModal').classList.add('hidden');
-        showToast('waiterToast');
-      }
-
-      return actions.reject();
     },
     createOrder: async () => {
       const result = await api('POST', '/api/paypal/orders/create', { tableToken: token });
@@ -357,6 +329,35 @@ async function initPayPalButtons() {
   paypalButtonsReady = true;
 }
 
+async function openPayPalModalFlow() {
+  document.getElementById('paypalAmount').textContent = fmt(billTotal);
+  setPayPalSubmitting(false);
+  document.getElementById('paypalModal').classList.remove('hidden');
+
+  if (!paypalConfig && paypalConfigPromise) {
+    paypalConfig = await paypalConfigPromise;
+  }
+
+  if (paypalConfig?.enabled) {
+    initPayPalButtons().catch((e) => {
+      document.getElementById('paypalNote').textContent = e.message || 'No se pudo iniciar PayPal';
+    });
+    return;
+  }
+
+  if (!paypalConfig?.configured) {
+    document.getElementById('paypalNote').textContent = 'PayPal no está configurado en el servidor.';
+    return;
+  }
+
+  if (!paypalConfig?.connected) {
+    document.getElementById('paypalNote').textContent = 'El bar aún no ha conectado su cuenta PayPal en el panel admin.';
+    return;
+  }
+
+  document.getElementById('paypalNote').textContent = 'PayPal no está disponible temporalmente.';
+}
+
 (async function init() {
   if (!token) return;
 
@@ -445,37 +446,7 @@ document.getElementById('payBackBtn').addEventListener('click', () => history.ba
 
 // Confirm pay → show PayPal modal
 document.getElementById('confirmarPagoBtn').addEventListener('click', async () => {
-  document.getElementById('paypalAmount').textContent = fmt(billTotal);
-  setPayPalSubmitting(false);
-  document.getElementById('paypalModal').classList.remove('hidden');
-  setCardFallbackVisible(false);
-
-  if (!paypalConfig && paypalConfigPromise) {
-    paypalConfig = await paypalConfigPromise;
-  }
-
-  if (paypalConfig?.enabled) {
-    initPayPalButtons().catch((e) => {
-      setCardFallbackVisible(true);
-      document.getElementById('paypalNote').textContent = e.message || 'No se pudo iniciar PayPal';
-    });
-    return;
-  }
-
-  if (!paypalConfig?.configured) {
-    setCardFallbackVisible(true);
-    document.getElementById('paypalNote').textContent = 'PayPal no está configurado en el servidor.';
-    return;
-  }
-
-  if (!paypalConfig?.connected) {
-    setCardFallbackVisible(true);
-    document.getElementById('paypalNote').textContent = 'El bar aún no ha conectado su cuenta PayPal en el panel admin.';
-    return;
-  }
-
-  setCardFallbackVisible(true);
-  document.getElementById('paypalNote').textContent = 'PayPal no está disponible temporalmente.';
+  openCardPaymentChoiceModal();
 });
 
 document.getElementById('closePaypalModal').addEventListener('click', () => {
@@ -485,27 +456,29 @@ document.getElementById('closePaypalModal').addEventListener('click', () => {
 document.getElementById('cancelPaypalBtn').addEventListener('click', () => {
   if (isPayPalSubmitting) return;
   document.getElementById('paypalModal').classList.add('hidden');
-  closeCardPaymentChoiceModal('cancel');
+  closeCardPaymentChoiceModal();
 });
 
 document.getElementById('closeCardPaymentChoiceModal').addEventListener('click', () => {
-  closeCardPaymentChoiceModal('cancel');
+  closeCardPaymentChoiceModal();
 });
 
-document.getElementById('payCardNowBtn').addEventListener('click', () => {
-  closeCardPaymentChoiceModal('now');
+document.getElementById('payCardNowBtn').addEventListener('click', async () => {
+  closeCardPaymentChoiceModal();
+  await openPayPalModalFlow();
 });
 
-document.getElementById('payWithDataphoneBtn').addEventListener('click', () => {
-  closeCardPaymentChoiceModal('datafono');
-});
-
-document.getElementById('fallbackCardNowBtn').addEventListener('click', async () => {
-  await notifyCardPayment('tarjeta');
-});
-
-document.getElementById('fallbackDataphoneBtn').addEventListener('click', async () => {
-  await notifyCardPayment('datafono');
+document.getElementById('payWithDataphoneBtn').addEventListener('click', async () => {
+  closeCardPaymentChoiceModal();
+  const result = await completeDataphonePaymentFlow();
+  if (!result.ok) {
+    alert(result.error || 'No se pudo confirmar el pago con datafono');
+    return;
+  }
+  showToast('waiterToast');
+  setTimeout(() => {
+    redirectToClosedTable();
+  }, 900);
 });
 
 document.getElementById('closeCashConfirmModal').addEventListener('click', () => {
