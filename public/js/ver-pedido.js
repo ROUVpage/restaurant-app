@@ -39,17 +39,15 @@ function renderCart() {
   orderItemsEl.innerHTML = cartItems.map((item) => {
     const subtotal = Number(item.quantity) * Number(item.productPrice);
     return `
-      <div class="order-item-row" data-id="${item.productId}">
-        <div>
-          <div class="order-item-name">${item.productName}</div>
-          <div class="product-desc">${fmt(item.productPrice)} por unidad</div>
-        </div>
-        <div class="qty-controls">
+      <div class="bill-item" data-id="${item.productId}">
+        <span class="bill-item-name">${item.productName}</span>
+        <div class="bill-item-controls">
           <button class="qty-btn" data-action="minus" data-id="${item.productId}">-</button>
           <span class="qty-num">${item.quantity}</span>
           <button class="qty-btn" data-action="plus" data-id="${item.productId}">+</button>
         </div>
-        <span class="order-item-subtotal">${fmt(subtotal)}</span>
+        <span class="bill-item-unit">${fmt(item.productPrice)}</span>
+        <span class="bill-item-price">${fmt(subtotal)}</span>
       </div>
     `;
   }).join('');
