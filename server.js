@@ -1466,8 +1466,12 @@ async function startServer() {
     }
 
     const order = dbGet(
-      `SELECT * FROM online_orders WHERE phone = ? ORDER BY created_at DESC, id DESC LIMIT 1`,
-      [normalizedPhone]
+      `SELECT *
+       FROM online_orders
+       WHERE phone = ? AND status IN (?, ?, ?, ?)
+       ORDER BY created_at DESC, id DESC
+       LIMIT 1`,
+      [normalizedPhone, 'received', 'preparing', 'ready', 'on_the_way']
     );
 
     if (!order) {

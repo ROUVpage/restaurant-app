@@ -111,6 +111,23 @@
   color: #aab6ce;
 }
 
+.result-summary {
+  margin-top: .45rem;
+  display: grid;
+  gap: .28rem;
+  color: #d7def0;
+  font-size: .9rem;
+}
+
+.result-summary p {
+  margin: 0;
+}
+
+.result-summary strong {
+  color: #9fb0cc;
+  font-weight: 600;
+}
+
 .result-items {
   display: flex;
   flex-direction: column;

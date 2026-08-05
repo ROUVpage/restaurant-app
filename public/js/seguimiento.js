@@ -2,6 +2,8 @@ const trackPhoneInput = document.getElementById('trackPhoneInput');
 const trackOrderBtn = document.getElementById('trackOrderBtn');
 const trackError = document.getElementById('trackError');
 const trackingResult = document.getElementById('trackingResult');
+let trackingPollTimer = null;
+let activeTrackingPhone = '';
 
 const statusLabelMap = {
   received: 'Recibido',
@@ -41,13 +43,21 @@ function renderTrackingData(payload) {
   const order = payload.order || {};
   const items = Array.isArray(payload.items) ? payload.items : [];
 
-  document.getElementById('resultCode').textContent = order.orderCode || '-';
-  document.getElementById('resultStatus').textContent = statusLabelMap[order.status] || 'Recibido';
-
+  const codeText = order.orderCode || '-';
+  const statusText = statusLabelMap[order.status] || 'Recibido';
   const modeText = order.mode === 'pickup' ? 'Recoger en local' : 'A domicilio';
-  const paymentText = order.paymentMethod || '-';
-  const whenText = formatDate(order.createdAt);
-  document.getElementById('resultMeta').textContent = `${modeText} · ${paymentText} · ${whenText}`;
+  const createdAtText = formatDate(order.createdAt);
+  const etaMinutes = order.mode === 'pickup' ? 25 : 40;
+  const etaTsMs = Number(order.createdAt || 0) * 1000 + etaMinutes * 60000;
+  const etaText = Number.isFinite(etaTsMs) && etaTsMs > 0
+    ? new Date(etaTsMs).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    : '-';
+
+  document.getElementById('resultCode').textContent = codeText;
+  document.getElementById('resultEta').textContent = etaText;
+  document.getElementById('resultStatusText').textContent = statusText;
+  document.getElementById('resultCodeInline').textContent = codeText;
+  document.getElementById('resultMeta').textContent = `${modeText} · ${createdAtText}`;
 
   const itemsContainer = document.getElementById('resultItems');
   itemsContainer.innerHTML = items.map((item) => {
@@ -69,21 +79,59 @@ async function runTrackingSearch() {
   if (!isValidSpanishMobile(phone)) {
     setError('Introduce un telefono valido de 9 digitos que empiece por 6 o 7.');
     trackingResult.classList.add('hidden');
+    stopTrackingPolling();
     return;
   }
 
   setError('');
+  const ok = await fetchAndRenderTracking(phone, false);
+  if (!ok) {
+    stopTrackingPolling();
+    return;
+  }
 
+  activeTrackingPhone = phone;
+  startTrackingPolling();
+}
+
+async function fetchAndRenderTracking(phone, silentNotFound) {
   const data = await api('GET', `/api/online-orders/track?phone=${encodeURIComponent(phone)}`);
   if (data?.error) {
+    const notFound = String(data.error || '').toLowerCase().includes('no hemos encontrado pedidos');
+    if (silentNotFound && notFound) {
+      trackingResult.classList.add('hidden');
+      setError('');
+      return false;
+    }
+
     setError(data.error);
     trackingResult.classList.add('hidden');
-    return;
+    return false;
   }
 
   setOnlineOrderContext({ phone });
   renderTrackingData(data);
+  return true;
 }
+
+function stopTrackingPolling() {
+  if (!trackingPollTimer) return;
+  clearInterval(trackingPollTimer);
+  trackingPollTimer = null;
+}
+
+function startTrackingPolling() {
+  stopTrackingPolling();
+  trackingPollTimer = setInterval(async () => {
+    if (document.visibilityState !== 'visible') return;
+    if (!activeTrackingPhone) return;
+    await fetchAndRenderTracking(activeTrackingPhone, true);
+  }, 3500);
+}
+
+window.addEventListener('beforeunload', () => {
+  stopTrackingPolling();
+});
 
 trackOrderBtn.addEventListener('click', runTrackingSearch);
 trackPhoneInput.addEventListener('keydown', (event) => {
