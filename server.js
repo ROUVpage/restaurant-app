@@ -1492,6 +1492,103 @@ async function startServer() {
     });
   });
 
+  app.get('/api/online-orders/admin', (req, res) => {
+    const rows = dbAll(
+      `SELECT *
+       FROM online_orders
+       WHERE status IN (?, ?)
+       ORDER BY created_at ASC, id ASC`,
+      ['received', 'ready']
+    );
+
+    const orders = rows.map((order) => {
+      const items = dbAll(
+        `SELECT product_id, product_name, product_price, quantity
+         FROM online_order_items
+         WHERE online_order_id = ?
+         ORDER BY id ASC`,
+        [order.id]
+      );
+
+      return {
+        id: order.id,
+        orderCode: order.order_code,
+        phone: order.phone,
+        mode: order.mode,
+        address: order.address,
+        paymentMethod: order.payment_method,
+        status: order.status,
+        total: Number(order.total || 0),
+        createdAt: order.created_at,
+        updatedAt: order.updated_at,
+        items: items.map((item) => ({
+          productId: item.product_id,
+          productName: item.product_name,
+          productPrice: Number(item.product_price || 0),
+          quantity: Number(item.quantity || 0)
+        }))
+      };
+    });
+
+    return res.json(orders);
+  });
+
+  app.patch('/api/online-orders/:id/finalize', (req, res) => {
+    const orderId = Number(req.params.id);
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return res.status(400).json({ error: 'Pedido online invalido' });
+    }
+
+    const order = dbGet('SELECT id, order_code, status FROM online_orders WHERE id = ?', [orderId]);
+    if (!order) {
+      return res.status(404).json({ error: 'Pedido online no encontrado' });
+    }
+
+    if (order.status === 'delivered') {
+      return res.json({ success: true, alreadyDelivered: true, status: 'delivered' });
+    }
+
+    if (order.status === 'ready') {
+      return res.json({ success: true, alreadyReady: true, status: 'ready' });
+    }
+
+    dbRun(
+      `UPDATE online_orders
+       SET status = ?, updated_at = strftime('%s','now')
+       WHERE id = ?`,
+      ['ready', orderId]
+    );
+    saveDb();
+    emitAdminUpdate('online_order_status_changed', { onlineOrderId: orderId, status: 'ready', orderCode: order.order_code });
+    return res.json({ success: true, status: 'ready' });
+  });
+
+  app.patch('/api/online-orders/:id/delivered', (req, res) => {
+    const orderId = Number(req.params.id);
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return res.status(400).json({ error: 'Pedido online invalido' });
+    }
+
+    const order = dbGet('SELECT id, order_code, status FROM online_orders WHERE id = ?', [orderId]);
+    if (!order) {
+      return res.status(404).json({ error: 'Pedido online no encontrado' });
+    }
+
+    if (order.status === 'delivered') {
+      return res.json({ success: true, alreadyDelivered: true, status: 'delivered' });
+    }
+
+    dbRun(
+      `UPDATE online_orders
+       SET status = ?, updated_at = strftime('%s','now')
+       WHERE id = ?`,
+      ['delivered', orderId]
+    );
+    saveDb();
+    emitAdminUpdate('online_order_status_changed', { onlineOrderId: orderId, status: 'delivered', orderCode: order.order_code });
+    return res.json({ success: true, status: 'delivered' });
+  });
+
   // ── WEBHOOK TEST (diagnóstico) ───────────────────────────────────────────
   app.get('/api/test-webhook', async (req, res) => {
     const webhookUrl = process.env.RESERVATION_WEBHOOK_URL;

@@ -19,6 +19,8 @@ const inFlightActions = new Set();
 let adminNoticeHideTimer = null;
 const billCache = new Map(); // tableId → { table, items, total }
 let billModalRefreshInterval = null;
+const onlineOrdersCache = new Map(); // onlineOrderId -> online order payload
+let currentOnlineOrderInfo = null;
 
 function showAdminNotice(message, type = 'info', timeoutMs = 3200) {
   if (!message) return;
@@ -438,6 +440,11 @@ function startRealtimeUpdates() {
       return;
     }
 
+    if (type === 'online_order_created' || type === 'online_order_status_changed') {
+      queueRealtimeRefresh('orders');
+      return;
+    }
+
     if (type === 'bill_item_updated' || type === 'table_paid') {
       queueRealtimeRefresh('tables');
       const evtTableId2 = String(data.tableId || '');
@@ -492,16 +499,18 @@ async function loadTables() {
 async function loadOrders() {
   if (ordersLoadPromise) return ordersLoadPromise;
   ordersLoadPromise = (async () => {
-    const [orders, waiterCalls] = await Promise.all([
+    const [orders, waiterCalls, onlineOrders] = await Promise.all([
       api('GET', '/api/orders/pending'),
-      api('GET', '/api/waiter-calls/pending')
+      api('GET', '/api/waiter-calls/pending'),
+      api('GET', '/api/online-orders/admin')
     ]);
 
     // Skip render on API error — keep current display rather than wiping it
-    if (!Array.isArray(orders) || !Array.isArray(waiterCalls)) return;
+    if (!Array.isArray(orders) || !Array.isArray(waiterCalls) || !Array.isArray(onlineOrders)) return;
 
     const safeOrders = orders;
     const safeCalls = waiterCalls;
+    const safeOnlineOrders = onlineOrders;
 
     const signature = JSON.stringify({
       orders: safeOrders.map((o) => [
@@ -511,12 +520,13 @@ async function loadOrders() {
         o.created_at,
         (o.items || []).map((item) => [item.id, item.quantity, item.fulfilled])
       ]),
-      waiterCalls: safeCalls.map((c) => [c.id, c.table_id, c.table_number, c.source, c.status, c.created_at])
+      waiterCalls: safeCalls.map((c) => [c.id, c.table_id, c.table_number, c.source, c.status, c.created_at]),
+      onlineOrders: safeOnlineOrders.map((o) => [o.id, o.orderCode, o.status, o.mode, o.phone, o.total, o.updatedAt])
     });
 
     if (signature === lastOrdersSignature) return;
     lastOrdersSignature = signature;
-    renderOrders(safeOrders, safeCalls);
+    renderOrders(safeOrders, safeCalls, safeOnlineOrders);
   })();
 
   try {
@@ -562,10 +572,15 @@ function renderTables(tables) {
   `).join('');
 }
 
-function renderOrders(orders, waiterCalls = []) {
+function renderOrders(orders, waiterCalls = [], onlineOrders = []) {
   const queue = document.getElementById('ordersQueue');
   const empty = document.getElementById('emptyOrders');
   const count = document.getElementById('ordersCount');
+
+  onlineOrdersCache.clear();
+  onlineOrders.forEach((order) => {
+    onlineOrdersCache.set(String(order.id), order);
+  });
 
   const waiterSourceLabel = (source) => {
     if (source === 'pagar') return 'pagina de pago (efectivo)';
@@ -587,7 +602,7 @@ function renderOrders(orders, waiterCalls = []) {
     total: (o.items || []).reduce((s, item) => s + (item.product_price * item.quantity), 0)
   }));
 
-  const queueCount = ordersWithTotal.length + waiterCalls.length;
+  const queueCount = ordersWithTotal.length + waiterCalls.length + onlineOrders.length;
   count.textContent = queueCount;
 
   if (queueCount === 0) {
@@ -693,7 +708,33 @@ function renderOrders(orders, waiterCalls = []) {
     </div>
   `).join('');
 
-  queue.innerHTML = waiterHtml + ordersHtml;
+  const onlineOrdersHtml = onlineOrders.map((o) => {
+    const isReady = String(o.status) === 'ready';
+    const modeLabel = String(o.mode) === 'pickup' ? 'Recoger' : 'A domicilio';
+    const statusLabel = isReady ? 'Listo para entregar' : 'Pendiente';
+    return `
+      <div class="order-card online-order-card" data-online-order-id="${o.id}">
+        <div class="order-card-header">
+          <span class="order-card-title">Pedido online ID ${o.id}</span>
+          <span class="order-card-time">${timeSince(o.createdAt)}</span>
+        </div>
+        <div class="waiter-call-body">
+          <div><strong>${o.orderCode}</strong> · ${modeLabel}</div>
+          <div>Estado: ${statusLabel}</div>
+        </div>
+        <div class="order-card-footer">
+          <span class="order-total">${fmt(o.total || 0)}</span>
+          ${isReady
+            ? `<button class="btn-complete-order btn-online-info" data-online-order-id="${o.id}">Info</button>
+               <button class="btn-complete-order btn-online-delivered" data-online-order-id="${o.id}">Entregado</button>`
+            : `<button class="btn-complete-order btn-online-finalize" data-online-order-id="${o.id}">Finalizar</button>
+               <button class="btn-complete-order btn-online-info" data-online-order-id="${o.id}">Info</button>`}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  queue.innerHTML = onlineOrdersHtml + waiterHtml + ordersHtml;
 }
 
 // -- INTERACTIONS -----------------------------------------------------------
@@ -712,6 +753,46 @@ document.getElementById('tablesGrid')?.addEventListener('click', async (e) => {
 });
 
 document.getElementById('ordersQueue')?.addEventListener('click', async (e) => {
+  const infoBtn = e.target.closest('.btn-online-info');
+  if (infoBtn) {
+    e.stopPropagation();
+    const orderId = String(infoBtn.dataset.onlineOrderId || '').trim();
+    if (orderId) openOnlineOrderInfo(orderId);
+    return;
+  }
+
+  const finalizeOnlineBtn = e.target.closest('.btn-online-finalize');
+  if (finalizeOnlineBtn) {
+    e.stopPropagation();
+    const orderId = String(finalizeOnlineBtn.dataset.onlineOrderId || '').trim();
+    if (!orderId) return;
+
+    await withActionLock(`online-finalize:${orderId}`, finalizeOnlineBtn, 'Finalizando...', async () => {
+      const result = await api('PATCH', `/api/online-orders/${orderId}/finalize`);
+      if (result.error && !isExpectedConcurrentError(result.error)) {
+        showAdminNotice(result.error, 'error');
+      }
+    });
+    loadOrders();
+    return;
+  }
+
+  const deliveredOnlineBtn = e.target.closest('.btn-online-delivered');
+  if (deliveredOnlineBtn) {
+    e.stopPropagation();
+    const orderId = String(deliveredOnlineBtn.dataset.onlineOrderId || '').trim();
+    if (!orderId) return;
+
+    await withActionLock(`online-delivered:${orderId}`, deliveredOnlineBtn, 'Cerrando...', async () => {
+      const result = await api('PATCH', `/api/online-orders/${orderId}/delivered`);
+      if (result.error && !isExpectedConcurrentError(result.error)) {
+        showAdminNotice(result.error, 'error');
+      }
+    });
+    loadOrders();
+    return;
+  }
+
   const actionBtn = e.target.closest('.btn-complete-order');
   if (actionBtn) {
     e.stopPropagation();
@@ -757,6 +838,66 @@ document.getElementById('ordersQueue')?.addEventListener('click', async (e) => {
   inFlightActions.delete(rowKey);
   loadOrders();
 });
+
+function renderOnlineOrderInfo(order) {
+  currentOnlineOrderInfo = order;
+  document.getElementById('onlineOrderInfoCode').textContent = order.orderCode || `#${order.id}`;
+
+  const modeLabel = String(order.mode) === 'pickup' ? 'Recoger' : 'A domicilio';
+  const statusLabel = String(order.status) === 'ready' ? 'Listo para entregar' : 'Pendiente';
+  const paymentLabel = order.paymentMethod || '-';
+  const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
+
+  document.getElementById('onlineOrderMeta').innerHTML = `
+    <div><span class="meta-label">ID:</span><span class="meta-value">${order.id}</span></div>
+    <div><span class="meta-label">Estado:</span><span class="meta-value">${statusLabel}</span></div>
+    <div><span class="meta-label">Modo:</span><span class="meta-value">${modeLabel}</span></div>
+    <div><span class="meta-label">Pago:</span><span class="meta-value">${paymentLabel}</span></div>
+    <div><span class="meta-label">Telefono:</span><span class="meta-value">${order.phone || '-'}</span></div>
+    <div><span class="meta-label">Direccion:</span><span class="meta-value">${addressLabel}</span></div>
+  `;
+
+  const items = Array.isArray(order.items) ? order.items : [];
+  const container = document.getElementById('onlineOrderItems');
+  if (!items.length) {
+    container.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Sin productos</p>';
+  } else {
+    container.innerHTML = items.map((item) => `
+      <div class="bill-item">
+        <span class="bill-item-name">${item.productName}</span>
+        <span class="bill-item-qty">x${item.quantity}</span>
+        <span class="bill-item-unit">${fmt(item.productPrice)}</span>
+        <span class="bill-item-price">${fmt(Number(item.productPrice) * Number(item.quantity))}</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('onlineOrderTotal').textContent = fmt(order.total || 0);
+  document.getElementById('onlineOrderInfoModal').classList.remove('hidden');
+}
+
+async function openOnlineOrderInfo(orderId) {
+  const cached = onlineOrdersCache.get(String(orderId));
+  if (cached) {
+    renderOnlineOrderInfo(cached);
+    return;
+  }
+
+  const list = await api('GET', '/api/online-orders/admin');
+  if (!Array.isArray(list)) {
+    showAdminNotice('No se pudo cargar la informacion del pedido online.', 'error');
+    return;
+  }
+
+  list.forEach((order) => onlineOrdersCache.set(String(order.id), order));
+  const found = onlineOrdersCache.get(String(orderId));
+  if (!found) {
+    showAdminNotice('Pedido online no encontrado.', 'warn');
+    return;
+  }
+
+  renderOnlineOrderInfo(found);
+}
 
 async function finalizeCashPaymentCall(tableId, callId, actionBtn = null) {
   if (isFinalizingCashCall) return;
@@ -1125,6 +1266,72 @@ function renderTicketInWindow(win, data) {
     return false;
   }
 }
+
+function renderOnlineTicketInWindow(win, order) {
+  if (!win || win.closed || !order) return false;
+
+  const rows = (order.items || []).map((item) => {
+    const subtotal = Number(item.productPrice || 0) * Number(item.quantity || 0);
+    return `<tr><td>${item.productName}</td><td style="text-align:center">${item.quantity}</td><td style="text-align:right">${fmt(item.productPrice)}</td><td style="text-align:right">${fmt(subtotal)}</td></tr>`;
+  }).join('');
+
+  const modeLabel = String(order.mode) === 'pickup' ? 'Recoger en local' : 'A domicilio';
+  const statusLabel = String(order.status) === 'ready' ? 'Listo para entregar' : 'Pendiente';
+  const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
+
+  try {
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Ticket ${order.orderCode || `Pedido ${order.id}`}</title>
+<style>
+body{font-family:Arial,sans-serif;font-size:12px;margin:12px;color:#111}
+h2{margin:0 0 4px;font-size:16px}
+p{margin:2px 0}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:4px 2px;border-bottom:1px dashed #bbb;font-size:12px}
+th{text-align:left}
+.total{margin-top:10px;font-weight:700;text-align:right}
+</style></head><body>
+<h2>El Rincon</h2>
+<p><strong>Pedido:</strong> ${order.orderCode || `#${order.id}`}</p>
+<p><strong>ID:</strong> ${order.id}</p>
+<p><strong>Estado:</strong> ${statusLabel}</p>
+<p><strong>Modo:</strong> ${modeLabel}</p>
+<p><strong>Telefono:</strong> ${order.phone || '-'}</p>
+<p><strong>Direccion:</strong> ${addressLabel}</p>
+<p><strong>Pago:</strong> ${order.paymentMethod || '-'}</p>
+<table>
+<thead><tr><th>Producto</th><th style="text-align:center">Cant.</th><th style="text-align:right">Precio</th><th style="text-align:right">Subtotal</th></tr></thead>
+<tbody>${rows}</tbody>
+</table>
+<div class="total">TOTAL: ${fmt(order.total || 0)}</div>
+</body></html>`);
+    win.document.close();
+    win.focus();
+    win.print();
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+document.getElementById('closeOnlineOrderInfoModal')?.addEventListener('click', () => {
+  document.getElementById('onlineOrderInfoModal').classList.add('hidden');
+});
+
+document.getElementById('closeOnlineOrderInfoBtn')?.addEventListener('click', () => {
+  document.getElementById('onlineOrderInfoModal').classList.add('hidden');
+});
+
+document.getElementById('onlineOrderInfoModal')?.addEventListener('click', (e) => {
+  const modal = document.getElementById('onlineOrderInfoModal');
+  if (e.target === modal) modal.classList.add('hidden');
+});
+
+document.getElementById('printOnlineOrderTicketBtn')?.addEventListener('click', () => {
+  if (!currentOnlineOrderInfo) return;
+  const win = window.open('', '_blank', 'width=380,height=650');
+  renderOnlineTicketInWindow(win, currentOnlineOrderInfo);
+});
 
 function printTicket(data) {
   const win = window.open('', '_blank', 'width=380,height=600');

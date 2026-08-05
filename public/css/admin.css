@@ -446,6 +446,70 @@
 }
 .btn-resolve-call:hover { background: rgba(66,165,245,.18); }
 
+.order-card.online-order-card {
+  border-color: rgba(201,168,76,.4);
+  box-shadow: inset 0 0 0 1px rgba(201,168,76,.08);
+}
+
+.online-order-badge {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: .15rem .5rem;
+  border: 1px solid rgba(201,168,76,.35);
+  background: rgba(201,168,76,.12);
+  color: var(--gold);
+}
+
+.online-order-badge.ready {
+  border-color: rgba(76,175,80,.35);
+  background: rgba(76,175,80,.12);
+  color: var(--accent-green);
+}
+
+.btn-online-info {
+  border-color: rgba(66,165,245,.4);
+  color: var(--accent-blue);
+  background: rgba(66,165,245,.12);
+}
+
+.btn-online-info:hover {
+  background: rgba(66,165,245,.18);
+}
+
+.btn-online-delivered {
+  border-color: rgba(76,175,80,.42);
+  color: var(--accent-green);
+  background: rgba(76,175,80,.14);
+}
+
+.btn-online-delivered:hover {
+  background: rgba(76,175,80,.2);
+}
+
+.online-order-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .45rem .75rem;
+  margin-bottom: .85rem;
+  padding: .7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,.02);
+  font-size: .84rem;
+}
+
+.online-order-meta .meta-label {
+  color: var(--text-muted);
+  margin-right: .35rem;
+}
+
+.online-order-meta .meta-value {
+  color: var(--text-primary);
+}
+
 @media (max-width: 700px) {
   .admin-page {
     min-height: 100dvh;
@@ -563,6 +627,10 @@
   .btn-complete-order,
   .btn-resolve-call {
     width: 100%;
+  }
+
+  .online-order-meta {
+    grid-template-columns: 1fr;
   }
 }
 

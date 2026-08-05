@@ -198,6 +198,28 @@
     </div>
   </div>
 
+  <!-- MODAL INFO PEDIDO ONLINE -->
+  <div class="modal-overlay hidden" id="onlineOrderInfoModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>Pedido online <span id="onlineOrderInfoCode"></span></h3>
+        <button class="modal-close" id="closeOnlineOrderInfoModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="online-order-meta" id="onlineOrderMeta"></div>
+        <div id="onlineOrderItems" class="bill-items"></div>
+        <div class="bill-total">
+          <span>TOTAL</span>
+          <span id="onlineOrderTotal"></span>
+        </div>
+      </div>
+      <div class="modal-footer keep-row-mobile">
+        <button class="btn-ghost" id="closeOnlineOrderInfoBtn">Cerrar</button>
+        <button class="btn-primary" id="printOnlineOrderTicketBtn">Imprimir ticket</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/utils.js"></script>
   <script src="/js/admin.js"></script>
 </body>
