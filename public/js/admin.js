@@ -846,7 +846,7 @@ function renderOnlineOrderInfo(order) {
   const modeLabel = String(order.mode) === 'pickup' ? 'Recoger' : 'A domicilio';
   const statusLabel = getOnlineStatusLabel(order.status, order.mode);
   const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
-  const paymentLabel = order.paymentMethod || '-';
+  const paymentLabel = getPaymentLabel(order.paymentMethod);
   const shouldShowPayment = String(order.mode) !== 'pickup';
   const etaMinutes = String(order.mode) === 'pickup' ? 25 : 40;
   const expectedReadyDate = new Date(Number(order.createdAt || 0) * 1000 + etaMinutes * 60000);
@@ -1343,6 +1343,14 @@ function getOnlineStatusLabel(status, mode) {
 
   if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'En camino';
   return 'En preparacion';
+}
+
+function getPaymentLabel(paymentMethod) {
+  const value = String(paymentMethod || '').toLowerCase();
+  if (value === 'paypal') return 'Pagar ahora';
+  if (value === 'efectivo' || value === 'cash') return 'Pagar en efectivo';
+  if (value === 'datafono' || value === 'dataphone') return 'Pagar con datafono';
+  return paymentMethod || '-';
 }
 
 document.getElementById('closeOnlineOrderInfoModal')?.addEventListener('click', () => {

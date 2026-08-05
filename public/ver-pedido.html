@@ -81,9 +81,24 @@
       <div class="modal-body">
         <p class="modal-lead">Selecciona como quieres pagar tu pedido a domicilio.</p>
         <div class="payment-grid">
-          <button class="btn-primary pay-method-btn" data-method="paypal">PayPal</button>
-          <button class="btn-secondary pay-method-btn" data-method="cash">Efectivo</button>
-          <button class="btn-ghost pay-method-btn" data-method="dataphone">Datafono</button>
+          <button class="btn-primary pay-method-btn" data-method="paypal">
+            <span class="pay-method-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Z" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.5"/></svg>
+            </span>
+            <span>Pagar ahora</span>
+          </button>
+          <button class="btn-secondary pay-method-btn" data-method="cash">
+            <span class="pay-method-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16v10H4z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            </span>
+            <span>Pagar en efectivo</span>
+          </button>
+          <button class="btn-ghost pay-method-btn" data-method="dataphone">
+            <span class="pay-method-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M10 7h4M10 11h4M10 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <span>Pagar con datafono</span>
+          </button>
         </div>
       </div>
       <div class="modal-footer keep-row-mobile">
