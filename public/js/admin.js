@@ -1045,6 +1045,7 @@ document.getElementById('cancelNewTable')?.addEventListener('click', () => {
 });
 
 document.getElementById('confirmNewTable')?.addEventListener('click', async () => {
+  const confirmBtn = document.getElementById('confirmNewTable');
   const number = parseInt(document.getElementById('tableNumber').value, 10);
   const persons = parseInt(document.getElementById('tablePersons').value, 10);
   const errorEl = document.getElementById('newTableError');
@@ -1059,21 +1060,29 @@ document.getElementById('confirmNewTable')?.addEventListener('click', async () =
     return;
   }
 
-  // Client-side check to avoid a 409 round-trip
-  const alreadyOpen = currentTables.some((t) => t.number === number && t.status === 'open');
-  if (alreadyOpen) {
-    showError(`La mesa ${number} ya existe y está abierta`);
-    return;
-  }
+  if (confirmBtn) confirmBtn.disabled = true;
+  try {
+    const result = await api('POST', '/api/tables', { number, persons });
+    if (result.error) {
+      const msg = String(result.error || '').toLowerCase();
+      if (msg.includes('ya existe') && msg.includes('abierta')) {
+        await loadAll();
+        const existingOpen = currentTables.find((t) => t.number === number && t.status === 'open');
+        if (existingOpen) {
+          newTableModal.classList.add('hidden');
+          await openBill(existingOpen.id, existingOpen.status);
+          return;
+        }
+      }
+      showError(result.error);
+      return;
+    }
 
-  const result = await api('POST', '/api/tables', { number, persons });
-  if (result.error) {
-    showError(result.error);
-    return;
+    newTableModal.classList.add('hidden');
+    await loadAll();
+  } finally {
+    if (confirmBtn) confirmBtn.disabled = false;
   }
-
-  newTableModal.classList.add('hidden');
-  await loadAll();
 });
 
 document.getElementById('closeQrModal')?.addEventListener('click', () => {

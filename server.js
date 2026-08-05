@@ -1756,8 +1756,15 @@ async function startServer() {
     const { number, persons } = req.body;
     if (!number || !persons) return res.status(400).json({ error: 'Faltan campos' });
 
-    const existing = dbGet('SELECT id FROM tables WHERE number = ? AND status = ?', [number, 'open']);
-    if (existing) return res.status(409).json({ error: 'Mesa ya existe y está abierta' });
+    const existing = dbGet('SELECT * FROM tables WHERE number = ? AND status = ? ORDER BY id DESC LIMIT 1', [number, 'open']);
+    if (existing) {
+      if (Number(existing.persons) !== Number(persons)) {
+        dbRun('UPDATE tables SET persons = ? WHERE id = ?', [persons, existing.id]);
+        saveDb();
+        emitAdminUpdate('table_updated');
+      }
+      return res.json(dbGet('SELECT * FROM tables WHERE id = ?', [existing.id]));
+    }
 
     // Reuse the same QR token for the same table number.
 
