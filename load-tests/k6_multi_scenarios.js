@@ -137,10 +137,13 @@ export function checkout() {
   } catch (e) {
     prods = [];
   }
-  const item = prods && prods.length ? prods[0] : null;
+  const flatProducts = Array.isArray(prods)
+    ? prods
+    : Object.values(prods).flatMap((category) => Array.isArray(category) ? category : []);
+  const item = flatProducts.length ? flatProducts[Math.floor(Math.random() * flatProducts.length)] : null;
   const orderPayload = JSON.stringify({
     table: Math.floor(Math.random() * 20) + 1,
-    items: item ? [{ productId: item.id || item._id || item.name, qty: 1 }] : [{ name: 'sample', qty: 1 }],
+    items: item ? [{ productId: item.id, productName: item.name, productPrice: item.price, quantity: 1 }] : [{ productName: 'sample', quantity: 1 }],
   });
   const headers = { 'Content-Type': 'application/json' };
   if (!READ_ONLY) {

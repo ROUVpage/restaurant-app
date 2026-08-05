@@ -1972,7 +1972,7 @@ async function startServer() {
 
     let tableRow = tableToken ? dbGet('SELECT * FROM tables WHERE token = ? AND status = ?', [tableToken, 'open']) : null;
     if (!tableRow) {
-      // Attempt to recover: if token exists in table_tokens, reuse number; otherwise create a new table row so orders can be accepted.
+      // Attempt to recover: if token exists in table_tokens, reuse number; otherwise create or reopen a table session.
       try {
         let tokenToUse = tableToken || uuidv4();
         let tableNumber = null;
@@ -1998,11 +1998,23 @@ async function startServer() {
           tokenToUse = existingTokenRow.token || tokenToUse;
         }
 
-        const info = dbRun('INSERT INTO tables (number, persons, token, status) VALUES (?, ?, ?, ?)', [tableNumber, 2, tokenToUse, 'open']);
-        saveDb();
-        emitAdminUpdate('table_created');
-        emitTableUpdateByToken(tokenToUse, 'table_created', { tableNumber });
-        tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [info.lastInsertRowid]);
+        const existingTableByToken = dbGet('SELECT * FROM tables WHERE token = ? ORDER BY id DESC LIMIT 1', [tokenToUse]);
+        if (existingTableByToken) {
+          // If the token already exists on a closed/paid table, reopen it rather than insert a duplicate token row.
+          if (existingTableByToken.status !== 'open') {
+            dbRun('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE table_id = ?)', [existingTableByToken.id]);
+            dbRun('DELETE FROM orders WHERE table_id = ?', [existingTableByToken.id]);
+            dbRun('DELETE FROM waiter_calls WHERE table_id = ? OR table_token = ?', [existingTableByToken.id, tokenToUse]);
+            dbRun('UPDATE tables SET number = ?, persons = ?, status = ?, created_at = ? WHERE id = ?', [tableNumber, 2, 'open', Math.floor(Date.now() / 1000), existingTableByToken.id]);
+          }
+          tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [existingTableByToken.id]);
+        } else {
+          const info = dbRun('INSERT INTO tables (number, persons, token, status) VALUES (?, ?, ?, ?)', [tableNumber, 2, tokenToUse, 'open']);
+          saveDb();
+          emitAdminUpdate('table_created');
+          emitTableUpdateByToken(tokenToUse, 'table_created', { tableNumber });
+          tableRow = dbGet('SELECT * FROM tables WHERE id = ?', [info.lastInsertRowid]);
+        }
       } catch (e) {
         return res.status(404).json({ error: 'Mesa no encontrada o cerrada' });
       }
@@ -2026,13 +2038,11 @@ async function startServer() {
 
       // If productPrice missing, try to resolve from catalog
       if (!Number.isFinite(productPrice)) {
-        // search PRODUCTS catalog by id or name
         let found = null;
         for (const cat of Object.values(PRODUCTS)) {
           for (const p of cat) {
-            if (productId && (String(p.id) === productId || String(p.id) === productId)) { found = p; break; }
-            if (!productName && p.id === productId) { found = p; break; }
-            if (productName && (p.name === productName || String(p.id) === productName)) { found = p; break; }
+            if (productId && String(p.id) === productId) { found = p; break; }
+            if (productName && (String(p.name) === productName || String(p.id) === productName)) { found = p; break; }
           }
           if (found) break;
         }
@@ -2066,7 +2076,7 @@ async function startServer() {
     if (normalizedRequestId) {
       const existingOrder = dbGet(
         'SELECT id FROM orders WHERE table_id = ? AND client_request_id = ? LIMIT 1',
-        [table.id, normalizedRequestId]
+        [tableRow.id, normalizedRequestId]
       );
       if (existingOrder) {
         return res.json({ success: true, orderId: existingOrder.id, duplicate: true });
@@ -2077,7 +2087,7 @@ async function startServer() {
       db.run('BEGIN');
       const orderInfo = dbRun(
         'INSERT INTO orders (table_id, status, client_request_id) VALUES (?, ?, ?)',
-        [table.id, 'pending', normalizedRequestId || null]
+        [tableRow.id, 'pending', normalizedRequestId || null]
       );
       const orderId = orderInfo.lastInsertRowid;
       for (const item of sanitizedItems) {
@@ -2087,15 +2097,15 @@ async function startServer() {
       db.run('COMMIT');
 
       saveDb();
-      emitAdminUpdate('order_created', { orderId, tableId: table.id });
-      emitBillUpdated(table.id, table.token);
+      emitAdminUpdate('order_created', { orderId, tableId: tableRow.id });
+      emitBillUpdated(tableRow.id, tableRow.token);
       return res.json({ success: true, orderId });
     } catch (error) {
       try { db.run('ROLLBACK'); } catch (_) {}
       if (normalizedRequestId && String(error?.message || '').includes('UNIQUE constraint failed: orders.table_id, orders.client_request_id')) {
         const existingOrder = dbGet(
           'SELECT id FROM orders WHERE table_id = ? AND client_request_id = ? LIMIT 1',
-          [table.id, normalizedRequestId]
+          [tableRow.id, normalizedRequestId]
         );
         if (existingOrder) {
           return res.json({ success: true, orderId: existingOrder.id, duplicate: true });
