@@ -845,14 +845,18 @@ function renderOnlineOrderInfo(order) {
 
   const modeLabel = String(order.mode) === 'pickup' ? 'Recoger' : 'A domicilio';
   const statusLabel = String(order.status) === 'ready' ? 'Listo para entregar' : 'Pendiente';
-  const paymentLabel = order.paymentMethod || '-';
   const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
+  const etaMinutes = String(order.mode) === 'pickup' ? 25 : 40;
+  const expectedReadyDate = new Date(Number(order.createdAt || 0) * 1000 + etaMinutes * 60000);
+  const expectedReadyAt = Number.isNaN(expectedReadyDate.getTime())
+    ? '-'
+    : expectedReadyDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
   document.getElementById('onlineOrderMeta').innerHTML = `
     <div><span class="meta-label">ID:</span><span class="meta-value">${order.id}</span></div>
     <div><span class="meta-label">Estado:</span><span class="meta-value">${statusLabel}</span></div>
     <div><span class="meta-label">Modo:</span><span class="meta-value">${modeLabel}</span></div>
-    <div><span class="meta-label">Pago:</span><span class="meta-value">${paymentLabel}</span></div>
+    <div><span class="meta-label">Hora estimada:</span><span class="meta-value">${expectedReadyAt}</span></div>
     <div><span class="meta-label">Telefono:</span><span class="meta-value">${order.phone || '-'}</span></div>
     <div><span class="meta-label">Direccion:</span><span class="meta-value">${addressLabel}</span></div>
   `;
@@ -1278,6 +1282,11 @@ function renderOnlineTicketInWindow(win, order) {
   const modeLabel = String(order.mode) === 'pickup' ? 'Recoger en local' : 'A domicilio';
   const statusLabel = String(order.status) === 'ready' ? 'Listo para entregar' : 'Pendiente';
   const addressLabel = order.address || (String(order.mode) === 'pickup' ? 'Recogida en local' : '-');
+  const etaMinutes = String(order.mode) === 'pickup' ? 25 : 40;
+  const expectedReadyDate = new Date(Number(order.createdAt || 0) * 1000 + etaMinutes * 60000);
+  const expectedReadyAt = Number.isNaN(expectedReadyDate.getTime())
+    ? '-'
+    : expectedReadyDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
   try {
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
@@ -1298,7 +1307,7 @@ th{text-align:left}
 <p><strong>Modo:</strong> ${modeLabel}</p>
 <p><strong>Telefono:</strong> ${order.phone || '-'}</p>
 <p><strong>Direccion:</strong> ${addressLabel}</p>
-<p><strong>Pago:</strong> ${order.paymentMethod || '-'}</p>
+<p><strong>Hora estimada:</strong> ${expectedReadyAt}</p>
 <table>
 <thead><tr><th>Producto</th><th style="text-align:center">Cant.</th><th style="text-align:right">Precio</th><th style="text-align:right">Subtotal</th></tr></thead>
 <tbody>${rows}</tbody>
