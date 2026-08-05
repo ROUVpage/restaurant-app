@@ -99,6 +99,25 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function setCardFallbackVisible(visible) {
+  const fallback = document.getElementById('cardFallbackActions');
+  const paypalButtons = document.getElementById('paypalButtons');
+  if (!fallback || !paypalButtons) return;
+  fallback.classList.toggle('hidden', !visible);
+  paypalButtons.classList.toggle('hidden', visible);
+}
+
+async function notifyCardPayment(source) {
+  const result = await api('POST', '/api/waiter-calls', { tableToken: token, source });
+  if (result.error) {
+    alert(result.error);
+    return false;
+  }
+  showToast('waiterToast');
+  document.getElementById('paypalModal').classList.add('hidden');
+  return true;
+}
+
 function closeCardPaymentChoiceModal(choice = 'cancel') {
   const modal = document.getElementById('cardPaymentChoiceModal');
   if (modal) modal.classList.add('hidden');
@@ -429,6 +448,7 @@ document.getElementById('confirmarPagoBtn').addEventListener('click', async () =
   document.getElementById('paypalAmount').textContent = fmt(billTotal);
   setPayPalSubmitting(false);
   document.getElementById('paypalModal').classList.remove('hidden');
+  setCardFallbackVisible(false);
 
   if (!paypalConfig && paypalConfigPromise) {
     paypalConfig = await paypalConfigPromise;
@@ -436,21 +456,25 @@ document.getElementById('confirmarPagoBtn').addEventListener('click', async () =
 
   if (paypalConfig?.enabled) {
     initPayPalButtons().catch((e) => {
+      setCardFallbackVisible(true);
       document.getElementById('paypalNote').textContent = e.message || 'No se pudo iniciar PayPal';
     });
     return;
   }
 
   if (!paypalConfig?.configured) {
+    setCardFallbackVisible(true);
     document.getElementById('paypalNote').textContent = 'PayPal no está configurado en el servidor.';
     return;
   }
 
   if (!paypalConfig?.connected) {
+    setCardFallbackVisible(true);
     document.getElementById('paypalNote').textContent = 'El bar aún no ha conectado su cuenta PayPal en el panel admin.';
     return;
   }
 
+  setCardFallbackVisible(true);
   document.getElementById('paypalNote').textContent = 'PayPal no está disponible temporalmente.';
 });
 
@@ -474,6 +498,14 @@ document.getElementById('payCardNowBtn').addEventListener('click', () => {
 
 document.getElementById('payWithDataphoneBtn').addEventListener('click', () => {
   closeCardPaymentChoiceModal('datafono');
+});
+
+document.getElementById('fallbackCardNowBtn').addEventListener('click', async () => {
+  await notifyCardPayment('tarjeta');
+});
+
+document.getElementById('fallbackDataphoneBtn').addEventListener('click', async () => {
+  await notifyCardPayment('datafono');
 });
 
 document.getElementById('closeCashConfirmModal').addEventListener('click', () => {
