@@ -154,13 +154,20 @@ function toIsoDate(dateObj) {
 }
 
 function normalizeDate(value) {
-  if (!value || typeof value !== 'string') return null;
-  const trimmed = value.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
-  const parsed = new Date(`${trimmed}T00:00:00`);
-  if (Number.isNaN(parsed.getTime())) return null;
-  if (toIsoDate(parsed) !== trimmed) return null;
-  return trimmed;
+  if (!value) return null;
+  // Accept strings like YYYY-MM-DD, full ISO datetimes (YYYY-MM-DDTHH:MM:SSZ)
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    const isoDateMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2})(?:T|$)/);
+    if (isoDateMatch) return isoDateMatch[1];
+    // try generic Date parse as fallback
+    const parsed = new Date(trimmed);
+    if (!Number.isNaN(parsed.getTime())) return toIsoDate(parsed);
+    return null;
+  }
+  // If a Date object was passed, convert to YYYY-MM-DD
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return toIsoDate(value);
+  return null;
 }
 
 function getDateRangeForMonth(monthValue) {
@@ -1062,13 +1069,16 @@ async function startServer() {
 
   function validateReservationInput({ reservationDate, slot, name, phone, persons }) {
     if (!reservationDate) return { ok: false, error: 'Fecha inválida' };
-    if (!RESERVATION_SLOTS[slot]) return { ok: false, error: 'Turno inválido' };
+    // Allow missing slot (infer default to 'lunch')
+    const resolvedSlot = slot || 'lunch';
+    if (!RESERVATION_SLOTS[resolvedSlot]) return { ok: false, error: 'Turno inválido' };
 
     const cleanName = String(name || '').trim();
     const cleanPhone = String(phone || '').replace(/\s+/g, '').trim();
     const parsedPersons = Number(persons);
 
-    if (!/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ' -]{1,79}$/.test(cleanName)) {
+    // Be more permissive with names: allow digits and common chars (keeps validation lightweight)
+    if (!/^[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9' \-]{1,79}$/.test(cleanName)) {
       return { ok: false, error: 'Nombre inválido (2-80 caracteres)' };
     }
 
@@ -1092,7 +1102,7 @@ async function startServer() {
       ok: true,
       value: {
         reservationDate,
-        slot,
+        slot: resolvedSlot,
         name: cleanName,
         phone: cleanPhone,
         persons: parsedPersons
@@ -1943,21 +1953,52 @@ async function startServer() {
   });
 
   app.post('/api/orders', (req, res) => {
-    const { tableToken, items, clientRequestId } = req.body;
-    const table = dbGet('SELECT * FROM tables WHERE token = ? AND status = ?', [tableToken, 'open']);
-    if (!table) return res.status(404).json({ error: 'Mesa no encontrada o cerrada' });
+    // Accept either { tableToken } or { table } (numeric table number) for compatibility with external clients/tests.
+    let { tableToken, items, clientRequestId, table } = req.body || {};
+    if (!tableToken && Number.isInteger(Number(table))) {
+      const t = dbGet('SELECT token FROM tables WHERE number = ? AND status IN (?, ?) ORDER BY id DESC LIMIT 1', [Number(table), 'open', 'paid']);
+      if (t && t.token) tableToken = t.token;
+    }
+
+    const tableRow = tableToken ? dbGet('SELECT * FROM tables WHERE token = ? AND status = ?', [tableToken, 'open']) : null;
+    if (!tableRow) return res.status(404).json({ error: 'Mesa no encontrada o cerrada' });
     if (!items || items.length === 0) return res.status(400).json({ error: 'Pedido vacío' });
     if (!Array.isArray(items)) return res.status(400).json({ error: 'Formato de pedido inválido' });
     if (items.length > 120) return res.status(400).json({ error: 'Demasiados productos en un solo pedido' });
 
     const sanitizedItems = [];
     for (const rawItem of items) {
-      const productId = String(rawItem?.productId || '').trim();
-      const productName = String(rawItem?.productName || '').trim();
-      const productPrice = Number(rawItem?.productPrice);
-      const quantity = Number(rawItem?.quantity);
+      // Support multiple field names from different clients: productId/product_id/id and productName/name, quantity/qty
+      const productIdRaw = rawItem?.productId || rawItem?.product_id || rawItem?.id || '';
+      const productNameRaw = rawItem?.productName || rawItem?.product_name || rawItem?.name || '';
+      const qtyRaw = rawItem?.quantity || rawItem?.qty || rawItem?.cantidad || 0;
+      const priceRaw = rawItem?.productPrice || rawItem?.product_price || rawItem?.price || null;
 
-      if (!productId || !productName) {
+      const productId = String(productIdRaw || '').trim();
+      let productName = String(productNameRaw || '').trim();
+      let productPrice = priceRaw != null ? Number(priceRaw) : NaN;
+      const quantity = Number(qtyRaw);
+
+      // If productPrice missing, try to resolve from catalog
+      if (!Number.isFinite(productPrice)) {
+        // search PRODUCTS catalog by id or name
+        let found = null;
+        for (const cat of Object.values(PRODUCTS)) {
+          for (const p of cat) {
+            if (productId && (String(p.id) === productId || String(p.id) === productId)) { found = p; break; }
+            if (!productName && p.id === productId) { found = p; break; }
+            if (productName && (p.name === productName || String(p.id) === productName)) { found = p; break; }
+          }
+          if (found) break;
+        }
+        if (found) {
+          productPrice = Number(found.price || 0);
+          if (!productName) productName = found.name;
+          if (!productId) productId = String(found.id);
+        }
+      }
+
+      if (!productId && !productName) {
         return res.status(400).json({ error: 'Producto inválido en el pedido' });
       }
       if (!Number.isFinite(productPrice) || productPrice < 0) {
@@ -1968,8 +2009,8 @@ async function startServer() {
       }
 
       sanitizedItems.push({
-        productId,
-        productName,
+        productId: String(productId),
+        productName: productName || String(productId),
         productPrice,
         quantity
       });
