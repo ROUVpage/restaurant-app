@@ -5,14 +5,6 @@ const trackingResult = document.getElementById('trackingResult');
 let trackingPollTimer = null;
 let activeTrackingPhone = '';
 
-const statusLabelMap = {
-  received: 'Recibido',
-  preparing: 'En cocina',
-  ready: 'Listo',
-  on_the_way: 'En camino',
-  delivered: 'Entregado'
-};
-
 (function prefillFromQuery() {
   const phoneFromQuery = String(new URLSearchParams(location.search).get('phone') || '').trim();
   const phoneFromContext = getOnlineOrderContext().phone || '';
@@ -44,8 +36,8 @@ function renderTrackingData(payload) {
   const items = Array.isArray(payload.items) ? payload.items : [];
 
   const codeText = order.orderCode || '-';
-  const statusText = statusLabelMap[order.status] || 'Recibido';
   const modeText = order.mode === 'pickup' ? 'Recoger en local' : 'A domicilio';
+  const statusText = getTrackingStatusLabel(order.status, order.mode);
   const createdAtText = formatDate(order.createdAt);
   const etaMinutes = order.mode === 'pickup' ? 25 : 40;
   const etaTsMs = Number(order.createdAt || 0) * 1000 + etaMinutes * 60000;
@@ -72,6 +64,22 @@ function renderTrackingData(payload) {
 
   document.getElementById('resultTotal').textContent = fmt(order.total || 0);
   trackingResult.classList.remove('hidden');
+}
+
+function getTrackingStatusLabel(status, mode) {
+  const normalizedStatus = String(status || '').toLowerCase();
+  const normalizedMode = String(mode || '').toLowerCase();
+  const isPickup = normalizedMode === 'pickup';
+
+  if (normalizedStatus === 'delivered') return 'Entregado';
+
+  if (isPickup) {
+    if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'Listo para recoger';
+    return 'En preparacion';
+  }
+
+  if (normalizedStatus === 'ready' || normalizedStatus === 'on_the_way') return 'En camino';
+  return 'En preparacion';
 }
 
 async function runTrackingSearch() {
