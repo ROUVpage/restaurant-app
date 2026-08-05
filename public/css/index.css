@@ -148,3 +148,17 @@
     width: 100%;
   }
 }
+
+@media (max-width: 560px) {
+  .home-nav {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: .35rem;
+  }
+
+  .home-nav a {
+    display: block;
+    width: 100%;
+  }
+}
