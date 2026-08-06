@@ -73,6 +73,7 @@
   font-size: 1.03rem;
   padding: .8rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .mode-btn.active {
