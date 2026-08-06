@@ -23,8 +23,10 @@ function setMode(nextMode) {
   if (isPickup) {
     orderLocationInput.value = LOCAL_PICKUP_ADDRESS;
     orderLocationInput.placeholder = 'Direccion del local';
+    orderLocationInput.readOnly = true;
     orderHint.textContent = 'Recogida en local. Te avisaremos cuando este listo.';
   } else {
+    orderLocationInput.readOnly = false;
     if (orderLocationInput.value === LOCAL_PICKUP_ADDRESS) {
       orderLocationInput.value = '';
     }

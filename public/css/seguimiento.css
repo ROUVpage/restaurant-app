@@ -90,19 +90,11 @@
   gap: .2rem;
 }
 
-.result-code-title {
-  margin: 0;
-  color: #a8b5ce;
-  font-size: 1.02rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-}
-
 #resultCode {
   margin: 0;
-  font-size: .92rem;
-  font-weight: 600;
+  color: #ffffff;
+  font-size: 1.22rem;
+  font-weight: 700;
 }
 
 .result-label {

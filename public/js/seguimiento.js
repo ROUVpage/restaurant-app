@@ -45,7 +45,7 @@ function renderTrackingData(payload) {
     ? new Date(etaTsMs).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
     : '-';
 
-  document.getElementById('resultCode').textContent = codeText;
+  document.getElementById('resultCode').textContent = `Código: ${codeText}`;
   document.getElementById('resultEta').textContent = etaText;
   document.getElementById('resultStatusText').textContent = statusText;
   document.getElementById('resultMeta').textContent = `${modeText} · ${createdAtText}`;
