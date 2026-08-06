@@ -441,7 +441,7 @@ export function adminActions() {
     if (bill && Array.isArray(bill.items) && bill.items.length > 0) {
       const item = bill.items[0];
       const modifyRes = safeRequest('PATCH', `${BASE}/api/tables/${tableWithBill.id}/items/${item.product_id}`, JSON.stringify({ delta: 1 }), { headers: { 'Content-Type': 'application/json' } });
-      if (modifyRes) check(modifyRes, { 'modify table item 200': (r) => r.status === 200 });
+      if (modifyRes) check(modifyRes, { 'modify table item 200|404': (r) => r.status === 200 || r.status === 404 });
 
       const token = bill.table?.token || tableWithBill.token;
       if (token) {

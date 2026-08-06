@@ -2326,15 +2326,28 @@ async function startServer() {
   });
 
   app.patch('/api/tables/:tableId/items/:productId', (req, res) => {
-    const { delta } = req.body;
+    const delta = Number(req.body?.delta);
     const { tableId, productId } = req.params;
+
+    if (!Number.isInteger(delta) || delta === 0) {
+      return res.status(400).json({ error: 'Delta invalido' });
+    }
+
     const item = dbGet(`
       SELECT oi.* FROM order_items oi
       JOIN orders o ON o.id = oi.order_id
       WHERE o.table_id = ? AND oi.product_id = ?
       ORDER BY oi.id DESC LIMIT 1
     `, [tableId, productId]);
-    if (!item) return res.status(404).json({ error: 'Producto no encontrado' });
+
+    // Idempotent behavior for concurrent updates: item may have been removed just before this request.
+    if (!item) {
+      const tableForBill = dbGet('SELECT id, token FROM tables WHERE id = ?', [tableId]);
+      emitAdminUpdate('bill_item_updated', { tableId: Number(tableId) });
+      if (tableForBill) emitBillUpdated(tableForBill.id, tableForBill.token);
+      return res.json({ success: true, idempotent: true, reason: 'item_not_found' });
+    }
+
     const newQty = item.quantity + delta;
     if (newQty <= 0) {
       dbRun('DELETE FROM order_items WHERE id = ?', [item.id]);
