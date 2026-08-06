@@ -1088,12 +1088,28 @@ function renderBillItems(container, items, editable) {
 
         const result = await api('PATCH', `/api/tables/${currentBillTableId}/items/${productId}`, { delta });
         if (result.error) {
-          // Revert on error
+          const expectedConcurrent = isExpectedConcurrentError(result.error);
+
+          // Revert on error using latest server snapshot.
           const fallback = await api('GET', `/api/tables/${currentBillTableId}/bill`);
           if (!fallback.error && !document.getElementById('billModal').classList.contains('hidden')) {
             billCache.set(String(currentBillTableId), fallback);
             renderBillItems(container, fallback.items, true);
             document.getElementById('billTotal').textContent = fmt(fallback.total);
+            if (expectedConcurrent) {
+              showAdminNotice('El producto ya no existia. Vista actualizada automaticamente.', 'info');
+            }
+          } else {
+            // If we cannot restore the modal snapshot, force a full refresh to avoid stale UI.
+            if (row.isConnected) {
+              row.querySelectorAll('.qty-btn').forEach((b) => { b.disabled = false; });
+            }
+            queueRealtimeRefresh('all');
+            if (expectedConcurrent) {
+              showAdminNotice('El producto ya no estaba disponible. Se recargo la vista.', 'info');
+            } else {
+              showAdminNotice(result.error, 'error');
+            }
           }
         } else if (row.isConnected) {
           row.querySelectorAll('.qty-btn').forEach((b) => { b.disabled = false; });

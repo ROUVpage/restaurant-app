@@ -7,6 +7,8 @@ const BASE_COUNTS = {
   browse: 20,
   reservas: 10,
   checkout: 10,
+  onlineOrder: 8,
+  onlineTracking: 8,
   admin: 5,
   adminActions: 3,
   sharedTableUsers: 12,
@@ -29,6 +31,8 @@ export const options = {
     browse: { executor: 'constant-vus', exec: 'browse', vus: computedVus.browse, duration: '30s' },
     reservas: { executor: 'constant-vus', exec: 'reserve', vus: computedVus.reservas, duration: '30s' },
     checkout: { executor: 'constant-vus', exec: 'checkout', vus: computedVus.checkout, duration: '30s' },
+    onlineOrder: { executor: 'constant-vus', exec: 'onlineOrderFlow', vus: computedVus.onlineOrder, duration: '30s' },
+    onlineTracking: { executor: 'constant-vus', exec: 'onlineTrackingFlow', vus: computedVus.onlineTracking, duration: '30s', startTime: '2s' },
     admin: { executor: 'constant-vus', exec: 'adminFlow', vus: computedVus.admin, duration: '30s' },
     adminActions: { executor: 'constant-vus', exec: 'adminActions', vus: computedVus.adminActions, duration: '30s' },
     sharedTableUsers: { executor: 'constant-vus', exec: 'sharedTableUsers', vus: computedVus.sharedTableUsers, duration: '30s', startTime: '2s' },
@@ -51,6 +55,7 @@ const SHARED_TABLE_B = Number(__ENV.SHARED_TABLE_B) || 8802;
 const FAILED_CAPTURE_CAP = Number(__ENV.FAILED_CAPTURE_CAP) || 200;
 const FAILED_BODY_LIMIT = Number(__ENV.FAILED_BODY_LIMIT) || 2000;
 const failedResponses = [];
+const PICKUP_ADDRESS = 'Calle del local - Recogida en barra';
 
 function captureResponse(res, meta = {}) {
   try {
@@ -177,6 +182,66 @@ export function checkout() {
   sleep(1);
 }
 
+export function onlineOrderFlow(data) {
+  const home = safeRequest('GET', `${BASE}/inicio`);
+  if (home) check(home, { 'online home 200': (r) => r.status === 200 });
+
+  const orderPage = safeRequest('GET', `${BASE}/pedido-online`);
+  if (orderPage) check(orderPage, { 'pedido online page 200': (r) => r.status === 200 });
+
+  const reviewPage = safeRequest('GET', `${BASE}/ver-pedido`);
+  if (reviewPage) check(reviewPage, { 'ver pedido page 200': (r) => r.status === 200 });
+
+  if (READ_ONLY) {
+    check({ ok: true }, { 'online order skipped (read-only)': () => true });
+    sleep(1);
+    return;
+  }
+
+  const catalog = getCatalogForFlow(data);
+  const created = createOnlineOrderFromCatalog(catalog);
+  if (created.res) {
+    check(created.res, { 'online order created 200|201': (r) => r.status === 200 || r.status === 201 });
+  }
+
+  sleep(1);
+}
+
+export function onlineTrackingFlow(data) {
+  const page = safeRequest('GET', `${BASE}/seguimiento`);
+  if (page) check(page, { 'seguimiento page 200': (r) => r.status === 200 });
+
+  if (READ_ONLY) {
+    const probePhone = randomPhone();
+    const probe = safeRequest('GET', `${BASE}/api/online-orders/track?phone=${encodeURIComponent(probePhone)}`);
+    if (probe) check(probe, { 'online tracking read-only 200|404': (r) => r.status === 200 || r.status === 404 });
+    sleep(1);
+    return;
+  }
+
+  const catalog = getCatalogForFlow(data);
+  const phone = randomPhone();
+  const created = createOnlineOrderFromCatalog(catalog, phone, 'delivery');
+  if (created.res) {
+    check(created.res, { 'online tracking setup order 200|201': (r) => r.status === 200 || r.status === 201 });
+  }
+
+  sleep(0.25);
+  const tracking = safeRequest('GET', `${BASE}/api/online-orders/track?phone=${encodeURIComponent(phone)}`);
+  if (tracking) {
+    check(tracking, {
+      'online tracking 200': (r) => r.status === 200,
+      'online tracking payload': (r) => {
+        if (r.status !== 200) return false;
+        const body = safeJson(r);
+        return body && body.order && String(body.order.phone || '') === phone;
+      },
+    });
+  }
+
+  sleep(1);
+}
+
 function isoDateDaysFromNow(days) {
   const dt = new Date(Date.now() + Number(days) * 24 * 3600 * 1000);
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
@@ -212,6 +277,63 @@ function buildOrderItemsFromCatalog(catalog) {
   const item = pickRandomProduct(catalog);
   if (!item) return [{ productName: 'sample', quantity: 1 }];
   return [{ productId: item.id, productName: item.name, productPrice: item.price, quantity: 1 }];
+}
+
+function getCatalogForFlow(data) {
+  const setupCatalog = Array.isArray(data?.catalog) ? data.catalog : [];
+  if (setupCatalog.length) return setupCatalog;
+
+  const productsRes = safeRequest('GET', `${BASE}/api/products`);
+  if (!productsRes || productsRes.status !== 200) return [];
+  const raw = safeJson(productsRes) || [];
+  return flattenProducts(raw)
+    .map((p) => ({ id: p.id, name: p.name, price: p.price }))
+    .filter((p) => p && p.id != null && p.name != null && p.price != null);
+}
+
+function randomDeliveryAddress() {
+  const suffix = Math.floor(Math.random() * 900) + 100;
+  return `Calle Prueba ${suffix}, Madrid`;
+}
+
+function randomDeliveryPaymentMethod() {
+  const roll = Math.random();
+  if (roll < 0.5) return 'cash';
+  if (roll < 0.75) return 'dataphone';
+  return 'paypal';
+}
+
+function createOnlineOrderFromCatalog(catalog, forcedPhone = null, forcedMode = null) {
+  const selected = pickRandomProduct(catalog);
+  if (!selected) return { phone: forcedPhone || randomPhone(), res: null, mode: 'delivery' };
+
+  const mode = forcedMode === 'pickup'
+    ? 'pickup'
+    : (forcedMode === 'delivery' ? 'delivery' : (Math.random() < 0.35 ? 'pickup' : 'delivery'));
+  const phone = forcedPhone || randomPhone();
+  const quantity = Math.floor(Math.random() * 2) + 1;
+
+  const payload = {
+    phone,
+    mode,
+    address: mode === 'pickup' ? PICKUP_ADDRESS : randomDeliveryAddress(),
+    paymentMethod: mode === 'pickup' ? 'pickup_local' : randomDeliveryPaymentMethod(),
+    items: [{
+      productId: selected.id,
+      productName: selected.name,
+      productPrice: selected.price,
+      quantity,
+    }],
+  };
+
+  const res = safeRequest(
+    'POST',
+    `${BASE}/api/online-orders`,
+    JSON.stringify(payload),
+    { headers: { 'Content-Type': 'application/json' } }
+  );
+
+  return { phone, mode, payload, res };
 }
 
 function getTableByNumber(number) {
