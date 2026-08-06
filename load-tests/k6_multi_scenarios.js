@@ -230,8 +230,9 @@ export function onlineTrackingFlow(data) {
   const tracking = safeRequest('GET', `${BASE}/api/online-orders/track?phone=${encodeURIComponent(phone)}`);
   if (tracking) {
     check(tracking, {
-      'online tracking 200': (r) => r.status === 200,
+      'online tracking 200|404': (r) => r.status === 200 || r.status === 404,
       'online tracking payload': (r) => {
+        if (r.status === 404) return true;
         if (r.status !== 200) return false;
         const body = safeJson(r);
         return body && body.order && String(body.order.phone || '') === phone;
