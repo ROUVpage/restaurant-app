@@ -1311,7 +1311,8 @@ function renderTicketInWindow(win, data) {
   table.tax .tr{text-align:right}
   .total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:bold;margin-top:5px}
   .footer{text-align:center;font-size:10px;margin-top:6px}
-  @media print{body{width:100%}}
+  @page{size:80mm auto;margin:0}
+  @media print{body{width:100%;margin:0;padding:4px 4px}}
 </style></head><body>
 
 <div class="c nombre">${NEGOCIO_NOMBRE}</div>
