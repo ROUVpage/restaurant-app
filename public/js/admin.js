@@ -1256,34 +1256,110 @@ document.getElementById('finalizeWithoutPrintBtn')?.addEventListener('click', ()
 function renderTicketInWindow(win, data) {
   if (!win || win.closed) return false;
 
-  const rows = (data.items || []).map((i) =>
-    `<tr><td>${i.product_name}</td><td style="text-align:center">${i.quantity}</td><td style="text-align:right">${fmt(i.product_price)}</td><td style="text-align:right">${fmt(i.product_price * i.quantity)}</td></tr>`
-  ).join('');
+  // ── Datos del negocio (personalizar según restaurante) ──────────────────
+  const NEGOCIO_NOMBRE  = 'EL RINCÓN';
+  const NEGOCIO_DIR     = 'C/ Ejemplo, 1, 18001, Granada';
+  const NEGOCIO_NIF     = 'B12345678';
+  const NEGOCIO_TEL     = '000 000 000';
+  // ────────────────────────────────────────────────────────────────────────
 
-  const now = new Date().toLocaleString('es-ES');
+  const IVA_RATE = 0.10; // 10 % IVA reducido (restauración España)
+  const total        = Number(data.total) || 0;
+  const baseImponible = total / (1 + IVA_RATE);
+  const ivaCuota      = total - baseImponible;
+
+  const now    = new Date();
+  const fecha  = now.toLocaleDateString('es-ES',  { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const hora   = now.toLocaleTimeString('es-ES',  { hour: '2-digit', minute: '2-digit' });
+  const numTicket = String(Math.floor(10000 + Math.random() * 90000));
+
+  const rows = (data.items || []).map((i) => {
+    const importe = Number(i.product_price) * Number(i.quantity);
+    return `<tr>
+      <td class="c-ud">${i.quantity}</td>
+      <td class="c-prod">${String(i.product_name).toUpperCase()}</td>
+      <td class="c-pvp">${fmt(i.product_price)}</td>
+      <td class="c-imp">${fmt(importe)}</td>
+    </tr>`;
+  }).join('');
 
   try {
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>Ticket Mesa ${data.table.number}</title>
 <style>
-  body{font-family:'Courier New',monospace;font-size:12px;color:#000;margin:0;padding:1rem}
-  h2{text-align:center;font-size:15px;margin-bottom:4px}
-  p{text-align:center;margin:2px 0;font-size:11px}
-  table{width:100%;border-collapse:collapse;margin-top:12px}
-  th{border-bottom:1px solid #000;padding:3px 2px;font-size:11px}
-  td{padding:3px 2px;font-size:11px}
-  .total{border-top:2px solid #000;padding-top:6px;margin-top:8px;display:flex;justify-content:space-between;font-weight:bold;font-size:14px}
-  .footer{text-align:center;margin-top:12px;font-size:10px;border-top:1px dashed #000;padding-top:8px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Courier New',Courier,monospace;font-size:12px;color:#000;width:80mm;margin:0 auto;padding:8px 6px}
+  .c{text-align:center}
+  .bold{font-weight:bold}
+  .nombre{font-size:16px;font-weight:bold;letter-spacing:1px}
+  .info{font-size:10px;margin:1px 0}
+  hr.solid{border:none;border-top:1px solid #000;margin:5px 0}
+  hr.dash{border:none;border-top:1px dashed #000;margin:5px 0}
+  .status{font-size:13px;font-weight:bold;margin:3px 0}
+  .meta{font-size:10px;margin:1px 0}
+  .nticket{font-size:10px}
+  .borrador{font-size:11px;font-weight:bold;margin:2px 0}
+  table.items{width:100%;border-collapse:collapse;margin-top:3px}
+  table.items th{border-bottom:1px solid #000;padding:2px 2px;font-size:10px;text-align:left}
+  table.items td{padding:2px 2px;font-size:11px;vertical-align:top}
+  .c-ud{width:18px}
+  .c-prod{width:auto}
+  .c-pvp{width:46px;text-align:right}
+  .c-imp{width:46px;text-align:right}
+  table.tax{width:100%;border-collapse:collapse;font-size:10px;margin-top:3px}
+  table.tax td{padding:1px 2px}
+  table.tax .tr{text-align:right}
+  .total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:bold;margin-top:5px}
+  .footer{text-align:center;font-size:10px;margin-top:6px}
+  @media print{body{width:100%}}
 </style></head><body>
-<h2>EL RINCON</h2>
-<p>Mesa ${data.table.number} - ${data.table.persons} personas</p>
-<p>${now}</p>
-<table>
-  <thead><tr><th align="left">Producto</th><th>Uds</th><th>P.Unit</th><th>Total</th></tr></thead>
+
+<div class="c nombre">${NEGOCIO_NOMBRE}</div>
+<div class="c info">${NEGOCIO_DIR}</div>
+<div class="c info">NIF/CIF: ${NEGOCIO_NIF} &nbsp;&nbsp; TEL: ${NEGOCIO_TEL}</div>
+
+<hr class="solid">
+
+<div class="c status">PENDIENTE PAGO: ${fmt(total)}</div>
+<div class="c meta">${fecha} ${hora} – MESA ${data.table.number} (${data.table.persons} pers.)</div>
+<div class="c nticket">N&#186; ${numTicket}</div>
+<div class="c borrador">BORRADOR PARA CLIENTE</div>
+
+<hr class="solid">
+
+<table class="items">
+  <thead>
+    <tr>
+      <th class="c-ud">Ud</th>
+      <th class="c-prod">Producto</th>
+      <th class="c-pvp" style="text-align:right">PVP</th>
+      <th class="c-imp" style="text-align:right">Importe</th>
+    </tr>
+  </thead>
   <tbody>${rows}</tbody>
 </table>
-<div class="total"><span>TOTAL</span><span>${fmt(data.total)}</span></div>
-<div class="footer">Gracias por su visita<br>IVA incluido</div>
+
+<hr class="dash">
+
+<table class="tax">
+  <tr>
+    <td>Base Imponible</td><td class="tr">${fmt(baseImponible)}</td>
+    <td>IVA&nbsp;10%</td><td class="tr">${fmt(ivaCuota)}</td>
+  </tr>
+  <tr>
+    <td>Total Base</td><td class="tr">${fmt(baseImponible)}</td>
+    <td>Total IVA</td><td class="tr">${fmt(ivaCuota)}</td>
+  </tr>
+</table>
+
+<hr class="solid">
+
+<div class="total-row"><span>TOTAL</span><span>${fmt(total)}</span></div>
+
+<hr class="solid">
+
+<div class="footer">Gracias por su visita</div>
+
 <script>window.onload=function(){window.print();window.close()}<\/script>
 </body></html>`);
     win.document.close();
