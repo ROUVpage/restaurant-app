@@ -1,3 +1,20 @@
+/* Language selector shared across every page header. */
+.language-switcher {
+  min-width: 92px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--border, #3a3a3a);
+  border-radius: 4px;
+  background: var(--bg-secondary, #1f1f1f);
+  color: var(--text-primary, #fff);
+  font: inherit;
+}
+.language-switcher-fixed {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1100;
+}
 /* ── RESET & BASE ────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
